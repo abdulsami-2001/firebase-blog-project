@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "414722007002",
+    "project_id": "fir-blog-app-65658",
+    "storage_bucket": "fir-blog-app-65658.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414722007002:android:c8641d4fb36d39b7ec6ae3",
+        "android_client_info": {
+          "package_name": "com.firebaseblogapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "414722007002-87a7fhtd6r65hqskav9q6br2lnagkaat.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.firebaseblogapp",
+            "certificate_hash": "10460227ba5bdfa0a7b262315952a770e9b1ad79"
+          }
+        },
+        {
+          "client_id": "414722007002-3vi3f3itpm3cj3oifbepmf3lvm0konb8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGse_7al4v5aXGs1DBNyQbIM6JFn3QS48"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "414722007002-3vi3f3itpm3cj3oifbepmf3lvm0konb8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
