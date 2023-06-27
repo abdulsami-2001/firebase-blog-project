@@ -1,8 +1,9 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 // for firebase integration 26 june 2023 
-
 apply plugin: 'com.google.gms.google-services'
+// for react native vector icons integration 27 june 2023
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.

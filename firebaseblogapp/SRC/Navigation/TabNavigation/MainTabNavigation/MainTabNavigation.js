@@ -8,7 +8,9 @@ import MyBlogs from '../../../Screens/MyBlogs/MyBlogs'
 import Profile from '../../../Screens/Profile/Profile'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import Feather from 'react-native-vector-icons/Feather'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import HomeNavigation from '../../StackNavigation/HomeNavigation/HomeNavigation'
+import BlogNavigation from '../../StackNavigation/BlogNavigation/BlogNavigation'
 
 
 const Tab = createBottomTabNavigator()
@@ -22,10 +24,11 @@ const MainTabNavigation = () => {
                 }}
             >
                 <Tab.Screen
-                    name={NavigationStrings.HOME}
-                    component={Home}
+                    name={NavigationStrings.HOMESTACK}
+                    component={HomeNavigation}
                     options={{
-                        tabBarIcon: () => (<Ionicons name='home' size={24} />)
+                        tabBarIcon: () => (<Ionicons name='home' size={24} />),
+                        title: NavigationStrings.HOME
                     }}
                 />
                 <Tab.Screen
@@ -36,17 +39,18 @@ const MainTabNavigation = () => {
                     }}
                 />
                 <Tab.Screen
-                    name={NavigationStrings.MYBLOGS}
-                    component={MyBlogs}
+                    name={NavigationStrings.BLOGSTACK}
+                    component={BlogNavigation}
                     options={{
-                        tabBarIcon: () => (<Ionicons name='reader' size={24} />)
+                        tabBarIcon: () => (<Ionicons name='reader' size={24} />),
+                        title: NavigationStrings.MYBLOGS
                     }}
                 />
                 <Tab.Screen
                     name={NavigationStrings.PROFILE}
                     component={Profile}
                     options={{
-                        tabBarIcon: () => (<Feather name='user' size={24} />)
+                        tabBarIcon: () => (<FontAwesome name='user' size={24} />)
                     }}
                 />
             </Tab.Navigator>

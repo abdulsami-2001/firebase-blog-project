@@ -1,6 +1,9 @@
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Card, Text } from 'react-native-paper'
+import { useNavigation } from '@react-navigation/native'
+import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
+import { ms, vs } from 'react-native-size-matters'
 
 const BlogData = [
     {
@@ -33,6 +36,7 @@ const BlogData = [
 
 
 const Home = () => {
+    const navigation = useNavigation()
 
     return (
         <View style={STYLES.mainCont}>
@@ -42,17 +46,21 @@ const Home = () => {
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => {
                         return (
-                            <TouchableOpacity style={STYLES.cardCont} activeOpacity={0.7} >
-                                <Card >
-                                    <Card.Cover source={item.img_url} />
+                            <Card style={STYLES.cardCont} >
+                                <Card.Cover source={item.img_url} />
+                                <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
                                     <Card.Content>
                                         <Text variant="titleLarge">{item.title}</Text>
                                         <Text variant="bodyMedium">{item.blog}</Text>
-                                        <Text variant="bodyMedium">Author: {item.author}</Text>
-                                        <Text variant="bodyMedium">Date: {item.date.toString()}</Text>
+                                        <View style={STYLES.infoCont}>
+                                            <View>
+                                                <Text variant="titleSmall">Author: {item.author}</Text>
+                                                <Text variant="titleSmall">Date: {item.date.toString()}</Text>
+                                            </View>
+                                        </View>
                                     </Card.Content>
-                                </Card>
-                            </TouchableOpacity>
+                                </TouchableOpacity>
+                            </Card>
                         )
                     }}
                 />
@@ -70,13 +78,23 @@ const STYLES = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         // flexDirection: 'row',
-        marginHorizontal: 15,
-        marginVertical: 5,
-        backgroundColor: 'purple'
+        marginHorizontal: ms(15),
+        marginVertical: vs(5),
+        // backgroundColor: 'purple'
     },
     subCont: {
     },
     cardCont: {
-        marginVertical: 5
+        marginVertical: vs(5)
+    },
+    infoCont: {
+        flexDirection: 'row'
+    },
+    btnCont: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        // backgroundColor:"purple",
+        paddingHorizontal: ms(10),
     }
 })
+

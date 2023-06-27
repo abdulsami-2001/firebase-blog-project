@@ -1,7 +1,11 @@
 export default NavigationString = {
     HOME: "HOME",
     FAVORITES: 'FAVORITES',
-    MYBLOGS:'MYBLOGS',
-    PROFILE:'PROFILE',
-    SETTINGS: "SETTINGS"
+    MYBLOGS: 'MY BLOGS',
+    PROFILE: 'PROFILE',
+    SETTINGS: "SETTINGS",
+    BLOG: "BLOG",
+    HOMESTACK: "HOME STACK",
+    BLOGSTACK: "BLOG STACK",
+    ADDBLOG: "ADD BLOG"
 }
