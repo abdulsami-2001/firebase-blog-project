@@ -29,6 +29,7 @@ const Profile = () => {
                     <Button mode="contained" style={STYLES.btn} onPress={() => console.log('Pressed')}>
                         SignUp
                     </Button>
+                    <Text>Just Created Signup branch</Text>
                 </View>
             </View>
         )
