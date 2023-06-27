@@ -7,5 +7,6 @@ export default NavigationString = {
     BLOG: "BLOG",
     HOMESTACK: "HOME STACK",
     BLOGSTACK: "BLOG STACK",
-    ADDBLOG: "ADD BLOG"
+    ADDBLOG: "ADD BLOG",
+    LOGIN:"LOGIN"
 }
