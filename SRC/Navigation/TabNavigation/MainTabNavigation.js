@@ -1,16 +1,14 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import NavigationStrings from '../../../Utils/NavigationStrings/NavigationStrings'
-import Home from '../../../Screens/Home/Home'
-import Favorite from '../../../Screens/Favorite/Favorite'
-import MyBlogs from '../../../Screens/MyBlogs/MyBlogs'
-import Profile from '../../../Screens/Profile/Profile'
+import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
+import Favorite from '../../Screens/Favorite/Favorite'
+import Profile from '../../Screens/Profile/Profile'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import HomeNavigation from '../../StackNavigation/HomeNavigation/HomeNavigation'
-import BlogNavigation from '../../StackNavigation/BlogNavigation/BlogNavigation'
+import HomeNavigation from '../StackNavigation/HomeNavigation'
+import BlogNavigation from '../StackNavigation/BlogNavigation'
 
 
 const Tab = createBottomTabNavigator()
