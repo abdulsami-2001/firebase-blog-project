@@ -1,20 +1,40 @@
 import { View, StyleSheet, } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Button, Text } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
+import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
+import auth from '@react-native-firebase/auth';
 
 
 const login = false
 
+
 const Profile = () => {
     const navigation = useNavigation()
 
-    if (login) {
+    const [user, setUser] = useState();
+    const [initializing, setInitializing] = useState(true);
+
+    function onAuthStateChanged(user) {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    }
+
+    useEffect(() => {
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        return subscriber; // unsubscribe on unmount
+    }, [])
+
+    console.log(user)
+
+    if (user) {
         return (
             <View style={STYLES.mainCont}>
                 <View style={STYLES.headingCont}>
                     <Text style={STYLES.heading}>Profile</Text>
+                    <Text style={STYLES.heading}>Email: {user?.email}</Text>
+                    <Text style={STYLES.heading}>User Verified: {user?.emailVerified ? "Yes" : "No"}</Text>
                 </View>
             </View>
         )
@@ -23,13 +43,12 @@ const Profile = () => {
             <View style={STYLES.mainContNL}>
                 <Text style={STYLES.heading} >You're Not Logged In.</Text>
                 <View style={STYLES.subContNL} >
-                    <Button mode="contained" style={STYLES.btn} onPress={() => console.log('Pressed')}>
-                        Login
+                    <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.SIGNUP)}>
+                        Signup
                     </Button>
-                    <Button mode="contained" style={STYLES.btn} onPress={() => console.log('Pressed')}>
-                        SignUp
-                    </Button>
-                    <Text>Just Created Signup branch</Text>
+                    {/* <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.)}> */}
+                    {/* Login */}
+                    {/* </Button> */}
                 </View>
             </View>
         )

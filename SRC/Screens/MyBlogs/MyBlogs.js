@@ -85,7 +85,7 @@ const MyBlogs = () => {
                     <Button mode="contained" style={STYLES.btn} onPress={() => console.log('Pressed')}>
                         Login
                     </Button>
-                    <Button mode="contained" style={STYLES.btn} onPress={() => console.log('Pressed')}>
+                    <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.SIGNUP)}>
                         SignUp
                     </Button>
                 </View>

@@ -1,9 +1,10 @@
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, Text } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { ms, vs } from 'react-native-size-matters'
+import auth from '@react-native-firebase/auth';
 
 const BlogData = [
     {
