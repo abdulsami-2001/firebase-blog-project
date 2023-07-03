@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import Profile from '../../Screens/Profile/Profile'
 import Signup from '../../Screens/Signup/Signup'
+import Login from '../../Screens/Login/Login'
 
 const Stack = createNativeStackNavigator()
 
@@ -20,6 +21,10 @@ const ProfileNavigation = () => {
             <Stack.Screen
                 name={NavigationStrings.SIGNUP}
                 component={Signup}
+            />
+            <Stack.Screen
+                name={NavigationStrings.LOGIN}
+                component={Login}
             />
         </Stack.Navigator>
     )

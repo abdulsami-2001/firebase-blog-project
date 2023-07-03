@@ -9,15 +9,17 @@ import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { Creators } from '../../Redux/Action/Action';
 import { connect } from 'react-redux';
 
-const SignUp = ({ myUserState }) => {
+const Login = ({ myUserState, isUserLoggedIn }) => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
     const navigation = useNavigation()
 
+    console.log("isUserLoggedIn ", isUserLoggedIn)
 
-    const signupHandler = () => {
+
+    const loginHandler = () => {
         if (Email != '' && Password != '') {
-            signupFirebase()
+            loginFirebase()
             SetEmail('')
             SetPassword('')
         } else if (Email == '' && Password == '') {
@@ -46,9 +48,9 @@ const SignUp = ({ myUserState }) => {
         }
     }
 
-    const signupFirebase = async () => {
+    const loginFirebase = async () => {
         await auth()
-            .createUserWithEmailAndPassword(Email, Password)
+            .signInWithEmailAndPassword(Email, Password)
             .then(() => {
                 showMessage({
                     message: "Signup Successful",
@@ -59,26 +61,32 @@ const SignUp = ({ myUserState }) => {
             })
             .catch(error => {
                 console.log(error)
-                if (error.code === 'auth/email-already-in-use') {
+                if (error.code === 'auth/invalid-email') {
                     showMessage({
-                        message: "Email address is already in use!",
+                        message: "Email address is not valid",
                         type: "warning",
                     });
                 }
-                if (error.code === 'auth/weak-password') {
+                if (error.code === 'auth/user-disabled') {
                     showMessage({
-                        message: "Create a strong password",
-                        description: "Password should be atlease 6 characters.",
+                        message: "Account is disabled",
+                        description: 'Contact Support Team',
+                        type: "warning",
+                    });
+                }
+                if (error.code === 'auth/user-not-found') {
+                    showMessage({
+                        message: "No user corresponding to the given email",
+                        type: "warning",
+                    });
+                }
+                if (error.code === 'auth/wrong-password') {
+                    showMessage({
+                        message: "Password is invalid for the given email, or the account corresponding to the email does not have a password set.",
                         type: "warning",
                     });
                 }
 
-                if (error.code === 'auth/invalid-email') {
-                    showMessage({
-                        message: "Email address is invalid!",
-                        type: "warning",
-                    });
-                }
             });
     }
 
@@ -86,7 +94,7 @@ const SignUp = ({ myUserState }) => {
         <View style={STYLES.mainCont}>
             <ScrollView>
                 <View style={STYLES.headingCont}>
-                    <Text style={STYLES.heading}>SignUp</Text>
+                    <Text style={STYLES.heading}>Login</Text>
                 </View>
                 <View style={STYLES.inputCont}>
                     <TextInput
@@ -107,8 +115,8 @@ const SignUp = ({ myUserState }) => {
                     />
                 </View>
                 <View style={STYLES.btnCont}>
-                    <Button mode="contained" style={STYLES.btn} onPress={signupHandler}>
-                        Signup
+                    <Button mode="contained" style={STYLES.btn} onPress={loginHandler}>
+                        Login
                     </Button>
                 </View>
             </ScrollView>
@@ -131,7 +139,7 @@ const mapStateToProps = (state) => {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUp)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
 
 
 const STYLES = StyleSheet.create({

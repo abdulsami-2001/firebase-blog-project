@@ -82,7 +82,7 @@ const MyBlogs = ({ isUserLoggedIn }) => {
             <View style={STYLES.mainContNL}>
                 <Text style={STYLES.heading} >You're Not Logged In.</Text>
                 <View style={STYLES.subContNL} >
-                    <Button mode="contained" style={STYLES.btn} onPress={() => console.log('Pressed')}>
+                    <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.LOGIN)}>
                         Login
                     </Button>
                     <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.SIGNUP)}>
