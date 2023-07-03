@@ -52,7 +52,7 @@ const SignUp = () => {
                     message: "Signup Successful",
                     type: "success",
                 });
-                navigation.navigate(NavigationStrings.HOME)
+                navigation.navigate(NavigationStrings.PROFILE)
             })
             .catch(error => {
                 console.log(error)

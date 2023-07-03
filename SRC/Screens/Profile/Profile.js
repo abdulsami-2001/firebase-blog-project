@@ -5,6 +5,7 @@ import { Button, Text } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import auth from '@react-native-firebase/auth';
+import { showMessage } from 'react-native-flash-message'
 
 
 const login = false
@@ -14,6 +15,7 @@ const Profile = () => {
     const navigation = useNavigation()
 
     const [user, setUser] = useState();
+    const [Flag, setFlag] = useState(true);
     const [initializing, setInitializing] = useState(true);
 
     function onAuthStateChanged(user) {
@@ -26,9 +28,28 @@ const Profile = () => {
         return subscriber; // unsubscribe on unmount
     }, [])
 
+    useEffect(() => {
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        return subscriber; // unsubscribe on unmount
+    }, [user])
+
     console.log(user)
 
-    if (user) {
+    const singOutHandler = async () => {
+        await auth()
+            .signOut()
+            .then(() => showMessage({
+                message: "Signout Successfull",
+                type: "success",
+            })).catch(() => {
+                showMessage({
+                    message: "Signout Unsuccessfull",
+                    type: "danger",
+                })
+            })
+    }
+
+    if (user != undefined && user != null) {
         return (
             <View style={STYLES.mainCont}>
                 <View style={STYLES.headingCont}>
@@ -36,6 +57,9 @@ const Profile = () => {
                     <Text style={STYLES.heading}>Email: {user?.email}</Text>
                     <Text style={STYLES.heading}>User Verified: {user?.emailVerified ? "Yes" : "No"}</Text>
                 </View>
+                <Button mode="contained" style={STYLES.btn} onPress={() => singOutHandler()}>
+                    Logout
+                </Button>
             </View>
         )
     } else {
@@ -55,6 +79,7 @@ const Profile = () => {
     }
 
 }
+
 
 export default Profile
 
