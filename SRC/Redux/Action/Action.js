@@ -1,9 +1,5 @@
 import { createActions } from 'reduxsauce'
 
-const { Types, Creators } = createActions({
-
+export const { Types, Creators } = createActions({
+    userState: ['userstateflag'],
 })
-
-export const CounterTypes = Types
-
-export default Creators

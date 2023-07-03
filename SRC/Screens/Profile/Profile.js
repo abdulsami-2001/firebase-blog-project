@@ -6,22 +6,23 @@ import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import auth from '@react-native-firebase/auth';
 import { showMessage } from 'react-native-flash-message'
+import { Creators } from '../../Redux/Action/Action'
+import { connect } from 'react-redux'
 
-
-const login = false
-
-
-const Profile = () => {
+const Profile = ({ myUserState, isUserLoggedIn }) => {
     const navigation = useNavigation()
 
-    const [user, setUser] = useState();
-    const [Flag, setFlag] = useState(true);
+    const [user, setUser] = useState(null);
     const [initializing, setInitializing] = useState(true);
 
     function onAuthStateChanged(user) {
         setUser(user);
         if (initializing) setInitializing(false);
     }
+
+    // console.log("user: ", user)
+    // console.log("initializing: ", initializing)
+    console.log("isUserLoggedIn ", isUserLoggedIn)
 
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
@@ -33,15 +34,19 @@ const Profile = () => {
         return subscriber; // unsubscribe on unmount
     }, [user])
 
-    console.log(user)
 
     const singOutHandler = async () => {
         await auth()
             .signOut()
-            .then(() => showMessage({
-                message: "Signout Successfull",
-                type: "success",
-            })).catch(() => {
+            .then(() => {
+
+                showMessage({
+                    message: "Signout Successfull",
+                    type: "success",
+                })
+                myUserState(false)
+            }
+            ).catch(() => {
                 showMessage({
                     message: "Signout Unsuccessfull",
                     type: "danger",
@@ -81,7 +86,18 @@ const Profile = () => {
 }
 
 
-export default Profile
+const mapDispatchToProps = {
+    myUserState: Creators.userState,
+}
+
+const mapStateToProps = (state) => {
+    return {
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile)
 
 
 const STYLES = StyleSheet.create({

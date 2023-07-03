@@ -6,8 +6,10 @@ import { showMessage, } from "react-native-flash-message";
 import auth from '@react-native-firebase/auth';
 import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
+import { Creators } from '../../Redux/Action/Action';
+import { connect } from 'react-redux';
 
-const SignUp = () => {
+const SignUp = ({ myUserState }) => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
     const navigation = useNavigation()
@@ -16,6 +18,7 @@ const SignUp = () => {
     const signupHandler = () => {
         if (Email != '' && Password != '') {
             signupFirebase()
+            myUserState(true)
             SetEmail('')
             SetPassword('')
         } else if (Email == '') {
@@ -114,7 +117,21 @@ const SignUp = () => {
     )
 }
 
-export default SignUp
+
+
+
+const mapDispatchToProps = {
+    myUserState: Creators.userState,
+}
+
+const mapStateToProps = (state) => {
+    return {
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp)
 
 
 const STYLES = StyleSheet.create({

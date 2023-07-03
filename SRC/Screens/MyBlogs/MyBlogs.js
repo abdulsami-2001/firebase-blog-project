@@ -5,6 +5,8 @@ import { Card, Text, Button } from 'react-native-paper'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
+import { Creators } from '../../Redux/Action/Action'
+import { connect } from 'react-redux'
 
 
 const BlogData = [
@@ -36,12 +38,10 @@ const BlogData = [
     },
 ]
 
-const login = false
-
-const MyBlogs = () => {
+const MyBlogs = ({ isUserLoggedIn }) => {
     const navigation = useNavigation()
 
-    if (login) {
+    if (isUserLoggedIn) {
         return (
             <View style={STYLES.mainCont}>
                 <View style={STYLES.headingCont}>
@@ -95,7 +95,18 @@ const MyBlogs = () => {
 
 }
 
-export default MyBlogs
+const mapDispatchToProps = {
+    myUserState: Creators.userState,
+}
+
+const mapStateToProps = (state) => {
+    return {
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyBlogs)
+
 
 
 const STYLES = StyleSheet.create({
@@ -137,7 +148,7 @@ const STYLES = StyleSheet.create({
         right: 20,
 
     },
-    btn:{
-        marginVertical:vs(3)
+    btn: {
+        marginVertical: vs(3)
     }
 })
