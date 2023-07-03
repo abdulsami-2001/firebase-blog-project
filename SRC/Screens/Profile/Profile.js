@@ -20,9 +20,11 @@ const Profile = ({ myUserState, isUserLoggedIn }) => {
         if (initializing) setInitializing(false);
     }
 
-    // console.log("user: ", user)
-    // console.log("initializing: ", initializing)
+    console.log("------------------")
+    console.log("user: ", user)
+    console.log("initializing: ", initializing)
     console.log("isUserLoggedIn ", isUserLoggedIn)
+    console.log("------------------")
 
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
@@ -72,12 +74,12 @@ const Profile = ({ myUserState, isUserLoggedIn }) => {
             <View style={STYLES.mainContNL}>
                 <Text style={STYLES.heading} >You're Not Logged In.</Text>
                 <View style={STYLES.subContNL} >
+                    <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.LOGIN)}>
+                        Login
+                    </Button>
                     <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.SIGNUP)}>
                         Signup
                     </Button>
-                    {/* <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.)}> */}
-                    {/* Login */}
-                    {/* </Button> */}
                 </View>
             </View>
         )

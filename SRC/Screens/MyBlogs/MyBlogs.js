@@ -10,38 +10,38 @@ import { connect } from 'react-redux'
 
 
 const BlogData = [
-    {
-        title: 'Done is better than perfect Done is better than perfect Done is better than perfect',
-        author: "Someone",
-        date: new Date(),
-        id: 1,
-        blog: 'Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , Done is better than perfect ,Done is better than perfect ,Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , ',
-        img_url: require('../../Assets/Images/demo.jpg')
+    // {
+    //     title: 'Done is better than perfect Done is better than perfect Done is better than perfect',
+    //     author: "Someone",
+    //     date: new Date(),
+    //     id: 1,
+    //     blog: 'Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , Done is better than perfect ,Done is better than perfect ,Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , ',
+    //     img_url: require('../../Assets/Images/demo.jpg')
 
-    },
-    {
-        title: 'Venture Dive',
-        author: "Someone--",
-        date: new Date(),
-        id: 2,
-        blog: 'Blog Venture Dive, Venture Dive , Venture Dive , Venture Dive , ,  Venture Dive , Venture Dive , ',
-        img_url: require('../../Assets/Images/fetch.png')
+    // },
+    // {
+    //     title: 'Venture Dive',
+    //     author: "Someone--",
+    //     date: new Date(),
+    //     id: 2,
+    //     blog: 'Blog Venture Dive, Venture Dive , Venture Dive , Venture Dive , ,  Venture Dive , Venture Dive , ',
+    //     img_url: require('../../Assets/Images/fetch.png')
 
-    },
-    {
-        title: 'If you know, you know',
-        author: "Someone++",
-        date: new Date(),
-        id: 3,
-        blog: 'Blog If you know, you know, If you know, you know , If you know, you know , If you know, you know , , If you know, you know ,If you know, you know , ',
-        img_url: require('../../Assets/Images/talk.jpg')
-    },
+    // },
+    // {
+    //     title: 'If you know, you know',
+    //     author: "Someone++",
+    //     date: new Date(),
+    //     id: 3,
+    //     blog: 'Blog If you know, you know, If you know, you know , If you know, you know , If you know, you know , , If you know, you know ,If you know, you know , ',
+    //     img_url: require('../../Assets/Images/talk.jpg')
+    // },
 ]
 
 const MyBlogs = ({ isUserLoggedIn }) => {
     const navigation = useNavigation()
 
-    if (isUserLoggedIn) {
+    if (isUserLoggedIn && BlogData.length > 0) {
         return (
             <View style={STYLES.mainCont}>
                 <View style={STYLES.headingCont}>
@@ -77,18 +77,21 @@ const MyBlogs = ({ isUserLoggedIn }) => {
                 </View>
             </View>
         )
-    } else {
+    } else if (isUserLoggedIn && BlogData.length <= 0) {
         return (
             <View style={STYLES.mainContNL}>
-                <Text style={STYLES.heading} >You're Not Logged In.</Text>
-                <View style={STYLES.subContNL} >
-                    <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.LOGIN)}>
-                        Login
-                    </Button>
-                    <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.SIGNUP)}>
-                        SignUp
-                    </Button>
-                </View>
+                <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}>
+                    <AntDesign name='pluscircle' size={50} />
+                </TouchableOpacity>
+                <Text style={STYLES.heading} >You didn't write any blogs.</Text>
+            </View>
+        )
+    }
+    else {
+        return (
+            <View style={STYLES.mainContNL}>
+                <Text style={STYLES.heading} >You're not logged in.</Text>
+                <Text style={STYLES.heading} >Do login/signup from profile</Text>
             </View>
         )
     }

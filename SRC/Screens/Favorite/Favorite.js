@@ -1,6 +1,8 @@
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Card, Text } from 'react-native-paper'
+import { connect } from 'react-redux'
+import { Creators } from '../../Redux/Action/Action'
 
 const BlogData = [
     // {
@@ -31,8 +33,8 @@ const BlogData = [
     // },
 ]
 
-const Favorite = () => {
-    if (BlogData.length > 0) {
+const Favorite = ({ isUserLoggedIn }) => {
+    if (isUserLoggedIn && BlogData.length > 0) {
         return (
             <View style={STYLES.mainCont}>
                 <FlatList
@@ -56,17 +58,18 @@ const Favorite = () => {
                 />
             </View>
         )
-    } else if (BlogData.length <= 0) {
+    } else if (isUserLoggedIn && BlogData.length <= 0) {
         return (
             <View style={STYLES.mainCont}>
-                <Text>You Don't Have Favorite Blogs.</Text>
+                <Text style={STYLES.heading}>You don't have favorite blogs.</Text>
             </View>
         )
     }
     else {
         return (
             <View style={STYLES.mainCont}>
-                <Text>Some Unexceptional Error.</Text>
+                <Text style={STYLES.heading} >You're not logged in.</Text>
+                <Text style={STYLES.heading} >Do login/signup from profile</Text>
             </View>
         )
     }
@@ -74,7 +77,18 @@ const Favorite = () => {
 
 }
 
-export default Favorite
+const mapDispatchToProps = {
+    myUserState: Creators.userState,
+}
+
+const mapStateToProps = (state) => {
+    return {
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Favorite)
+
 
 
 const STYLES = StyleSheet.create({
@@ -91,5 +105,9 @@ const STYLES = StyleSheet.create({
     },
     cardCont: {
         marginVertical: 5
-    }
+    },
+    heading: {
+        fontSize: 22,
+        alignSelf: 'center'
+    },
 })
