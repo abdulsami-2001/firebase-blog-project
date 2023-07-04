@@ -66,27 +66,28 @@ const Login = ({ myUserState, isUserLoggedIn }) => {
                         message: "Email address is not valid",
                         type: "warning",
                     });
-                }
-                if (error.code === 'auth/user-disabled') {
+                } else if (error.code === 'auth/user-disabled') {
                     showMessage({
                         message: "Account is disabled",
                         description: 'Contact Support Team',
                         type: "warning",
                     });
-                }
-                if (error.code === 'auth/user-not-found') {
+                } else if (error.code === 'auth/user-not-found') {
                     showMessage({
                         message: "No user corresponding to the given email",
                         type: "warning",
                     });
-                }
-                if (error.code === 'auth/wrong-password') {
+                } else if (error.code === 'auth/wrong-password') {
                     showMessage({
                         message: "Password is invalid for the given email, or the account corresponding to the email does not have a password set.",
                         type: "warning",
                     });
+                } else {
+                    showMessage({
+                        message: "Something went wrong",
+                        type: "warning",
+                    });
                 }
-
             });
     }
 

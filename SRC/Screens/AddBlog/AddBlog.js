@@ -8,90 +8,15 @@ import { showMessage } from 'react-native-flash-message'
 import DocumentPicker from 'react-native-document-picker'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StyleSheet, Text, View, ScrollView,  Image, TouchableOpacity } from 'react-native'
+import { connect } from 'react-redux'
+import { Creators } from '../../Redux/Action/Action'
 
-const AddBlog = () => {
+const AddBlog = ({isUserLoggedIn}) => {
     const [Title, setTitle] = useState("");
     const [Content, setContent] = useState("");
     const [Author, setAuthor] = useState("");
     const [ImageUrl, setImageUrl] = useState('')
 
-    const imageUploadHandler = async () => {
-        try { 
-            const res = await DocumentPicker.pick({
-                // allowMultiSelection: true,
-                type: [DocumentPicker.types.allFiles]
-            })
-
-            const {uri: path, name: fileName, type: fileType} = res[0]
-            const base64String = await RNFetchBlob.fs.readFile(res[0].uri, 'base64')
-            uploadToFBCloudStorage(fileName, base64String,fileType)
-           
-
-        } catch (error) {
-            if (DocumentPicker.isCancel(error)) {
-                showMessage({
-                    message: "You didn't choose any image.",
-                    type: "danger",
-                })
-            }
-            else {
-                showMessage({
-                    message: "Something went wrong",
-                    type: "danger",
-                })
-                console.log(error)
-            }
-        }
-
-    }
-
-    const uploadToFBCloudStorage = async (fileName, base64String,fileType) => {
-        showMessage({
-            message: "Image uploading in process",
-            type: "info",
-            duration: 3000
-        })
-        const uploadContent = storage().ref(`allFiles/${fileName}`)
-        .putString(base64String, 'base64', {contentType:fileType})
-
-        uploadContent.on('state_changed', (snapshot) => {
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            switch (snapshot.state) {
-            case 'paused':
-                console.log('Upload is paused');
-                break;
-            case 'running':
-                console.log('Upload is running');
-                break;
-            }
-        }, 
-        (error) => {
-            // Handle unsuccessful uploads
-            console.log(error)
-            showMessage({
-                message: "Something went wrong",
-                description: error.message,
-                type: "warning",
-            })
-        }, 
-        () => {
-            // Handle successful uploads on complete
-            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-            uploadContent.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                console.log('File available at', downloadURL);
-                setImageUrl(downloadURL)
-                showMessage({
-                    message: "Image Uploaded Successfully.",
-                    type: "success",
-                })
-            });
-        }
-        )
-    }
-    
     const publishHandler = () => {
         if (Title != '' && Content != '' && Author != '' && ImageUrl != '') {
             // run func
@@ -133,61 +58,182 @@ const AddBlog = () => {
             });
         }
     }
+    
+    const imageUploadHandler = async () => {
+        try { 
+            const res = await DocumentPicker.pick({
+                // allowMultiSelection: true,
+                type: [DocumentPicker.types.allFiles]
+            })
+            const {uri: path, name: fileName, type: fileType} = res[0]
+            const base64String = await RNFetchBlob.fs.readFile(path, 'base64')
+            uploadToFBCloudStorage(fileName, base64String,fileType)
+        } catch (error) {
+            if (DocumentPicker.isCancel(error)) {
+                showMessage({
+                    message: "You didn't choose any image.",
+                    type: "danger",
+                })
+            }
+            else {
+                showMessage({
+                    message: "Something went wrong",
+                    type: "danger",
+                })
+                console.log(error)
+            }
+        }
 
+    }
 
-    return (
-        <View style={STYLES.mainCont}>
-                {ImageUrl == '' && 
-                    <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={imageUploadHandler}>
-                        <MaterialCommunityIcons name='image-plus' size={50} />
-                    </TouchableOpacity>
-                }
-            <ScrollView >
+    const uploadToFBCloudStorage = async (fileName, base64String,fileType) => {
+        showMessage({
+            message: "Image uploading in process",
+            type: "info",
+            duration: 3000
+        })
+        const uploadContent = storage().ref(`allFiles/${fileName}`)
+        .putString(base64String, 'base64', {contentType:fileType})
+        uploadContent.on('state_changed', (snapshot) => {
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+            case 'paused':
+                console.log('Upload is paused');
+                break;
+            case 'running':
+                console.log('Upload is running');
+                break;
+            }
+        }, 
+        (error) => {
+            // Handle unsuccessful uploads
+            console.log(error)
+            showMessage({
+                message: "Something went wrong",
+                description: error.message,
+                type: "warning",
+            })
+        }, 
+        () => {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            uploadContent.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                console.log('File available at', downloadURL);
+                setImageUrl(downloadURL)
+                showMessage({
+                    message: "Image Uploaded Successfully.",
+                    type: "success",
+                })
+            });
+        }
+        )
+    }
+    
+    const uploadDataToFirestore = async () => {
+        try {   
+            firestore()
+            .collection('Users')
+            .doc('ABC')
+            .set({
+                name: 'Ada Lovelace',
+                age: 30,
+            })
+            .then(() => {
+                console.log('User added!');
+            });
+        } catch (error) {
+            showMessage({
+                duration: 2000,
+                message: 'Error while uploading blogs',
+                description: "Make sure you have working internet",
+            })
+        }
+    }
+    if (isUserLoggedIn) {
+        return (
+            <View style={STYLES.mainCont}>
+                    {ImageUrl == '' && 
+                        <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={imageUploadHandler}>
+                            <MaterialCommunityIcons name='image-plus' size={50} />
+                        </TouchableOpacity>
+                    }
+                <ScrollView >
+                    <View style={STYLES.headingCont}>
+                        <Text style={STYLES.heading}>Write a blog</Text>
+                    </View>
+                    <View style={STYLES.inputCont}>
+                        <TextInput
+                            label="Title"
+                            value={Title}
+                            type='outlined'
+                            onChangeText={text => setTitle(text)}
+                            style={STYLES.input}
+                        />
+                        <TextInput
+                            label="Blog content"
+                            value={Content}
+                            type='outlined'
+                            multiline
+                            onChangeText={text => setContent(text)}
+                            style={STYLES.input}
+                        />
+                        <TextInput
+                            label="Author"
+                            value={Author}
+                            type='outlined'
+                            onChangeText={text => setAuthor(text)}
+                            style={STYLES.input}
+                        />
+                    </View>
+                    <Button 
+                        mode="contained" 
+                        style={STYLES.btn} 
+                        onPress={publishHandler}
+                    >
+                        Publish Blog
+                    </Button>
+                    <Button 
+                        mode="contained" 
+                        style={STYLES.btn} 
+                        onPress={{}}
+                    >
+                        Check
+                    </Button>
+                    {ImageUrl != '' && 
+                    <View style={STYLES.imgCont} >
+                        <Image source={{uri:ImageUrl}} width={200} height={200} /> 
+                    </View> 
+                    }
+                </ScrollView>
+            </View>
+        )
+    } else {
+        return(
+            <View style={STYLES.mainContNL}>
                 <View style={STYLES.headingCont}>
-                    <Text style={STYLES.heading}>Write a blog</Text>
+                <Text style={STYLES.heading} >You're not logged in.</Text>
+                <Text style={STYLES.heading} >Do login/signup from profile</Text>
                 </View>
-                <View style={STYLES.inputCont}>
-                    <TextInput
-                        label="Title"
-                        value={Title}
-                        type='outlined'
-                        onChangeText={text => setTitle(text)}
-                        style={STYLES.input}
-                    />
-                    <TextInput
-                        label="Blog content"
-                        value={Content}
-                        type='outlined'
-                        multiline
-                        onChangeText={text => setContent(text)}
-                        style={STYLES.input}
-                    />
-                    <TextInput
-                        label="Author"
-                        value={Author}
-                        type='outlined'
-                        onChangeText={text => setAuthor(text)}
-                        style={STYLES.input}
-                    />
-                </View>
-                <Button 
-                    mode="contained" 
-                    style={STYLES.btn} 
-                    onPress={publishHandler}
-                >
-                    Publish Blog
-                </Button>
-                {ImageUrl != '' && 
-                <View style={STYLES.imgCont} >
-                    <Image source={{uri:ImageUrl}} width={200} height={200} /> 
-                </View> 
-                }
-            </ScrollView>
-        </View>
-    )
+            </View>
+        )
+    }
 }
 
-export default AddBlog
+const mapDispatchToProps = {
+    myUserState: Creators.userState,
+}
+
+const mapStateToProps = (state) => {
+    return {
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddBlog)
 
 
 const STYLES = StyleSheet.create({
@@ -195,6 +241,12 @@ const STYLES = StyleSheet.create({
         flex: 1,
         marginHorizontal: ms(15),
         marginVertical: vs(5),
+    },
+    mainContNL: {
+        flex: 1,
+        marginHorizontal: ms(15),
+        marginVertical: vs(5),
+        justifyContent: 'center',
     },
     headingCont: {
         alignItems: 'center'

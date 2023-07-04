@@ -9,7 +9,7 @@ import { showMessage } from 'react-native-flash-message'
 import { Creators } from '../../Redux/Action/Action'
 import { connect } from 'react-redux'
 
-const Profile = ({ myUserState, isUserLoggedIn }) => {
+const Profile = ({ myUserState, isUserLoggedIn, myUserId, userId }) => {
     const navigation = useNavigation()
 
     const [user, setUser] = useState(null);
@@ -24,15 +24,27 @@ const Profile = ({ myUserState, isUserLoggedIn }) => {
     console.log("user: ", user)
     console.log("initializing: ", initializing)
     console.log("isUserLoggedIn ", isUserLoggedIn)
+    console.log("userId ", userId)
     console.log("------------------")
 
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        // if (user?.uid != undefined) {
+        //     myUserId(user?.uid)
+        // } else {
+        //     myUserId('')
+        // }
         return subscriber; // unsubscribe on unmount
     }, [])
 
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        // if (user?.uid != undefined) {
+        //     myUserId(user?.uid)
+        // } else {
+        //     myUserId('')
+        // }
+        console.log(user?.uid)
         return subscriber; // unsubscribe on unmount
     }, [user])
 
@@ -47,6 +59,8 @@ const Profile = ({ myUserState, isUserLoggedIn }) => {
                     type: "success",
                 })
                 myUserState(false)
+                myUserId('')
+
             }
             ).catch(() => {
                 showMessage({
@@ -90,11 +104,13 @@ const Profile = ({ myUserState, isUserLoggedIn }) => {
 
 const mapDispatchToProps = {
     myUserState: Creators.userState,
+    myUserId: Creators.userId,
 }
 
 const mapStateToProps = (state) => {
     return {
-        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userId: state.UserAuth.userId
     }
 }
 

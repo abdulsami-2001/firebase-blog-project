@@ -64,18 +64,20 @@ const SignUp = ({ myUserState }) => {
                         message: "Email address is already in use!",
                         type: "warning",
                     });
-                }
-                if (error.code === 'auth/weak-password') {
+                }else if (error.code === 'auth/weak-password') {
                     showMessage({
                         message: "Create a strong password",
                         description: "Password should be atlease 6 characters.",
                         type: "warning",
                     });
-                }
-
-                if (error.code === 'auth/invalid-email') {
+                }else if (error.code === 'auth/invalid-email') {
                     showMessage({
                         message: "Email address is invalid!",
+                        type: "warning",
+                    });
+                } else {
+                    showMessage({
+                        message: "Some Unexpected Error",
                         type: "warning",
                     });
                 }
