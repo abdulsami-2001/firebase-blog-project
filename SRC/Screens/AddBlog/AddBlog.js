@@ -1,50 +1,189 @@
-import { StyleSheet, Text, View, ScrollView, Button } from 'react-native'
 import React, { useState } from 'react'
-import { ms, vs } from 'react-native-size-matters'
-import { TextInput } from 'react-native-paper';
+import RNFetchBlob from 'rn-fetch-blob'
+import storage from '@react-native-firebase/storage'
+import { TextInput,Button } from 'react-native-paper'
+import { ms, mvs, vs } from 'react-native-size-matters'
+import firestore from '@react-native-firebase/firestore'
+import { showMessage } from 'react-native-flash-message'
+import DocumentPicker from 'react-native-document-picker'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StyleSheet, Text, View, ScrollView,  Image, TouchableOpacity } from 'react-native'
 
 const AddBlog = () => {
-    const [text, setText] = useState("");
-    const [text1, setText1] = useState("");
-    const [text2, setText2] = useState("");
+    const [Title, setTitle] = useState("");
+    const [Content, setContent] = useState("");
+    const [Author, setAuthor] = useState("");
+    const [ImageUrl, setImageUrl] = useState('')
+
+    const imageUploadHandler = async () => {
+        try { 
+            const res = await DocumentPicker.pick({
+                // allowMultiSelection: true,
+                type: [DocumentPicker.types.allFiles]
+            })
+
+            const {uri: path, name: fileName, type: fileType} = res[0]
+            const base64String = await RNFetchBlob.fs.readFile(res[0].uri, 'base64')
+            uploadToFBCloudStorage(fileName, base64String,fileType)
+           
+
+        } catch (error) {
+            if (DocumentPicker.isCancel(error)) {
+                showMessage({
+                    message: "You didn't choose any image.",
+                    type: "danger",
+                })
+            }
+            else {
+                showMessage({
+                    message: "Something went wrong",
+                    type: "danger",
+                })
+                console.log(error)
+            }
+        }
+
+    }
+
+    const uploadToFBCloudStorage = async (fileName, base64String,fileType) => {
+        showMessage({
+            message: "Image uploading in process",
+            type: "info",
+            duration: 3000
+        })
+        const uploadContent = storage().ref(`allFiles/${fileName}`)
+        .putString(base64String, 'base64', {contentType:fileType})
+
+        uploadContent.on('state_changed', (snapshot) => {
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+            case 'paused':
+                console.log('Upload is paused');
+                break;
+            case 'running':
+                console.log('Upload is running');
+                break;
+            }
+        }, 
+        (error) => {
+            // Handle unsuccessful uploads
+            console.log(error)
+            showMessage({
+                message: "Something went wrong",
+                description: error.message,
+                type: "warning",
+            })
+        }, 
+        () => {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            uploadContent.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                console.log('File available at', downloadURL);
+                setImageUrl(downloadURL)
+                showMessage({
+                    message: "Image Uploaded Successfully.",
+                    type: "success",
+                })
+            });
+        }
+        )
+    }
+    
+    const publishHandler = () => {
+        if (Title != '' && Content != '' && Author != '' && ImageUrl != '') {
+            // run func
+            showMessage({
+                message: "all works.",
+                type: "success",
+            });
+        } else if (Content  == '' && Title == ''&& Author == '') {
+            showMessage({
+                message: "All inputs are empty.",
+                type: "warning",
+            });
+        }else if (Title  == '') {
+            showMessage({
+                message: "Title is empty.",
+                type: "warning",
+            });
+        }else if (Content  == '') {
+            showMessage({
+                message: "Content is empty.",
+                type: "warning",
+            });
+        }
+        else if (Author  == '') {
+            showMessage({
+                message: "Author is empty.",
+                type: "warning",
+            });
+        }else if (ImageUrl  == '') {
+            showMessage({
+                message: "Image is not uploaded.",
+                type: "warning",
+            });
+        }
+        else {
+            showMessage({
+                message: "Some Unexpected Error",
+                type: "warning",
+            });
+        }
+    }
+
 
     return (
-
         <View style={STYLES.mainCont}>
-            <ScrollView>
+                {ImageUrl == '' && 
+                    <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={imageUploadHandler}>
+                        <MaterialCommunityIcons name='image-plus' size={50} />
+                    </TouchableOpacity>
+                }
+            <ScrollView >
                 <View style={STYLES.headingCont}>
                     <Text style={STYLES.heading}>Write a blog</Text>
                 </View>
                 <View style={STYLES.inputCont}>
                     <TextInput
                         label="Title"
-                        value={text}
+                        value={Title}
                         type='outlined'
-                        onChangeText={text => setText(text)}
+                        onChangeText={text => setTitle(text)}
                         style={STYLES.input}
                     />
                     <TextInput
-                        label="Blog Content"
-                        value={text1}
+                        label="Blog content"
+                        value={Content}
                         type='outlined'
                         multiline
-                        onChangeText={text => setText1(text)}
+                        onChangeText={text => setContent(text)}
                         style={STYLES.input}
                     />
                     <TextInput
                         label="Author"
-                        value={text}
+                        value={Author}
                         type='outlined'
-                        onChangeText={text => setText2(text)}
+                        onChangeText={text => setAuthor(text)}
                         style={STYLES.input}
                     />
                 </View>
-                <View style={STYLES.btnCont}>
-                    <Button title='Add Image' />
-                </View>
+                <Button 
+                    mode="contained" 
+                    style={STYLES.btn} 
+                    onPress={publishHandler}
+                >
+                    Publish Blog
+                </Button>
+                {ImageUrl != '' && 
+                <View style={STYLES.imgCont} >
+                    <Image source={{uri:ImageUrl}} width={200} height={200} /> 
+                </View> 
+                }
             </ScrollView>
         </View>
-
     )
 }
 
@@ -66,7 +205,51 @@ const STYLES = StyleSheet.create({
     input: {
         marginVertical: vs(8),
     },
-    btnCont:{
-        
+    imgCont: {
+        justifyContent:'center',
+        alignItems:'center',
+        marginVertical:mvs(10)
+    },
+    btn: {
+        marginVertical: vs(3)
+    },
+    iconCont:{
+        position: 'absolute',
+        zIndex: 1,
+        bottom: 15,
+        right: 20,
     }
 })
+
+// Extra Code
+
+// let base64String = []
+// res.filter(async (item, index) => {
+//     base64String.push(await RNFetchBlob.fs.readFile(item.uri, 'base64'))
+
+    
+// })
+
+
+// const getDataFromFirestore = async () => {
+//     try {
+//         const { _data: data } = await firestore()?.collection('Blogs')?.doc('test')?.get()
+//         console.log(data)
+//         if (data != undefined) {
+//             // setDataFromServer(data)
+//         } else {
+//             // setDataFromServer({})
+//             showMessage({
+//                 duration: 2000,
+//                 message: 'Error while fetching blogs',
+//                 description: "Make sure you have working internet",
+//             })
+//         }
+//     } catch (error) {
+//         showMessage({
+//             duration: 2000,
+//             message: 'Error while fetching blogs',
+//             description: "Make sure you have working internet",
+//         })
+//     }
+// }

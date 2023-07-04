@@ -17,7 +17,7 @@ const Test = ({ isUserLoggedIn, myUserState }) => {
     //     console.log(reference)
     // }
 
-    console.log(Img)
+    // console.log(Img)
 
     const cloudFirestoreHandler = async () => {
         const { _data } = await firestore().collection('Blogs')?.doc('test')?.get();
@@ -25,12 +25,37 @@ const Test = ({ isUserLoggedIn, myUserState }) => {
         setImg(_data?.img?._documentPath?._parts[0])
     }
 
+    // const getDataFromFirestore = async () => {
+    //     try {
+    //         const { _data: data } = await firestore()?.collection('Blogs')?.doc('test')?.get()
+
+    //         console.log(data)
+    //         if (data != undefined) {
+    //             // setDataFromServer(data)
+    //         } else {
+    //             // setDataFromServer({})
+    //             showMessage({
+    //                 duration: 2000,
+    //                 message: 'Error while fetching blogs',
+    //                 description: "Make sure you have working internet",
+    //             })
+    //         }
+
+    //     } catch (error) {
+    //         showMessage({
+    //             duration: 2000,
+    //             message: 'Error while fetching blogs',
+    //             description: "Make sure you have working internet",
+    //         })
+    //     }
+    // }
+
     return (
         <View>
             <Text>Test</Text>
             <Button title='change' onPress={() => myUserState(!isUserLoggedIn)} />
             {/* <Button title='create Reference' onPress={() => referenceHandler()} /> */}
-            <Button title='fetch from firestore' onPress={() => cloudFirestoreHandler()} />
+            <Button title='fetch from firestore' onPress={() => getDataFromFirestore()} />
             <Image source={{ uri: Img }} width={100} height={100} />
         </View>
     )
