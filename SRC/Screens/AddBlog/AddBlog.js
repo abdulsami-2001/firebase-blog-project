@@ -10,20 +10,22 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { StyleSheet, Text, View, ScrollView,  Image, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
 import { Creators } from '../../Redux/Action/Action'
+import { useNavigation } from '@react-navigation/native'
+import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 
-const AddBlog = ({isUserLoggedIn}) => {
+
+const AddBlog = ({isUserLoggedIn, userIdentification, userBlogs,myuserBlogs }) => {
     const [Title, setTitle] = useState("");
     const [Content, setContent] = useState("");
     const [Author, setAuthor] = useState("");
     const [ImageUrl, setImageUrl] = useState('')
 
+    const navigation = useNavigation()
+
     const publishHandler = () => {
         if (Title != '' && Content != '' && Author != '' && ImageUrl != '') {
             // run func
-            showMessage({
-                message: "all works.",
-                type: "success",
-            });
+            getDataFromFirestore()
         } else if (Content  == '' && Title == ''&& Author == '') {
             showMessage({
                 message: "All inputs are empty.",
@@ -136,22 +138,118 @@ const AddBlog = ({isUserLoggedIn}) => {
         try {   
             firestore()
             .collection('Users')
-            .doc('ABC')
+            .doc(userIdentification)
             .set({
-                name: 'Ada Lovelace',
-                age: 30,
+                [Title] : {
+                    Title,
+                    Content,
+                    Author,
+                    ImageUrl
+                }
             })
             .then(() => {
-                console.log('User added!');
+                showMessage({
+                    duration: 2000,
+                    message: 'Blog Added',
+                    type:'success'
+                })
+                myuserBlogs({
+                        [Title] : {
+                            Title,
+                            Content,
+                            Author,
+                            ImageUrl
+                        }
+                })
+                navigation.navigate(NavigationStrings.MYBLOGS)
+                setTitle('')
+                setAuthor('')
+                setContent('')
+                setImageUrl('')
             });
         } catch (error) {
             showMessage({
                 duration: 2000,
                 message: 'Error while uploading blogs',
                 description: "Make sure you have working internet",
+                type:'warning'
             })
         }
     }
+
+    const updateDataToFirestore = async (data) => {
+        try {   
+            firestore()
+            .collection('Users')
+            .doc(userIdentification)
+            .update({
+                ...data,
+                [Title] : {
+                    Title,
+                    Content,
+                    Author,
+                    ImageUrl
+                }
+            })
+            .then(() => {
+                showMessage({
+                    duration: 2000,
+                    message: 'Blog Added',
+                    type:'success'
+                })
+                myuserBlogs({
+                    ...data,
+                    [Title] : {
+                        Title,
+                        Content,
+                        Author,
+                        ImageUrl
+                    }
+                })
+                navigation.navigate(NavigationStrings.MYBLOGS)
+                setTitle('')
+                setAuthor('')
+                setContent('')
+                setImageUrl('')
+            });
+        } catch (error) {
+            showMessage({
+                duration: 2000,
+                message: 'Error while uploading blogs',
+                description: "Make sure you have working internet",
+                type:'warning'
+            })
+        }
+    }
+
+    const getDataFromFirestore = async () => {
+            try {
+                const { _data: data } = await firestore()?.collection('Users')?.doc(userIdentification)?.get()
+    
+                console.log(data)
+
+                if (data == undefined) {
+                    // First blog of user                    
+                    uploadDataToFirestore()
+                }else if(data != undefined){
+                    // Already post min one blog                    
+                    updateDataToFirestore(data)
+
+                } else {
+                    showMessage({
+                        duration: 2000,
+                        message: "Make sure you have working internet",
+                    })
+                }
+    
+            } catch (error) {
+                showMessage({
+                    duration: 2000,
+                    message: "Make sure you have working internet",
+                })
+            }
+    }
+
     if (isUserLoggedIn) {
         return (
             <View style={STYLES.mainCont}>
@@ -195,13 +293,13 @@ const AddBlog = ({isUserLoggedIn}) => {
                     >
                         Publish Blog
                     </Button>
-                    <Button 
+                    {/* <Button 
                         mode="contained" 
                         style={STYLES.btn} 
-                        onPress={{}}
+                        onPress={getDataFromFirestore}
                     >
-                        Check
-                    </Button>
+                        check
+                    </Button> */}
                     {ImageUrl != '' && 
                     <View style={STYLES.imgCont} >
                         <Image source={{uri:ImageUrl}} width={200} height={200} /> 
@@ -224,11 +322,14 @@ const AddBlog = ({isUserLoggedIn}) => {
 
 const mapDispatchToProps = {
     myUserState: Creators.userState,
+    myuserBlogs: Creators.userBlogs,
 }
 
 const mapStateToProps = (state) => {
     return {
-        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userIdentification: state.UserAuth.userIdentification,
+        userBlogs: state.UserAuth.userBlogs,
     }
 }
 

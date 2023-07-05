@@ -10,7 +10,7 @@ import { Creators, Types } from '../../Redux/Action/Action'
 
 import { connect } from 'react-redux'
 
-const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) => {
+const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs }) => {
     const navigation = useNavigation()
 
     const [user, setUser] = useState(null);
@@ -49,13 +49,13 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) 
         await auth()
             .signOut()
             .then(() => {
-
                 showMessage({
                     message: "Signout Successfull",
                     type: "success",
                 })
                 myUserState(false)
                 myUserId('')
+                myuserBlogs({})
             }
             ).catch(() => {
                 showMessage({
@@ -100,12 +100,14 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) 
 const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
+    myuserBlogs: Creators.userBlogs,
 }
 
 const mapStateToProps = (state) => {
     return {
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
-        userIdentification: state.UserAuth.userIdentification
+        userIdentification: state.UserAuth.userIdentification,
+        userBlogs: state.UserAuth.userBlogs,
     }
 }
 
