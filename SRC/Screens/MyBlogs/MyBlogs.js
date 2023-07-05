@@ -38,8 +38,13 @@ const BlogData = [
     // },
 ]
 
-const MyBlogs = ({ isUserLoggedIn }) => {
+const MyBlogs = ({ isUserLoggedIn, userIdentification }) => {
     const navigation = useNavigation()
+
+    const check = () => {
+        console.log("userIdentification - blog screen: ", userIdentification)
+        console.log("isUserLoggedIn - blog screen: ", isUserLoggedIn)
+    }
 
     if (isUserLoggedIn && BlogData.length > 0) {
         return (
@@ -80,7 +85,8 @@ const MyBlogs = ({ isUserLoggedIn }) => {
     } else if (isUserLoggedIn && BlogData.length <= 0) {
         return (
             <View style={STYLES.mainContNL}>
-                <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}>
+                {/* <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}> */}
+                <TouchableOpacity style={STYLES.btnCont} onPress={() => check()}>
                     <AntDesign name='pluscircle' size={50} />
                 </TouchableOpacity>
                 <Text style={STYLES.heading} >You didn't write any blogs.</Text>
@@ -104,7 +110,8 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state) => {
     return {
-        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userIdentification: state.UserAuth.userIdentification
     }
 }
 

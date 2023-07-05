@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { TextInput, Button } from 'react-native-paper';
 import { showMessage, } from "react-native-flash-message";
@@ -9,17 +9,34 @@ import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { Creators } from '../../Redux/Action/Action';
 import { connect } from 'react-redux';
 
-const SignUp = ({ myUserState }) => {
+const SignUp = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
+    const [user, setUser] = useState(null);
+    const [initializing, setInitializing] = useState(true);
     const navigation = useNavigation()
+
+    console.log("isUserLoggedIn - Signup Screen: ", isUserLoggedIn)
+    console.log("userIdentification - Signup Screen: ", userIdentification)
+
+    function onAuthStateChanged(user) {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    }
+
+    useEffect(() => {
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        if (user != undefined && user != null) {
+            myUserId(user.uid)
+        }
+        return subscriber; // unsubscribe on unmount
+    }, [user])
 
 
     const signupHandler = () => {
         if (Email != '' && Password != '') {
             signupFirebase()
-            SetEmail('')
-            SetPassword('')
+
         } else if (Email == '' && Password == '') {
             showMessage({
                 message: "Email & Password Not Be Empty",
@@ -55,6 +72,8 @@ const SignUp = ({ myUserState }) => {
                     type: "success",
                 });
                 myUserState(true)
+                SetEmail('')
+                SetPassword('')
                 navigation.navigate(NavigationStrings.PROFILE)
             })
             .catch(error => {
@@ -64,20 +83,20 @@ const SignUp = ({ myUserState }) => {
                         message: "Email address is already in use!",
                         type: "warning",
                     });
-                }else if (error.code === 'auth/weak-password') {
+                } else if (error.code === 'auth/weak-password') {
                     showMessage({
                         message: "Create a strong password",
                         description: "Password should be atlease 6 characters.",
                         type: "warning",
                     });
-                }else if (error.code === 'auth/invalid-email') {
+                } else if (error.code === 'auth/invalid-email') {
                     showMessage({
                         message: "Email address is invalid!",
                         type: "warning",
                     });
                 } else {
                     showMessage({
-                        message: "Some Unexpected Error",
+                        message: "Something went wrong",
                         type: "warning",
                     });
                 }
@@ -124,11 +143,13 @@ const SignUp = ({ myUserState }) => {
 
 const mapDispatchToProps = {
     myUserState: Creators.userState,
+    myUserId: Creators.userId
 }
 
 const mapStateToProps = (state) => {
     return {
-        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userIdentification: state.UserAuth.userIdentification
     }
 }
 

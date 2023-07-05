@@ -6,10 +6,11 @@ import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import auth from '@react-native-firebase/auth';
 import { showMessage } from 'react-native-flash-message'
-import { Creators } from '../../Redux/Action/Action'
+import { Creators, Types } from '../../Redux/Action/Action'
+
 import { connect } from 'react-redux'
 
-const Profile = ({ myUserState, isUserLoggedIn, myUserId, userId }) => {
+const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) => {
     const navigation = useNavigation()
 
     const [user, setUser] = useState(null);
@@ -20,33 +21,28 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userId }) => {
         if (initializing) setInitializing(false);
     }
 
+    // console.log("------------------")
+    // console.log("user: ", user)
+    // console.log("initializing: ", initializing)
+    console.log("isUserLoggedIn - Profile Screen: ", isUserLoggedIn)
+    console.log("userIdentification - Profile Screen: ", userIdentification)
     console.log("------------------")
-    console.log("user: ", user)
-    console.log("initializing: ", initializing)
-    console.log("isUserLoggedIn ", isUserLoggedIn)
-    console.log("userId ", userId)
-    console.log("------------------")
+
+    // console.log("Creators ", Creators)
+    // console.log("Types ", Types)
+    //
+
+    // useEffect(() => {
+    //     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    //     return subscriber; // unsubscribe on unmount
+    // }, [])
 
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-        // if (user?.uid != undefined) {
-        //     myUserId(user?.uid)
-        // } else {
-        //     myUserId('')
-        // }
-        return subscriber; // unsubscribe on unmount
-    }, [])
-
-    useEffect(() => {
-        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-        // if (user?.uid != undefined) {
-        //     myUserId(user?.uid)
-        // } else {
-        //     myUserId('')
-        // }
-        console.log(user?.uid)
+        
         return subscriber; // unsubscribe on unmount
     }, [user])
+
 
 
     const singOutHandler = async () => {
@@ -60,7 +56,6 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userId }) => {
                 })
                 myUserState(false)
                 myUserId('')
-
             }
             ).catch(() => {
                 showMessage({
@@ -110,7 +105,7 @@ const mapDispatchToProps = {
 const mapStateToProps = (state) => {
     return {
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
-        userId: state.UserAuth.userId
+        userIdentification: state.UserAuth.userIdentification
     }
 }
 
