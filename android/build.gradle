@@ -9,6 +9,8 @@ buildscript {
 
         // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
         ndkVersion = "23.1.7779620"
+        // for detect multiple kotlin daemon sessions
+        // kotlin_version = '1.6.10' 
     }
     repositories {
         google()
@@ -18,7 +20,11 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath 'com.google.gms:google-services:4.3.15'
-
+        
         // for firebase integration 26 june 2023 
+
+        // for detect multiple kotlin daemon sessions
+        // classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
     }
 }

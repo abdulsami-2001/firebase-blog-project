@@ -202,13 +202,13 @@ const AddBlog = ({isUserLoggedIn, userIdentification, userBlogs,myuserBlogs }) =
                     type:'success'
                 })
                 myuserBlogs({
-                    ...data,
                     [Title] : {
                         Title,
                         Content,
                         Author,
                         ImageUrl
-                    }
+                    },
+                    ...data,
                 })
                 navigation.navigate(NavigationStrings.MYBLOGS)
                 setTitle('')

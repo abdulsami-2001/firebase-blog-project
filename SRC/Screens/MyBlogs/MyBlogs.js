@@ -1,5 +1,5 @@
 import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Card, Text, Button } from 'react-native-paper'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -11,51 +11,14 @@ import { connect } from 'react-redux'
 
 const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
     const navigation = useNavigation()
-
+    const [first, setfirst] = useState(true)
     let BlogData = Object.keys(userBlogs)
 
-    const BlogData____ = [
-        // {
-        //     title: 'Done is better than perfect Done is better than perfect Done is better than perfect',
-        //     author: "Someone",
-        //     date: new Date(),
-        //     id: 1,
-        //     blog: 'Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , Done is better than perfect ,Done is better than perfect ,Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , ',
-        //     img_url: require('../../Assets/Images/demo.jpg')
-
-        // },
-        // {
-        //     title: 'Venture Dive',
-        //     author: "Someone--",
-        //     date: new Date(),
-        //     id: 2,
-        //     blog: 'Blog Venture Dive, Venture Dive , Venture Dive , Venture Dive , ,  Venture Dive , Venture Dive , ',
-        //     img_url: require('../../Assets/Images/fetch.png')
-
-        // },
-        // {
-        //     title: 'If you know, you know',
-        //     author: "Someone++",
-        //     date: new Date(),
-        //     id: 3,
-        //     blog: 'Blog If you know, you know, If you know, you know , If you know, you know , If you know, you know , , If you know, you know ,If you know, you know , ',
-        //     img_url: require('../../Assets/Images/talk.jpg')
-        // },
-    ]
-
-    
+    useEffect(() => {
+        setfirst(!first)
+    }, [userBlogs])
 
 
-    // const check = () => {
-    //     console.log("userIdentification - blog screen: ", userIdentification)
-    //     console.log("isUserLoggedIn - blog screen: ", isUserLoggedIn)
-    // }
-
-    const check = () => {
-
-        console.log("MyBlogs Screen - userBlogs: ", userBlogs)
-
-    }
     if (isUserLoggedIn && BlogData.length > 0) {
         return (
             <View style={STYLES.mainCont}>
@@ -70,7 +33,6 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                         data={BlogData}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => {
-                            console.log(userBlogs[item]?.ImageUrl)
                             return (
                                 <Card style={STYLES.cardCont} >
                                     <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} />
@@ -96,10 +58,9 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
         return (
             <View style={STYLES.mainContNL}>
                 <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}>
-                    {/* <TouchableOpacity style={STYLES.btnCont} onPress={() => check()}> */}
                     <AntDesign name='pluscircle' size={50} />
                 </TouchableOpacity>
-                <Text style={STYLES.heading} onPress={() => check()} >You didn't write any blogs.</Text>
+                <Text style={STYLES.heading}  >You didn't write any blogs.</Text>
 
             </View>
         )

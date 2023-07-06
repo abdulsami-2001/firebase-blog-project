@@ -4,6 +4,7 @@ import { Types, Creators } from '../Redux/Action/Action'
 import { connect } from 'react-redux'
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
+import { showMessage } from 'react-native-flash-message';
 
 
 const Test = ({ isUserLoggedIn, myUserState }) => {
@@ -25,30 +26,38 @@ const Test = ({ isUserLoggedIn, myUserState }) => {
         setImg(_data?.img?._documentPath?._parts[0])
     }
 
-    // const getDataFromFirestore = async () => {
-    //     try {
-    //         const { _data: data } = await firestore()?.collection('Blogs')?.doc('test')?.get()
+    const getDataFromFirestore = async () => {
+        try {
+            // const data = firestore()?.collection().where().get()
+            let data = []
+            const dataRef = firestore().collection('Users');
+            const snapshot = await dataRef.get();
+            snapshot.forEach(doc => {
+                data.push(doc.data())
+            });
 
-    //         console.log(data)
-    //         if (data != undefined) {
-    //             // setDataFromServer(data)
-    //         } else {
-    //             // setDataFromServer({})
-    //             showMessage({
-    //                 duration: 2000,
-    //                 message: 'Error while fetching blogs',
-    //                 description: "Make sure you have working internet",
-    //             })
-    //         }
+            console.log(data)
 
-    //     } catch (error) {
-    //         showMessage({
-    //             duration: 2000,
-    //             message: 'Error while fetching blogs',
-    //             description: "Make sure you have working internet",
-    //         })
-    //     }
-    // }
+            // if (data != undefined) {
+            //     // setDataFromServer(data)
+            // } else {
+            //     // setDataFromServer({})
+            //     showMessage({
+            //         duration: 2000,
+            //         message: 'Error while fetching blogs',
+            //         description: "Make sure you have working internet",
+            //     })
+            // }
+
+        } catch (error) {
+            console.log(error)
+            showMessage({
+                duration: 2000,
+                message: 'Error while fetching blogs',
+                description: "Make sure you have working internet -c",
+            })
+        }
+    }
 
     return (
         <View>

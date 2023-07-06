@@ -33,7 +33,7 @@ const BlogData = [
     // },
 ]
 
-const Favorite = ({ isUserLoggedIn }) => {
+const Favorite = ({  myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs }) => {
     if (isUserLoggedIn && BlogData.length > 0) {
         return (
             <View style={STYLES.mainCont}>
@@ -79,16 +79,20 @@ const Favorite = ({ isUserLoggedIn }) => {
 
 const mapDispatchToProps = {
     myUserState: Creators.userState,
+    myUserId: Creators.userId,
+    myuserBlogs: Creators.userBlogs,
 }
 
 const mapStateToProps = (state) => {
     return {
-        isUserLoggedIn: state.UserAuth.isUserLoggedIn
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userBlogs: state.UserAuth.userBlogs,
+        userIdentification: state.UserAuth.userIdentification
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Favorite)
 
+export default connect(mapStateToProps, mapDispatchToProps)(Favorite)
 
 
 const STYLES = StyleSheet.create({

@@ -1,44 +1,51 @@
-import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Card, Text } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { ms, vs } from 'react-native-size-matters'
 import auth from '@react-native-firebase/auth';
+import { connect } from 'react-redux'
+import { Creators } from '../../Redux/Action/Action'
+import { showMessage } from 'react-native-flash-message'
+import firestore from '@react-native-firebase/firestore'
 
-const BlogData = [
-    {
-        title: 'Done is better than perfect Done is better than perfect Done is better than perfect',
-        author: "Someone",
-        date: new Date(),
-        id: 1,
-        blog: 'Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , Done is better than perfect ,Done is better than perfect ,Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , ',
-        img_url: require('../../Assets/Images/demo.jpg')
-
-    },
-    {
-        title: 'Venture Dive',
-        author: "Someone--",
-        date: new Date(),
-        id: 2,
-        blog: 'Blog Venture Dive, Venture Dive , Venture Dive , Venture Dive , ,  Venture Dive , Venture Dive , ',
-        img_url: require('../../Assets/Images/fetch.png')
-
-    },
-    {
-        title: 'If you know, you know',
-        author: "Someone++",
-        date: new Date(),
-        id: 3,
-        blog: 'Blog If you know, you know, If you know, you know , If you know, you know , If you know, you know , , If you know, you know ,If you know, you know , ',
-        img_url: require('../../Assets/Images/talk.jpg')
-    },
-]
-
-
-const Home = () => {
+const Home = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs, myallBlogs, allBlogs }) => {
     const navigation = useNavigation()
+    let BlogData = Object.keys(allBlogs)
+    const { width } = Dimensions.get('screen')
 
+    useEffect(() => {
+        getDataFromFirestore()
+    }, [userBlogs])
+
+    const getDataFromFirestore = async () => {
+        try {
+            // const data = firestore()?.collection().where().get()
+            let datatemp = {}
+            let dataRef = firestore().collection('Users');
+            let snapshot = await dataRef?.get()
+            snapshot.forEach(doc => {
+                let tempdoc = doc?.data()
+                datatemp = { ...tempdoc, ...datatemp }
+            });
+
+            // console.log("BlogData ", ...BlogData)
+            // myallBlogs({ ...datatemp, ...BlogData })
+            myallBlogs({ ...datatemp })
+
+        } catch (error) {
+            console.log(error)
+            showMessage({
+                duration: 2000,
+                message: 'Error while fetching blogs',
+                description: "Make sure you have working internet",
+            })
+        }
+    }
+
+    console.log("BlogData ", BlogData)
+    // allBlogs[item]?.Title
     return (
         <View style={STYLES.mainCont}>
             <View style={STYLES.subCont}>
@@ -47,16 +54,15 @@ const Home = () => {
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => {
                         return (
-                            <Card style={STYLES.cardCont} >
-                                <Card.Cover source={item.img_url} />
+                            <Card style={STYLES.cardCont(width)} >
+                                <Card.Cover source={{ uri: allBlogs[item]?.ImageUrl }} />
                                 <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
                                     <Card.Content>
-                                        <Text variant="titleLarge">{item.title}</Text>
-                                        <Text variant="bodyMedium">{item.blog}</Text>
+                                        <Text variant="titleLarge">{allBlogs[item]?.Title}</Text>
+                                        <Text variant="bodyMedium">{allBlogs[item]?.Content}</Text>
                                         <View style={STYLES.infoCont}>
                                             <View>
-                                                <Text variant="titleSmall">Author: {item.author}</Text>
-                                                <Text variant="titleSmall">Date: {item.date.toString()}</Text>
+                                                <Text variant="titleSmall">Author: {allBlogs[item]?.Author}</Text>
                                             </View>
                                         </View>
                                     </Card.Content>
@@ -70,8 +76,24 @@ const Home = () => {
     )
 }
 
-export default Home
+const mapDispatchToProps = {
+    myUserState: Creators.userState,
+    myUserId: Creators.userId,
+    myuserBlogs: Creators.userBlogs,
+    myallBlogs: Creators.allBlogs,
+}
 
+const mapStateToProps = (state) => {
+    return {
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userBlogs: state.UserAuth.userBlogs,
+        userIdentification: state.UserAuth.userIdentification,
+        allBlogs: state.UserAuth.allBlogs,
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const STYLES = StyleSheet.create({
     mainCont: {
@@ -85,9 +107,11 @@ const STYLES = StyleSheet.create({
     },
     subCont: {
     },
-    cardCont: {
-        marginVertical: vs(5)
-    },
+    cardCont: (width) => ({
+        marginVertical: vs(5),
+        // backgroundColor:'red'
+        width: width
+    }),
     infoCont: {
         flexDirection: 'row'
     },

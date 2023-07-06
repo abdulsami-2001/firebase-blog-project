@@ -10,7 +10,7 @@ import { Creators, Types } from '../../Redux/Action/Action'
 
 import { connect } from 'react-redux'
 
-const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs }) => {
+const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs , myallBlogs, allBlogs}) => {
     const navigation = useNavigation()
 
     const [user, setUser] = useState(null);
@@ -39,7 +39,7 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, my
 
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-        
+
         return subscriber; // unsubscribe on unmount
     }, [user])
 
@@ -55,7 +55,7 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, my
                 })
                 myUserState(false)
                 myUserId('')
-                myuserBlogs({})
+                // myuserBlogs(allBlogs)
             }
             ).catch(() => {
                 showMessage({
@@ -101,6 +101,7 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
+    myallBlogs: Creators.allBlogs,
 }
 
 const mapStateToProps = (state) => {
@@ -108,6 +109,7 @@ const mapStateToProps = (state) => {
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userIdentification: state.UserAuth.userIdentification,
         userBlogs: state.UserAuth.userBlogs,
+        allBlogs: state.UserAuth.allBlogs,
     }
 }
 
