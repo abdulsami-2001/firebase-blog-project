@@ -26,6 +26,10 @@ const AddBlog = ({isUserLoggedIn, userIdentification, userBlogs,myuserBlogs }) =
         if (Title != '' && Content != '' && Author != '' && ImageUrl != '') {
             // run func
             getDataFromFirestore()
+            showMessage({
+                message: "Publishing is in process",
+                type: "info",
+            });
         } else if (Content  == '' && Title == ''&& Author == '') {
             showMessage({
                 message: "All inputs are empty.",
@@ -293,13 +297,6 @@ const AddBlog = ({isUserLoggedIn, userIdentification, userBlogs,myuserBlogs }) =
                     >
                         Publish Blog
                     </Button>
-                    {/* <Button 
-                        mode="contained" 
-                        style={STYLES.btn} 
-                        onPress={getDataFromFirestore}
-                    >
-                        check
-                    </Button> */}
                     {ImageUrl != '' && 
                     <View style={STYLES.imgCont} >
                         <Image source={{uri:ImageUrl}} width={200} height={200} /> 

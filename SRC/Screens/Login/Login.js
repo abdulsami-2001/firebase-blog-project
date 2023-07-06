@@ -8,17 +8,18 @@ import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { Creators } from '../../Redux/Action/Action';
 import { connect } from 'react-redux';
+import firestore from '@react-native-firebase/firestore'
 
-const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) => {
+const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs }) => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
     const [user, setUser] = useState(null);
     const [initializing, setInitializing] = useState(true);
 
     const navigation = useNavigation()
-    console.log("--------------")
-    console.log("isUserLoggedIn - Login Screen: ", isUserLoggedIn)
-    console.log("userIdentification - Login Screen: ", userIdentification)
+    // console.log("--------------")
+    // console.log("isUserLoggedIn - Login Screen: ", isUserLoggedIn)
+    // console.log("userIdentification - Login Screen: ", userIdentification)
 
 
 
@@ -31,9 +32,33 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) =>
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         if (user != undefined && user != null) {
             myUserId(user.uid)
+            getDataFromFirestore(user.uid)
         }
         return subscriber; // unsubscribe on unmount
     }, [user])
+
+    const getDataFromFirestore = async (userTemp) => {
+        try {
+            const { _data: data } = await firestore()?.collection('Users')?.doc(userTemp)?.get()
+
+            if (data != undefined) {
+                myuserBlogs(data)
+            } else {
+                showMessage({
+                    duration: 2000,
+                    message: "Unable to fetch your blogs",
+                    description: 'Make sure internet is working.'
+                })
+            }
+
+        } catch (error) {
+            showMessage({
+                duration: 2000,
+                message: "Unable to fetch your blogs",
+                description: 'Make sure internet is working.'
+            })
+        }
+    }
 
     const loginHandler = () => {
         if (Email != '' && Password != '') {
@@ -70,7 +95,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) =>
             .signInWithEmailAndPassword(Email, Password)
             .then(() => {
                 showMessage({
-                    message: "Signup Successful",
+                    message: "Login Successful",
                     type: "success",
                 });
                 myUserState(true)
@@ -150,12 +175,14 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) =>
 
 const mapDispatchToProps = {
     myUserState: Creators.userState,
-    myUserId: Creators.userId
+    myUserId: Creators.userId,
+    myuserBlogs: Creators.userBlogs,
 }
 
 const mapStateToProps = (state) => {
     return {
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification
     }
 }
