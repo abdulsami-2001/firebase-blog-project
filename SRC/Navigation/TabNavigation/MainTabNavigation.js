@@ -17,16 +17,14 @@ const MainTabNavigation = () => {
     return (
         <NavigationContainer>
             <Tab.Navigator
-                screenOptions={{
-                    headerShown: false
-                }}
             >
                 <Tab.Screen
                     name={NavigationStrings.HOMESTACK}
                     component={HomeNavigation}
                     options={{
                         tabBarIcon: () => (<Ionicons name='home' size={24} />),
-                        title: NavigationStrings.HOME
+                        title: NavigationStrings.HOME,
+                        headerShown: false
                     }}
                 />
                 <Tab.Screen
@@ -34,6 +32,7 @@ const MainTabNavigation = () => {
                     component={Favorite}
                     options={{
                         tabBarIcon: () => (<MaterialIcons name='favorite' size={24} />),
+                        headerShown: true
                     }}
                 />
                 <Tab.Screen
@@ -41,7 +40,9 @@ const MainTabNavigation = () => {
                     component={BlogNavigation}
                     options={{
                         tabBarIcon: () => (<Ionicons name='reader' size={24} />),
-                        title: NavigationStrings.MYBLOGS
+                        title: NavigationStrings.MYBLOGS,
+                        headerShown: false
+
                     }}
                 />
                 <Tab.Screen
@@ -49,7 +50,9 @@ const MainTabNavigation = () => {
                     component={ProfileNavigation}
                     options={{
                         tabBarIcon: () => (<FontAwesome name='user' size={24} />),
-                        title: NavigationStrings.PROFILE
+                        title: NavigationStrings.PROFILE,
+                        headerShown: false
+
                     }}
                 />
             </Tab.Navigator>

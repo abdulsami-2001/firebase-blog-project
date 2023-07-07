@@ -11,7 +11,7 @@ const ProfileNavigation = () => {
     return (
         <Stack.Navigator
             screenOptions={{
-                headerShown: false
+                headerShown: true
             }}
         >
             <Stack.Screen

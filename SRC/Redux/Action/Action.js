@@ -5,4 +5,5 @@ export const { Types, Creators } = createActions({
     userId: ['uid'],
     userBlogs: ['userblogs'],
     allBlogs: ['allblogs'],
+    userFavorites: ['userfavorites'],
 })

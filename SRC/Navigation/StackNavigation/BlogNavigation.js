@@ -10,7 +10,7 @@ const BlogNavigation = () => {
     return (
         <Stack.Navigator
             screenOptions={{
-                headerShown: false
+                headerShown: true
             }}
         >
             <Stack.Screen

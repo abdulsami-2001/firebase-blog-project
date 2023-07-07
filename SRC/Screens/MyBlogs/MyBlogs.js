@@ -16,15 +16,12 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
 
     useEffect(() => {
         setfirst(!first)
-    }, [userBlogs])
+    }, [userBlogs, userIdentification, isUserLoggedIn])
 
 
     if (isUserLoggedIn && BlogData.length > 0) {
         return (
             <View style={STYLES.mainCont}>
-                <View style={STYLES.headingCont}>
-                    <Text style={STYLES.heading}>My Blogs</Text>
-                </View>
                 <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}>
                     <AntDesign name='pluscircle' size={50} />
                 </TouchableOpacity>
@@ -34,9 +31,9 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => {
                             return (
-                                <Card style={STYLES.cardCont} >
-                                    <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} />
-                                    <TouchableOpacity activeOpacity={0.7} >
+                                <TouchableOpacity style={STYLES.cardCont} activeOpacity={0.7} >
+                                    <Card  >
+                                        <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} />
                                         <Card.Content>
                                             <Text variant="titleLarge">{userBlogs[item]?.Title}</Text>
                                             <Text variant="bodyMedium">{userBlogs[item]?.Content}</Text>
@@ -46,8 +43,8 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                                                 </View>
                                             </View>
                                         </Card.Content>
-                                    </TouchableOpacity>
-                                </Card>
+                                    </Card>
+                                </TouchableOpacity>
                             )
                         }}
                     />

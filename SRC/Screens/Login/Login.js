@@ -10,7 +10,7 @@ import { Creators } from '../../Redux/Action/Action';
 import { connect } from 'react-redux';
 import firestore from '@react-native-firebase/firestore'
 
-const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs }) => {
+const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs, myuserFavorites, userFavorites }) => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
     const [user, setUser] = useState(null);
@@ -20,6 +20,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myus
     // console.log("--------------")
     // console.log("isUserLoggedIn - Login Screen: ", isUserLoggedIn)
     // console.log("userIdentification - Login Screen: ", userIdentification)
+    console.log("userFavorites - Login Screen: ", userFavorites)
 
 
 
@@ -33,6 +34,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myus
         if (user != undefined && user != null) {
             myUserId(user.uid)
             getDataFromFirestore(user.uid)
+            getFavoritesFromFirestore(user.uid)
         }
         return subscriber; // unsubscribe on unmount
     }, [user])
@@ -55,6 +57,30 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myus
             showMessage({
                 duration: 2000,
                 message: "Unable to fetch your blogs",
+                description: 'Make sure internet is working.'
+            })
+        }
+    }
+
+
+    const getFavoritesFromFirestore = async (userTemp) => {
+        try {
+            const { _data: data } = await firestore()?.collection('Favorites')?.doc(userTemp)?.get()
+
+            if (data != undefined) {
+                myuserFavorites(data)
+            } else {
+                showMessage({
+                    duration: 2000,
+                    message: "Unable to fetch your favorites",
+                    description: 'Make sure internet is working.'
+                })
+            }
+
+        } catch (error) {
+            showMessage({
+                duration: 2000,
+                message: "Unable to fetch your favorites",
                 description: 'Make sure internet is working.'
             })
         }
@@ -177,15 +203,20 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
+    myuserFavorites: Creators.userFavorites,
+    myallBlogs: Creators.allBlogs,
 }
 
 const mapStateToProps = (state) => {
     return {
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userBlogs: state.UserAuth.userBlogs,
-        userIdentification: state.UserAuth.userIdentification
+        userIdentification: state.UserAuth.userIdentification,
+        allBlogs: state.UserAuth.allBlogs,
+        userFavorites: state.UserAuth.userFavorites,
     }
 }
+
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

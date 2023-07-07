@@ -1,39 +1,22 @@
-import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { Card, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { Creators } from '../../Redux/Action/Action'
 
-const BlogData = [
-    // {
-    //     title: 'Done is better than perfect Done is better than perfect Done is better than perfect',
-    //     author: "Someone",
-    //     date: new Date(),
-    //     id: 1,
-    //     blog: 'Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , Done is better than perfect ,Done is better than perfect ,Blog Done is better than perfect, Done is better than perfect , Done is better than perfect , Done is better than perfect , , ',
-    //     img_url: require('../../Assets/Images/demo.jpg')
 
-    // },
-    // {
-    //     title: 'Venture Dive',
-    //     author: "Someone--",
-    //     date: new Date(),
-    //     id: 2,
-    //     blog: 'Blog Venture Dive, Venture Dive , Venture Dive , Venture Dive , ,  Venture Dive , Venture Dive , ',
-    //     img_url: require('../../Assets/Images/fetch.png')
+const Favorite = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs, myuserFavorites, userFavorites }) => {
+    const { width } = Dimensions.get('screen')
+    const [first, setfirst] = useState(true)
 
-    // },
-    // {
-    //     title: 'If you know, you know',
-    //     author: "Someone++",
-    //     date: new Date(),
-    //     id: 3,
-    //     blog: 'Blog If you know, you know, If you know, you know , If you know, you know , If you know, you know , , If you know, you know ,If you know, you know , ',
-    //     img_url: require('../../Assets/Images/talk.jpg')
-    // },
-]
+    useEffect(() => {
+        setfirst(!first)
+    }, [userFavorites, userIdentification, isUserLoggedIn])
 
-const Favorite = ({  myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs }) => {
+
+    let BlogData = Object.keys(userFavorites)
+
+
     if (isUserLoggedIn && BlogData.length > 0) {
         return (
             <View style={STYLES.mainCont}>
@@ -42,14 +25,12 @@ const Favorite = ({  myUserState, isUserLoggedIn, myUserId, userIdentification, 
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => {
                         return (
-                            <Card style={STYLES.cardCont} >
-                                <Card.Cover source={item.img_url} />
+                            <Card style={STYLES.cardCont(width)} >
+                                <Card.Cover source={{ uri: userFavorites[item]?.ImageUrl }} />
                                 <TouchableOpacity activeOpacity={0.7} >
                                     <Card.Content>
-                                        <Text variant="titleLarge">{item.title}</Text>
-                                        <Text variant="bodyMedium">{item.blog}</Text>
-                                        <Text variant="titleSmall">Author: {item.author}</Text>
-                                        <Text variant="titleSmall">Date: {item.date.toString()}</Text>
+                                        <Text variant="titleLarge">{userFavorites[item]?.Title}</Text>
+                                        <Text variant="bodyMedium">{userFavorites[item]?.Content}</Text>
                                     </Card.Content>
                                 </TouchableOpacity>
                             </Card>
@@ -81,15 +62,20 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
+    myuserFavorites: Creators.userFavorites,
+    myallBlogs: Creators.allBlogs,
 }
 
 const mapStateToProps = (state) => {
     return {
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userBlogs: state.UserAuth.userBlogs,
-        userIdentification: state.UserAuth.userIdentification
+        userIdentification: state.UserAuth.userIdentification,
+        allBlogs: state.UserAuth.allBlogs,
+        userFavorites: state.UserAuth.userFavorites,
     }
 }
+
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Favorite)
@@ -107,9 +93,11 @@ const STYLES = StyleSheet.create({
     },
     subCont: {
     },
-    cardCont: {
-        marginVertical: 5
-    },
+    cardCont: (width) => ({
+        marginVertical: 5,
+        width: width
+
+    }),
     heading: {
         fontSize: 22,
         alignSelf: 'center'

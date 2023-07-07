@@ -1,4 +1,4 @@
-import { View, StyleSheet, } from 'react-native'
+import { View, StyleSheet, Dimensions } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Button, Text } from 'react-native-paper'
@@ -7,11 +7,12 @@ import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import auth from '@react-native-firebase/auth';
 import { showMessage } from 'react-native-flash-message'
 import { Creators, Types } from '../../Redux/Action/Action'
-
+import Lottie from 'lottie-react-native';
 import { connect } from 'react-redux'
 
-const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs , myallBlogs, allBlogs}) => {
+const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs, myallBlogs, allBlogs, myuserFavorites, userFavorites }) => {
     const navigation = useNavigation()
+    const { width, height } = Dimensions.get('screen')
 
     const [user, setUser] = useState(null);
     const [initializing, setInitializing] = useState(true);
@@ -20,23 +21,6 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, my
         setUser(user);
         if (initializing) setInitializing(false);
     }
-
-    // console.log("------------------")
-    // console.log("user: ", user)
-    // console.log("initializing: ", initializing)
-    console.log("isUserLoggedIn - Profile Screen: ", isUserLoggedIn)
-    console.log("userIdentification - Profile Screen: ", userIdentification)
-    console.log("------------------")
-
-    // console.log("Creators ", Creators)
-    // console.log("Types ", Types)
-    //
-
-    // useEffect(() => {
-    //     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    //     return subscriber; // unsubscribe on unmount
-    // }, [])
-
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
 
@@ -55,7 +39,8 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, my
                 })
                 myUserState(false)
                 myUserId('')
-                // myuserBlogs(allBlogs)
+                myuserFavorites({})
+                myuserBlogs({})
             }
             ).catch(() => {
                 showMessage({
@@ -69,7 +54,9 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, my
         return (
             <View style={STYLES.mainCont}>
                 <View style={STYLES.headingCont}>
-                    <Text style={STYLES.heading}>Profile</Text>
+                    <View style={STYLES.lottieCont(width, height)} >
+                        <Lottie source={require('../../Assets/Lottie/profile.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
+                    </View>
                     <Text style={STYLES.heading}>Email: {user?.email}</Text>
                     <Text style={STYLES.heading}>User Verified: {user?.emailVerified ? "Yes" : "No"}</Text>
                 </View>
@@ -81,7 +68,10 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, my
     } else {
         return (
             <View style={STYLES.mainContNL}>
-                <Text style={STYLES.heading} >You're Not Logged In.</Text>
+
+                <View style={STYLES.lottieCont(width, height)} >
+                    <Lottie source={require('../../Assets/Lottie/profile.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
+                </View>
                 <View style={STYLES.subContNL} >
                     <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.LOGIN)}>
                         Login
@@ -97,22 +87,24 @@ const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, my
 }
 
 
+
 const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
+    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
 }
 
 const mapStateToProps = (state) => {
     return {
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
-        userIdentification: state.UserAuth.userIdentification,
         userBlogs: state.UserAuth.userBlogs,
+        userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
+        userFavorites: state.UserAuth.userFavorites,
     }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)
 
@@ -127,11 +119,25 @@ const STYLES = StyleSheet.create({
         flex: 1,
         marginHorizontal: ms(15),
         marginVertical: vs(5),
-        justifyContent: 'center',
+        // justifyContent: 'center',
+        // backgroundColor:'red'
     },
+    lottieCont: (width, height) => ({
+        width: width,
+        height: height / 2,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }),
+    lottie: (width, height) => ({
+        // backgroundColor: 'pink',
+        height: height / 2,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }),
     subContNL: {
-        justifyContent: 'space-evenly',
-        alignItems: 'center',
+        // justifyContent: 'space-evenly',
+        // alignItems: 'center',
+        // backgroundColor: "pink"
     },
     headingCont: {
         alignItems: 'center'
@@ -160,3 +166,22 @@ const STYLES = StyleSheet.create({
         marginVertical: vs(3)
     }
 })
+
+
+
+
+ // console.log("------------------")
+    // console.log("user: ", user)
+    // console.log("initializing: ", initializing)
+    // console.log("isUserLoggedIn - Profile Screen: ", isUserLoggedIn)
+    // console.log("userIdentification - Profile Screen: ", userIdentification)
+    // console.log("------------------")
+
+    // console.log("Creators ", Creators)
+    // console.log("Types ", Types)
+    //
+
+    // useEffect(() => {
+    //     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    //     return subscriber; // unsubscribe on unmount
+    // }, [])

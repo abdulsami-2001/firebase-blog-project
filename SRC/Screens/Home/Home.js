@@ -44,8 +44,6 @@ const Home = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuse
         }
     }
 
-    console.log("BlogData ", BlogData)
-    // allBlogs[item]?.Title
     return (
         <View style={STYLES.mainCont}>
             <View style={STYLES.subCont}>
@@ -54,9 +52,9 @@ const Home = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuse
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => {
                         return (
-                            <Card style={STYLES.cardCont(width)} >
-                                <Card.Cover source={{ uri: allBlogs[item]?.ImageUrl }} />
-                                <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
+                            <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
+                                <Card  >
+                                    <Card.Cover source={{ uri: allBlogs[item]?.ImageUrl }} />
                                     <Card.Content>
                                         <Text variant="titleLarge">{allBlogs[item]?.Title}</Text>
                                         <Text variant="bodyMedium">{allBlogs[item]?.Content}</Text>
@@ -66,13 +64,13 @@ const Home = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuse
                                             </View>
                                         </View>
                                     </Card.Content>
-                                </TouchableOpacity>
-                            </Card>
+                                </Card>
+                            </TouchableOpacity>
                         )
                     }}
                 />
             </View>
-        </View>
+        </View >
     )
 }
 
