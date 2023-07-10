@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 import { Creators } from '../../Redux/Action/Action'
 import { showMessage } from 'react-native-flash-message'
 import firestore from '@react-native-firebase/firestore'
+import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 
 const Blog = ({ route, myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs, myallBlogs, allBlogs, myuserFavorites, userFavorites }) => {
     const [first, setfirst] = useState(true)
@@ -148,9 +149,9 @@ const Blog = ({ route, myUserState, isUserLoggedIn, myUserId, userIdentification
                         </View>
                         <TouchableOpacity activeOpacity={0.7} style={STYLES.btnCont}  >
                             {isLoved ?
-                                <MaterialIcons name='favorite' size={24} />
+                                <MaterialIcons name='favorite' size={24} color={ThemeColors.CGREEN} />
                                 :
-                                <MaterialIcons name='favorite-border' size={24} onPress={() => iconPresHandler()} />
+                                <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler()} />
                             }
                         </TouchableOpacity>
                     </View>

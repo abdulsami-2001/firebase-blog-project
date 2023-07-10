@@ -165,7 +165,7 @@ const STYLES = StyleSheet.create({
     },
     btn: {
         marginVertical: vs(3),
-        color: 'red',
+        backgroundColor: ThemeColors.CGREEN
     }
 })
 

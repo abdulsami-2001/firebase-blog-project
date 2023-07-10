@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { Creators } from '../../Redux/Action/Action';
 import { connect } from 'react-redux';
+import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
 
 const SignUp = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) => {
     const [Email, SetEmail] = useState("");
@@ -172,7 +173,8 @@ const STYLES = StyleSheet.create({
     input: {
         marginVertical: vs(8),
     },
-    btnCont: {
-
+    btn: {
+        marginVertical: vs(3),
+        backgroundColor: ThemeColors.CGREEN
     }
 })

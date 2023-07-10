@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { Creators } from '../../Redux/Action/Action'
 import { connect } from 'react-redux'
+import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 
 
 const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
@@ -23,7 +24,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
         return (
             <View style={STYLES.mainCont}>
                 <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}>
-                    <AntDesign name='pluscircle' size={50} />
+                    <AntDesign name='pluscircle' color={ThemeColors.WHITE} size={50} />
                 </TouchableOpacity>
                 <View style={STYLES.myBlogsCont}>
                     <FlatList
@@ -55,7 +56,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
         return (
             <View style={STYLES.mainContNL}>
                 <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}>
-                    <AntDesign name='pluscircle' size={50} />
+                    <AntDesign name='pluscircle' color={ThemeColors.WHITE} size={50} />
                 </TouchableOpacity>
                 <Text style={STYLES.heading}  >You didn't write any blogs.</Text>
 
@@ -127,7 +128,8 @@ const STYLES = StyleSheet.create({
         zIndex: 1,
         bottom: 15,
         right: 20,
-
+        backgroundColor: ThemeColors.CGREEN,
+        borderRadius: 30,
     },
     btn: {
         marginVertical: vs(3)

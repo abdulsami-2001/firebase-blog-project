@@ -12,6 +12,7 @@ import { connect } from 'react-redux'
 import { Creators } from '../../Redux/Action/Action'
 import { useNavigation } from '@react-navigation/native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
+import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 
 
 const AddBlog = ({isUserLoggedIn, userIdentification, userBlogs,myuserBlogs }) => {
@@ -259,7 +260,7 @@ const AddBlog = ({isUserLoggedIn, userIdentification, userBlogs,myuserBlogs }) =
             <View style={STYLES.mainCont}>
                     {ImageUrl == '' && 
                         <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={imageUploadHandler}>
-                            <MaterialCommunityIcons name='image-plus' size={50} />
+                            <MaterialCommunityIcons name='image-plus' color={ThemeColors.CGREEN} size={50} />
                         </TouchableOpacity>
                     }
                 <ScrollView >
@@ -361,13 +362,17 @@ const STYLES = StyleSheet.create({
         marginVertical:mvs(10)
     },
     btn: {
-        marginVertical: vs(3)
+        marginVertical: vs(3),
+        backgroundColor: ThemeColors.CGREEN
+
     },
     iconCont:{
         position: 'absolute',
         zIndex: 1,
         bottom: 15,
         right: 20,
+        backgroundColor: ThemeColors.WHITE,
+        borderRadius: 50,
     }
 })
 

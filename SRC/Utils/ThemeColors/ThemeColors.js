@@ -11,6 +11,7 @@ export const ThemeColors = {
     GREEN: "#89d6ce",
     PURPLE: "purple",
     ORANGE: "orange",
+    // CGREEN: "tomato",
     CGREEN: "#12B28E",
     CADETBLUE: "cadetblue",
     BLACKOPACITY80: "rgba(0,0,0,0.8)",
