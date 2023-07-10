@@ -9,6 +9,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import HomeNavigation from '../StackNavigation/HomeNavigation'
 import BlogNavigation from '../StackNavigation/BlogNavigation'
 import ProfileNavigation from '../StackNavigation/ProfileNavigation'
+import CustomHeader from '../../Components/CustomHeader'
+import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 
 
 const Tab = createBottomTabNavigator()
@@ -17,12 +19,19 @@ const MainTabNavigation = () => {
     return (
         <NavigationContainer>
             <Tab.Navigator
+                screenOptions={{
+                    tabBarStyle: {
+                        backgroundColor: ThemeColors.CGREEN,
+                    },
+                    tabBarActiveTintColor: ThemeColors.BLACKOPACITY80,
+                    tabBarInactiveTintColor: ThemeColors.WHITE,
+                }}
             >
                 <Tab.Screen
                     name={NavigationStrings.HOMESTACK}
                     component={HomeNavigation}
                     options={{
-                        tabBarIcon: () => (<Ionicons name='home' size={24} />),
+                        tabBarIcon: () => (<Ionicons name='home' size={24} color={ThemeColors.WHITE} />),
                         title: NavigationStrings.HOME,
                         headerShown: false
                     }}
@@ -31,15 +40,17 @@ const MainTabNavigation = () => {
                     name={NavigationStrings.FAVORITES}
                     component={Favorite}
                     options={{
-                        tabBarIcon: () => (<MaterialIcons name='favorite' size={24} />),
-                        headerShown: true
+                        tabBarIcon: () => (<MaterialIcons name='favorite' size={24} color={ThemeColors.WHITE} />),
+                        headerShown: true,
+                        title: NavigationStrings.FAVORITES,
+                        header: (props) => <CustomHeader props={props} />
                     }}
                 />
                 <Tab.Screen
                     name={NavigationStrings.BLOGSTACK}
                     component={BlogNavigation}
                     options={{
-                        tabBarIcon: () => (<Ionicons name='reader' size={24} />),
+                        tabBarIcon: () => (<Ionicons name='reader' size={24} color={ThemeColors.WHITE} />),
                         title: NavigationStrings.MYBLOGS,
                         headerShown: false
 
@@ -49,7 +60,7 @@ const MainTabNavigation = () => {
                     name={NavigationStrings.PROFILESTACK}
                     component={ProfileNavigation}
                     options={{
-                        tabBarIcon: () => (<FontAwesome name='user' size={24} />),
+                        tabBarIcon: () => (<FontAwesome name='user' size={24} color={ThemeColors.WHITE} />),
                         title: NavigationStrings.PROFILE,
                         headerShown: false
 

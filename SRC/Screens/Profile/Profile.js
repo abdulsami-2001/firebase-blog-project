@@ -9,6 +9,7 @@ import { showMessage } from 'react-native-flash-message'
 import { Creators, Types } from '../../Redux/Action/Action'
 import Lottie from 'lottie-react-native';
 import { connect } from 'react-redux'
+import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 
 const Profile = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs, myallBlogs, allBlogs, myuserFavorites, userFavorites }) => {
     const navigation = useNavigation()
@@ -119,8 +120,8 @@ const STYLES = StyleSheet.create({
         flex: 1,
         marginHorizontal: ms(15),
         marginVertical: vs(5),
-        // justifyContent: 'center',
-        // backgroundColor:'red'
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     lottieCont: (width, height) => ({
         width: width,
@@ -163,7 +164,8 @@ const STYLES = StyleSheet.create({
 
     },
     btn: {
-        marginVertical: vs(3)
+        marginVertical: vs(3),
+        color: 'red',
     }
 })
 

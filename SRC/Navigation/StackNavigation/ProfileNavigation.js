@@ -4,6 +4,7 @@ import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import Profile from '../../Screens/Profile/Profile'
 import Signup from '../../Screens/Signup/Signup'
 import Login from '../../Screens/Login/Login'
+import CustomHeader from '../../Components/CustomHeader'
 
 const Stack = createNativeStackNavigator()
 
@@ -17,14 +18,26 @@ const ProfileNavigation = () => {
             <Stack.Screen
                 name={NavigationStrings.PROFILE}
                 component={Profile}
+                options={{
+                    title: NavigationStrings.PROFILE,
+                    header: (props) => <CustomHeader props={props} />
+                }}
             />
             <Stack.Screen
                 name={NavigationStrings.SIGNUP}
                 component={Signup}
+                options={{
+                    title: NavigationStrings.SIGNUP,
+                    header: (props) => <CustomHeader props={props} />
+                }}
             />
             <Stack.Screen
                 name={NavigationStrings.LOGIN}
                 component={Login}
+                options={{
+                    title: NavigationStrings.LOGIN,
+                    header: (props) => <CustomHeader props={props} />
+                }}
             />
         </Stack.Navigator>
     )
