@@ -8,7 +8,7 @@ import { TextInput, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native'
 import { showMessage, } from "react-native-flash-message";
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
-import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native'
+import { StyleSheet, View, ScrollView, Dimensions } from 'react-native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 
 const SignUp = ({ myUserState, isUserLoggedIn, myUserId }) => {
@@ -134,12 +134,8 @@ const SignUp = ({ myUserState, isUserLoggedIn, myUserId }) => {
                 </View>
             </ScrollView>
         </View>
-
     )
 }
-
-
-
 
 const mapDispatchToProps = {
     myUserState: Creators.userState,
@@ -153,9 +149,7 @@ const mapStateToProps = (state) => {
     }
 }
 
-
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp)
-
 
 const STYLES = StyleSheet.create({
     mainCont: {
@@ -174,12 +168,6 @@ const STYLES = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     }),
-    headingCont: {
-        alignItems: 'center'
-    },
-    heading: {
-        fontSize: 22
-    },
     input: {
         marginVertical: vs(8),
     },
