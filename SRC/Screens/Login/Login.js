@@ -1,29 +1,25 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { connect } from 'react-redux';
+import Lottie from 'lottie-react-native';
+import auth from '@react-native-firebase/auth';
 import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
-import { TextInput, Button } from 'react-native-paper';
-import { showMessage, } from "react-native-flash-message";
-import auth from '@react-native-firebase/auth';
-import { useNavigation } from '@react-navigation/native'
-import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { Creators } from '../../Redux/Action/Action';
-import { connect } from 'react-redux';
+import { TextInput, Button } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native'
 import firestore from '@react-native-firebase/firestore'
+import { showMessage, } from "react-native-flash-message";
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
+import { StyleSheet, Dimensions, View, ScrollView } from 'react-native'
+import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 
-const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs, myuserFavorites, userFavorites }) => {
+const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavorites, userFavorites }) => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
     const [user, setUser] = useState(null);
     const [initializing, setInitializing] = useState(true);
+    const { width, height } = Dimensions.get('screen')
 
     const navigation = useNavigation()
-    // console.log("--------------")
-    // console.log("isUserLoggedIn - Login Screen: ", isUserLoggedIn)
-    // console.log("userIdentification - Login Screen: ", userIdentification)
-    console.log("userFavorites - Login Screen: ", userFavorites)
-
-
 
     function onAuthStateChanged(user) {
         setUser(user);
@@ -67,7 +63,6 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myus
     const getFavoritesFromFirestore = async (userTemp) => {
         try {
             const { _data: data } = await firestore()?.collection('Favorites')?.doc(userTemp)?.get()
-
             if (data != undefined) {
                 myuserFavorites(data)
             } else {
@@ -77,7 +72,6 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myus
                     description: 'Make sure internet is working.'
                 })
             }
-
         } catch (error) {
             showMessage({
                 duration: 2000,
@@ -90,7 +84,6 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myus
     const loginHandler = () => {
         if (Email != '' && Password != '') {
             loginFirebase()
-
         } else if (Email == '' && Password == '') {
             showMessage({
                 message: "Email & Password Not Be Empty",
@@ -165,8 +158,8 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myus
     return (
         <View style={STYLES.mainCont}>
             <ScrollView>
-                <View style={STYLES.headingCont}>
-                    <Text style={STYLES.heading}>Login</Text>
+                <View style={STYLES.lottieCont(width, height)} >
+                    <Lottie source={require('../../Assets/Lottie/login-signup.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
                 </View>
                 <View style={STYLES.inputCont}>
                     <TextInput
@@ -188,7 +181,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myus
                 </View>
                 <View style={STYLES.btnCont}>
                     <Button mode="contained" style={STYLES.btn} onPress={loginHandler}>
-                        Login
+                        {NavigationStrings.LOGIN}
                     </Button>
                 </View>
             </ScrollView>
@@ -229,6 +222,17 @@ const STYLES = StyleSheet.create({
         marginHorizontal: ms(15),
         marginVertical: vs(5),
     },
+    lottieCont: (width, height) => ({
+        width: width,
+        height: height / 3,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }),
+    lottie: (width, height) => ({
+        height: height / 2,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }),
     headingCont: {
         alignItems: 'center'
     },
@@ -237,6 +241,10 @@ const STYLES = StyleSheet.create({
     },
     input: {
         marginVertical: vs(8),
+    },
+    btnCont: {
+        // alignItems: 'center',
+        justifyContent: 'center'
     },
     btn: {
         marginVertical: vs(3),

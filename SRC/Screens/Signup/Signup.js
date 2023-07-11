@@ -1,24 +1,23 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { ms, vs } from 'react-native-size-matters'
-import { TextInput, Button } from 'react-native-paper';
-import { showMessage, } from "react-native-flash-message";
-import auth from '@react-native-firebase/auth';
-import { useNavigation } from '@react-navigation/native'
-import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
-import { Creators } from '../../Redux/Action/Action';
 import { connect } from 'react-redux';
+import Lottie from 'lottie-react-native';
+import auth from '@react-native-firebase/auth';
+import { ms, vs } from 'react-native-size-matters'
+import React, { useState, useEffect } from 'react'
+import { Creators } from '../../Redux/Action/Action';
+import { TextInput, Button } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native'
+import { showMessage, } from "react-native-flash-message";
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
+import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native'
+import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 
-const SignUp = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) => {
+const SignUp = ({ myUserState, isUserLoggedIn, myUserId }) => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
     const [user, setUser] = useState(null);
     const [initializing, setInitializing] = useState(true);
+    const { width, height } = Dimensions.get('screen')
     const navigation = useNavigation()
-
-    console.log("isUserLoggedIn - Signup Screen: ", isUserLoggedIn)
-    console.log("userIdentification - Signup Screen: ", userIdentification)
 
     function onAuthStateChanged(user) {
         setUser(user);
@@ -107,8 +106,8 @@ const SignUp = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) =
     return (
         <View style={STYLES.mainCont}>
             <ScrollView>
-                <View style={STYLES.headingCont}>
-                    <Text style={STYLES.heading}>SignUp</Text>
+                <View style={STYLES.lottieCont(width, height)} >
+                    <Lottie source={require('../../Assets/Lottie/login-signup.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
                 </View>
                 <View style={STYLES.inputCont}>
                     <TextInput
@@ -130,7 +129,7 @@ const SignUp = ({ myUserState, isUserLoggedIn, myUserId, userIdentification }) =
                 </View>
                 <View style={STYLES.btnCont}>
                     <Button mode="contained" style={STYLES.btn} onPress={signupHandler}>
-                        Signup
+                        {NavigationStrings.SIGNUP}
                     </Button>
                 </View>
             </ScrollView>
@@ -164,6 +163,17 @@ const STYLES = StyleSheet.create({
         marginHorizontal: ms(15),
         marginVertical: vs(5),
     },
+    lottieCont: (width, height) => ({
+        width: width,
+        height: height / 3,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }),
+    lottie: (width, height) => ({
+        height: height / 2,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }),
     headingCont: {
         alignItems: 'center'
     },
