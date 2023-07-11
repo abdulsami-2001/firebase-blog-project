@@ -1,23 +1,16 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import { Card, Text } from 'react-native-paper'
-import { ms, vs } from 'react-native-size-matters'
 import { connect } from 'react-redux'
+import { Card, Text } from 'react-native-paper'
+import React from 'react'
+import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import { showMessage } from 'react-native-flash-message'
 import firestore from '@react-native-firebase/firestore'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native'
 
-const Blog = ({ route, myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs, myallBlogs, allBlogs, myuserFavorites, userFavorites }) => {
-    const [first, setfirst] = useState(true)
+const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavorites }) => {
     const { params } = route
-
-    // useEffect(() => {
-    //     setfirst(!first)
-    // }, [userFavorites, userIdentification, isUserLoggedIn])
-
-
 
     const isLoved = false
     const iconPresHandler = () => {
@@ -41,8 +34,6 @@ const Blog = ({ route, myUserState, isUserLoggedIn, myUserId, userIdentification
 
     const getFavoritesFromFirestore = async () => {
         try {
-            // const data = firestore()?.collection().where().get()
-
             let dataRef = firestore().collection('Favorites');
             let snapshot = await dataRef?.get()
             let newUser = true
@@ -52,13 +43,7 @@ const Blog = ({ route, myUserState, isUserLoggedIn, myUserId, userIdentification
                 }
             });
 
-            console.log(newUser)
-
             newUser ? uploadFavoritesToFirestore() : updateFavoritesToFirestore()
-
-            // console.log("BlogData ", ...BlogData)
-            // myallBlogs({ ...datatemp, ...BlogData })
-            // myallBlogs({ ...datatemp })
 
         } catch (error) {
             console.log(error)
@@ -69,7 +54,6 @@ const Blog = ({ route, myUserState, isUserLoggedIn, myUserId, userIdentification
             })
         }
     }
-
 
     const uploadFavoritesToFirestore = async () => {
         try {
@@ -101,8 +85,6 @@ const Blog = ({ route, myUserState, isUserLoggedIn, myUserId, userIdentification
         }
     }
 
-
-
     const updateFavoritesToFirestore = async () => {
         try {
             firestore()
@@ -133,30 +115,29 @@ const Blog = ({ route, myUserState, isUserLoggedIn, myUserId, userIdentification
         }
     }
 
-
-
-    console.log(params)
     return (
         <View style={STYLES.mainCont}>
-            <Card style={STYLES.cardCont} >
-                <Card.Cover source={{ uri: allBlogs[params]?.ImageUrl }} />
-                <Card.Content>
-                    <Text variant="titleLarge">{allBlogs[params]?.Title}</Text>
-                    <Text variant="bodyMedium">{allBlogs[params]?.Content}</Text>
-                    <View style={STYLES.infoCont}>
-                        <View>
-                            <Text variant="titleSmall">Author: {allBlogs[params]?.Author}</Text>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <Card style={STYLES.cardCont} >
+                    <Card.Cover source={{ uri: allBlogs[params]?.ImageUrl }} resizeMode='contain' />
+                    <Card.Content>
+                        <Text variant="titleLarge">{allBlogs[params]?.Title}</Text>
+                        <Text variant="bodyMedium">{allBlogs[params]?.Content}</Text>
+                        <View style={STYLES.infoCont}>
+                            <View>
+                                <Text variant="titleSmall">Author: {allBlogs[params]?.Author}</Text>
+                            </View>
+                            <TouchableOpacity activeOpacity={0.7} style={STYLES.btnCont}  >
+                                {isLoved ?
+                                    <MaterialIcons name='favorite' size={24} color={ThemeColors.CGREEN} />
+                                    :
+                                    <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler()} />
+                                }
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity activeOpacity={0.7} style={STYLES.btnCont}  >
-                            {isLoved ?
-                                <MaterialIcons name='favorite' size={24} color={ThemeColors.CGREEN} />
-                                :
-                                <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler()} />
-                            }
-                        </TouchableOpacity>
-                    </View>
-                </Card.Content>
-            </Card>
+                    </Card.Content>
+                </Card>
+            </ScrollView>
         </View>
     )
 }

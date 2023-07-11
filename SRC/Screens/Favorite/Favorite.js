@@ -1,12 +1,17 @@
-import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { Card, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
+import Lottie from 'lottie-react-native';
+import { vs } from 'react-native-size-matters'
+import { Card, Text } from 'react-native-paper'
+import React, { useEffect, useState } from 'react'
 import { Creators } from '../../Redux/Action/Action'
+import { useNavigation } from '@react-navigation/native'
+import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
+import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
+import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 
-
-const Favorite = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, myuserBlogs, userBlogs, myuserFavorites, userFavorites }) => {
-    const { width } = Dimensions.get('screen')
+const Favorite = ({ isUserLoggedIn, userIdentification, userFavorites }) => {
+    const { width, height } = Dimensions.get('screen')
+    const navigation = useNavigation()
     const [first, setfirst] = useState(true)
 
     useEffect(() => {
@@ -25,37 +30,55 @@ const Favorite = ({ myUserState, isUserLoggedIn, myUserId, userIdentification, m
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => {
                         return (
-                            <Card style={STYLES.cardCont(width)} >
-                                <Card.Cover source={{ uri: userFavorites[item]?.ImageUrl }} />
-                                <TouchableOpacity activeOpacity={0.7} >
+                            <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)}>
+                                <Card>
+                                    <Card.Cover source={{ uri: userFavorites[item]?.ImageUrl }} resizeMode='contain'/>
                                     <Card.Content>
-                                        <Text variant="titleLarge">{userFavorites[item]?.Title}</Text>
-                                        <Text variant="bodyMedium">{userFavorites[item]?.Content}</Text>
+                                        <Text variant="titleLarge" style={STYLES.textHeading} >{userFavorites[item]?.Title}</Text>
+
+                                        {userFavorites[item]?.Content?.length > 135 ?
+                                            <Text variant="bodyMedium" style={STYLES.text}>{userFavorites[item]?.Content.substr(0, 135)}...</Text>
+                                            :
+                                            <Text variant="bodyMedium" style={STYLES.text}>{userFavorites[item]?.Content}</Text>
+                                        }
+                                        <View style={STYLES.authorCont} >
+                                            <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
+                                            <Text style={STYLES.text}>{userFavorites[item]?.Author}</Text>
+                                        </View>
                                     </Card.Content>
-                                </TouchableOpacity>
-                            </Card>
+                                </Card>
+                            </TouchableOpacity>
                         )
-                    }}
+                    }
+                    }
                 />
             </View>
         )
     } else if (isUserLoggedIn && BlogData.length <= 0) {
         return (
             <View style={STYLES.mainCont}>
-                <Text style={STYLES.heading}>You don't have favorite blogs.</Text>
+                <View style={STYLES.lottieCont(width, height)} >
+                    <Lottie source={require('../../Assets/Lottie/announcement.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
+                </View>
+                <View style={STYLES.headingCont} >
+                    <Text style={STYLES.heading}>You don't have favorite blogs.</Text>
+                </View>
             </View>
         )
     }
     else {
         return (
             <View style={STYLES.mainCont}>
-                <Text style={STYLES.heading} >You're not logged in.</Text>
-                <Text style={STYLES.heading} >Do login/signup from profile</Text>
+                <View style={STYLES.lottieCont(width, height)} >
+                    <Lottie source={require('../../Assets/Lottie/announcement.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
+                </View>
+                <View style={STYLES.headingCont} >
+                    <Text style={STYLES.heading} >You're not logged in.</Text>
+                    <Text style={STYLES.heading} >Login/signup is required.</Text>
+                </View>
             </View>
         )
     }
-
-
 }
 
 const mapDispatchToProps = {
@@ -76,10 +99,7 @@ const mapStateToProps = (state) => {
     }
 }
 
-
-
 export default connect(mapStateToProps, mapDispatchToProps)(Favorite)
-
 
 const STYLES = StyleSheet.create({
     mainCont: {
@@ -91,15 +111,40 @@ const STYLES = StyleSheet.create({
         marginVertical: 5,
         // backgroundColor: 'purple'
     },
+    lottieCont: (width, height) => ({
+        width: width,
+        height: height / 4,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }),
+    lottie: (width, height) => ({
+        height: height / 2,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }),
+    authorCont: {
+        flexDirection: 'row',
+    },
     subCont: {
     },
     cardCont: (width) => ({
         marginVertical: 5,
-        width: width
-
     }),
+    headingCont: {
+        marginVertical: vs(20),
+        alignItems: 'center',
+    },
     heading: {
         fontSize: 22,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        color: ThemeColors.GRAY,
+    },
+    textHeading: {
+        fontWeight: 'bold',
+        fontSize: 18,
+    },
+    text: {
+        color: ThemeColors.GRAY,
+        fontSize: 15,
     },
 })

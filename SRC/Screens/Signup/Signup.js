@@ -11,7 +11,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
 import { StyleSheet, View, ScrollView, Dimensions } from 'react-native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 
-const SignUp = ({ myUserState, isUserLoggedIn, myUserId }) => {
+const SignUp = ({ myUserState, myUserId }) => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
     const [user, setUser] = useState(null);
@@ -64,6 +64,10 @@ const SignUp = ({ myUserState, isUserLoggedIn, myUserId }) => {
     }
 
     const signupFirebase = async () => {
+        showMessage({
+            message: "Signing up...",
+            type: "info",
+        });
         await auth()
             .createUserWithEmailAndPassword(Email, Password)
             .then(() => {
@@ -105,7 +109,7 @@ const SignUp = ({ myUserState, isUserLoggedIn, myUserId }) => {
 
     return (
         <View style={STYLES.mainCont}>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={STYLES.lottieCont(width, height)} >
                     <Lottie source={require('../../Assets/Lottie/login-signup.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
                 </View>

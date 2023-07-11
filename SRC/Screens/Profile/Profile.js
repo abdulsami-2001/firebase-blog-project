@@ -30,6 +30,10 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
     }, [user])
 
     const singOutHandler = async () => {
+        showMessage({
+            message: "Signing Out...",
+            type: "info",
+        })
         await auth()
             .signOut()
             .then(() => {
@@ -70,13 +74,13 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
                         <Text style={STYLES.text}>{new Date(user?.metadata?.creationTime).toDateString()} {new Date(user?.metadata?.creationTime).toLocaleTimeString()}</Text>
                     </View>
                     <View style={STYLES.textCont} >
-                        <Text style={STYLES.textHeading}>Last signin</Text>
+                        <Text style={STYLES.textHeading}>Last login</Text>
                         <Text style={STYLES.text}>{new Date(user?.metadata?.lastSignInTime).toDateString()} {new Date(user?.metadata?.lastSignInTime).toLocaleTimeString()}</Text>
                     </View>
                 </View>
                 <View style={STYLES.btnCont} >
                     <Button mode="contained" style={STYLES.btn} onPress={() => singOutHandler()}>
-                        Logout
+                        SIGN OUT
                     </Button>
                 </View>
             </View>
@@ -89,10 +93,10 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
                 </View>
                 <View style={STYLES.subContNL} >
                     <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.LOGIN)}>
-                        Login
+                        {NavigationStrings.LOGIN}
                     </Button>
                     <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.SIGNUP)}>
-                        Signup
+                        {NavigationStrings.SIGNUP}
                     </Button>
                 </View>
             </View>
@@ -138,6 +142,7 @@ const STYLES = StyleSheet.create({
         marginLeft: ms(5),
         fontSize: 16,
         marginTop: vs(2),
+        color: ThemeColors.GRAY,
     },
     mainCont: {
         flex: 1,
@@ -168,7 +173,8 @@ const STYLES = StyleSheet.create({
         // backgroundColor: "pink"
     },
     headingCont: {
-        marginVertical: vs(5)
+        marginVertical: vs(5),
+        alignItems: 'center',
     },
     btnCont: {
         alignItems: 'center',

@@ -84,6 +84,10 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
     const loginHandler = () => {
         if (Email != '' && Password != '') {
             loginFirebase()
+            showMessage({
+                message: "Logining In...",
+                type: "info",
+            });
         } else if (Email == '' && Password == '') {
             showMessage({
                 message: "Email & Password Not Be Empty",
@@ -157,7 +161,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
 
     return (
         <View style={STYLES.mainCont}>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={STYLES.lottieCont(width, height)} >
                     <Lottie source={require('../../Assets/Lottie/login-signup.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
                 </View>

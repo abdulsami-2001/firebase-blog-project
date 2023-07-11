@@ -1,24 +1,24 @@
-import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native'
+import { connect } from 'react-redux'
+import Lottie from 'lottie-react-native';
+import { Card, Text } from 'react-native-paper'
 import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
-import { Card, Text, Button } from 'react-native-paper'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import { useNavigation } from '@react-navigation/native'
-import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { Creators } from '../../Redux/Action/Action'
-import { connect } from 'react-redux'
+import { useNavigation } from '@react-navigation/native'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
-
+import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
+import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native'
 
 const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
     const navigation = useNavigation()
     const [first, setfirst] = useState(true)
+    const { width, height } = Dimensions.get('screen')
     let BlogData = Object.keys(userBlogs)
 
     useEffect(() => {
         setfirst(!first)
     }, [userBlogs, userIdentification, isUserLoggedIn])
-
 
     if (isUserLoggedIn && BlogData.length > 0) {
         return (
@@ -32,16 +32,19 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => {
                             return (
-                                <TouchableOpacity style={STYLES.cardCont} activeOpacity={0.7} >
+                                <TouchableOpacity style={STYLES.cardCont} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
                                     <Card  >
-                                        <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} />
+                                        <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
                                         <Card.Content>
-                                            <Text variant="titleLarge">{userBlogs[item]?.Title}</Text>
-                                            <Text variant="bodyMedium">{userBlogs[item]?.Content}</Text>
-                                            <View style={STYLES.infoCont}>
-                                                <View>
-                                                    <Text variant="titleSmall">Author: {userBlogs[item]?.Author}</Text>
-                                                </View>
+                                            <Text variant="titleLarge" style={STYLES.textHeading} >{userBlogs[item]?.Title}</Text>
+                                            {userBlogs[item]?.Content?.length > 135 ?
+                                                <Text variant="bodyMedium" style={STYLES.text}>{userBlogs[item]?.Content.substr(0, 135)}...</Text>
+                                                :
+                                                <Text variant="bodyMedium" style={STYLES.text}>{userBlogs[item]?.Content}</Text>
+                                            }
+                                            <View style={STYLES.authorCont} >
+                                                <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
+                                                <Text style={STYLES.text}>{userBlogs[item]?.Author}</Text>
                                             </View>
                                         </Card.Content>
                                     </Card>
@@ -50,7 +53,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                         }}
                     />
                 </View>
-            </View>
+            </View >
         )
     } else if (isUserLoggedIn && BlogData.length <= 0) {
         return (
@@ -58,16 +61,25 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                 <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}>
                     <AntDesign name='pluscircle' color={ThemeColors.WHITE} size={50} />
                 </TouchableOpacity>
-                <Text style={STYLES.heading}  >You didn't write any blogs.</Text>
-
+                <View style={STYLES.lottieCont(width, height)} >
+                    <Lottie source={require('../../Assets/Lottie/announcement.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
+                </View>
+                <View style={STYLES.headingCont} >
+                    <Text style={STYLES.heading}  >You didn't write any blogs.</Text>
+                </View>
             </View>
         )
     }
     else {
         return (
             <View style={STYLES.mainContNL}>
-                <Text style={STYLES.heading} >You're not logged in.</Text>
-                <Text style={STYLES.heading} >Do login/signup from profile</Text>
+                <View style={STYLES.lottieCont(width, height)} >
+                    <Lottie source={require('../../Assets/Lottie/announcement.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
+                </View>
+                <View style={STYLES.headingCont} >
+                    <Text style={STYLES.heading} >You're not logged in.</Text>
+                    <Text style={STYLES.heading} >Login/signup is required.</Text>
+                </View>
             </View>
         )
     }
@@ -89,8 +101,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyBlogs)
 
-
-
 const STYLES = StyleSheet.create({
     mainCont: {
         flex: 1,
@@ -102,26 +112,37 @@ const STYLES = StyleSheet.create({
         marginHorizontal: ms(15),
         marginVertical: vs(5),
         justifyContent: 'center',
+        alignItems: 'center',
     },
     subContNL: {
         justifyContent: 'space-evenly',
         alignItems: 'center',
     },
-    headingCont: {
+    lottieCont: (width, height) => ({
+        width: width,
+        height: height / 4,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }),
+    lottie: (width, height) => ({
+        height: height / 2,
+        justifyContent: 'center',
         alignItems: 'center'
+    }),
+    headingCont: {
+        marginVertical: vs(20),
+        alignItems: 'center',
     },
     heading: {
         fontSize: 22,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        color: ThemeColors.GRAY,
     },
     myBlogsCont: {
         flex: 1
     },
     cardCont: {
         marginVertical: vs(5)
-    },
-    infoCont: {
-        flexDirection: 'row'
     },
     btnCont: {
         position: 'absolute',
@@ -131,7 +152,15 @@ const STYLES = StyleSheet.create({
         backgroundColor: ThemeColors.CGREEN,
         borderRadius: 30,
     },
-    btn: {
-        marginVertical: vs(3)
-    }
+    textHeading: {
+        fontWeight: 'bold',
+        fontSize: 18,
+    },
+    text: {
+        color: ThemeColors.GRAY,
+        fontSize: 15,
+    },
+    authorCont: {
+        flexDirection: 'row',
+    },
 })
