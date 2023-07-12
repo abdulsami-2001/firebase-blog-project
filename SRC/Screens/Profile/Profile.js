@@ -54,18 +54,20 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
             })
     }
 
-    
-
     if (user != undefined && user != null) {
         return (
             <View style={STYLES.mainCont}>
                 <View style={STYLES.headingCont}>
                     <View style={STYLES.lottieCont(width, height)} >
-                        <FontAwesome name='user-circle' color={ThemeColors.GRAY} size={180} />
+                        <FontAwesome name='user-circle' color={ThemeColors.GRAY} size={130} />
                     </View>
                     <View style={STYLES.textCont} >
                         <Text style={STYLES.textHeading}>Email</Text>
                         <Text style={STYLES.text}>{user?.email}</Text>
+                    </View>
+                    <View style={STYLES.textCont} >
+                        <Text style={STYLES.textHeading}>Email verified</Text>
+                        <Text style={STYLES.text}>{user?.emailVerified ? "Yes" : "No"}</Text>
                     </View>
                     <View style={STYLES.textCont} >
                         <Text style={STYLES.textHeading}>User id</Text>
@@ -82,7 +84,10 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
                 </View>
                 <View style={STYLES.btnCont} >
                     <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.CHANGEPASSWORD)}>
-                        CHANGE PASSWORD
+                        {NavigationStrings.CHANGEPASSWORD}
+                    </Button>
+                    <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.VERIFYEMAIL)}>
+                        {NavigationStrings.VERIFYEMAIL}
                     </Button>
                     <Button mode="contained" style={STYLES.btn} onPress={() => singOutHandler()}>
                         SIGN OUT
@@ -137,21 +142,22 @@ const STYLES = StyleSheet.create({
         marginHorizontal: ms(12),
         justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: vs(5)
+        marginVertical: vs(2)
     },
     textHeading: {
         fontWeight: 'bold',
-        fontSize: 20,
+        fontSize: 18,
     },
     text: {
         marginLeft: ms(5),
-        fontSize: 16,
+        fontSize: 15,
         marginTop: vs(2),
         color: ThemeColors.GRAY,
     },
     mainCont: {
         flex: 1,
         marginHorizontal: ms(15),
+        alignItems: 'center',
         marginVertical: vs(5),
     },
     mainContNL: {
@@ -163,7 +169,7 @@ const STYLES = StyleSheet.create({
     },
     lottieCont: (width, height) => ({
         width: width,
-        height: height / 4,
+        height: height / 5,
         justifyContent: 'center',
         alignItems: 'center',
     }),
