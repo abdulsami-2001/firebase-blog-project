@@ -9,8 +9,8 @@ import { useNavigation } from '@react-navigation/native'
 import firestore from '@react-native-firebase/firestore'
 import { showMessage, } from "react-native-flash-message";
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
-import { StyleSheet, Dimensions, View, ScrollView } from 'react-native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
+import { StyleSheet, Dimensions, View, ScrollView, TouchableOpacity, Text } from 'react-native'
 
 const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavorites, userFavorites }) => {
     const [Email, SetEmail] = useState("");
@@ -182,6 +182,9 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                         onChangeText={text => SetPassword(text)}
                         style={STYLES.input}
                     />
+                    <TouchableOpacity onPress={() => navigation.navigate(NavigationStrings.FORGETPASSWORD)}>
+                        <Text style={STYLES.forgetPasword} >Forget password ?</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={STYLES.btnCont}>
                     <Button mode="contained" style={STYLES.btn} onPress={loginHandler}>
@@ -253,5 +256,9 @@ const STYLES = StyleSheet.create({
     btn: {
         marginVertical: vs(3),
         backgroundColor: ThemeColors.CGREEN
+    },
+    forgetPasword: {
+        alignSelf: 'flex-end',
+        marginBottom: vs(3)
     }
 })

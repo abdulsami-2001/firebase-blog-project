@@ -62,24 +62,24 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
                         <FontAwesome name='user-circle' color={ThemeColors.GRAY} size={130} />
                     </View>
                     <View style={STYLES.textCont} >
-                        <Text style={STYLES.textHeading}>Email</Text>
-                        <Text style={STYLES.text}>{user?.email}</Text>
-                    </View>
-                    <View style={STYLES.textCont} >
                         <Text style={STYLES.textHeading}>Email verified</Text>
                         <Text style={STYLES.text}>{user?.emailVerified ? "Yes" : "No"}</Text>
                     </View>
                     <View style={STYLES.textCont} >
-                        <Text style={STYLES.textHeading}>User id</Text>
-                        <Text style={STYLES.text}>{user?.uid}</Text>
+                        <Text style={STYLES.textHeading}>Email</Text>
+                        <Text style={STYLES.text}>{user?.email}</Text>
+                    </View>
+                    <View style={STYLES.textCont} >
+                        <Text style={STYLES.textHeading}>Last login</Text>
+                        <Text style={STYLES.text}>{new Date(user?.metadata?.lastSignInTime).toDateString()} {new Date(user?.metadata?.lastSignInTime).toLocaleTimeString()}</Text>
                     </View>
                     <View style={STYLES.textCont} >
                         <Text style={STYLES.textHeading}>Account creation</Text>
                         <Text style={STYLES.text}>{new Date(user?.metadata?.creationTime).toDateString()} {new Date(user?.metadata?.creationTime).toLocaleTimeString()}</Text>
                     </View>
                     <View style={STYLES.textCont} >
-                        <Text style={STYLES.textHeading}>Last login</Text>
-                        <Text style={STYLES.text}>{new Date(user?.metadata?.lastSignInTime).toDateString()} {new Date(user?.metadata?.lastSignInTime).toLocaleTimeString()}</Text>
+                        <Text style={STYLES.textHeading}>User id</Text>
+                        <Text style={STYLES.text}>{user?.uid}</Text>
                     </View>
                 </View>
                 <View style={STYLES.btnCont} >

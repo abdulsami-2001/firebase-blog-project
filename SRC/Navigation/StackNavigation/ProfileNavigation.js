@@ -7,6 +7,7 @@ import Login from '../../Screens/Login/Login'
 import CustomHeader from '../../Components/CustomHeader'
 import ChangePassword from '../../Screens/ChangePassword/ChangePassword'
 import VerifyEmail from '../../Screens/VerifyEmail/VerifyEmail'
+import ForgetPassword from '../../Screens/ForgetPassword/ForgetPassword'
 
 const Stack = createNativeStackNavigator()
 
@@ -54,6 +55,14 @@ const ProfileNavigation = () => {
                 component={VerifyEmail}
                 options={{
                     title: NavigationStrings.VERIFYEMAIL,
+                    header: (props) => <CustomHeader props={props} />
+                }}
+            />
+            <Stack.Screen
+                name={NavigationStrings.FORGETPASSWORD}
+                component={ForgetPassword}
+                options={{
+                    title: NavigationStrings.FORGETPASSWORD,
                     header: (props) => <CustomHeader props={props} />
                 }}
             />
