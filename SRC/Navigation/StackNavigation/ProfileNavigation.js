@@ -5,6 +5,7 @@ import Profile from '../../Screens/Profile/Profile'
 import Signup from '../../Screens/Signup/Signup'
 import Login from '../../Screens/Login/Login'
 import CustomHeader from '../../Components/CustomHeader'
+import ChangePassword from '../../Screens/ChangePassword/ChangePassword'
 
 const Stack = createNativeStackNavigator()
 
@@ -36,6 +37,14 @@ const ProfileNavigation = () => {
                 component={Login}
                 options={{
                     title: NavigationStrings.LOGIN,
+                    header: (props) => <CustomHeader props={props} />
+                }}
+            />
+            <Stack.Screen
+                name={NavigationStrings.CHANGEPASSWORD}
+                component={ChangePassword}
+                options={{
+                    title: NavigationStrings.CHANGEPASSWORD,
                     header: (props) => <CustomHeader props={props} />
                 }}
             />

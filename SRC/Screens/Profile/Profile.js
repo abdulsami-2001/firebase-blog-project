@@ -54,6 +54,8 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
             })
     }
 
+    
+
     if (user != undefined && user != null) {
         return (
             <View style={STYLES.mainCont}>
@@ -79,6 +81,9 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
                     </View>
                 </View>
                 <View style={STYLES.btnCont} >
+                    <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.CHANGEPASSWORD)}>
+                        CHANGE PASSWORD
+                    </Button>
                     <Button mode="contained" style={STYLES.btn} onPress={() => singOutHandler()}>
                         SIGN OUT
                     </Button>

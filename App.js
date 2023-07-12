@@ -6,6 +6,7 @@ import MainTabNavigation from './SRC/Navigation/TabNavigation/MainTabNavigation'
 import { PaperProvider } from 'react-native-paper';
 import FlashMessage from "react-native-flash-message";
 import { View } from 'react-native'
+
 const App = () => {
     const { Store, Persistor } = ReduxStore()
     return (

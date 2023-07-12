@@ -11,4 +11,5 @@ export default NavigationString = {
     LOGIN: "LOGIN",
     SIGNUP: "SIGNUP",
     PROFILESTACK: "PROFILE STACK",
+    CHANGEPASSWORD: "CHANGE PASSWORD",
 }
