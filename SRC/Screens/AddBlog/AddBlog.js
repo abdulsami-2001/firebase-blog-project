@@ -273,9 +273,6 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
                     </TouchableOpacity>
                 }
                 <ScrollView showsVerticalScrollIndicator={false} >
-                    <View style={STYLES.headingCont}>
-                        <Text style={STYLES.heading}>Write a blog</Text>
-                    </View>
                     <View style={STYLES.inputCont}>
                         <TextInput
                             label="Title"
@@ -291,6 +288,7 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
                             multiline
                             onChangeText={text => setContent(text)}
                             style={STYLES.input}
+                            onPressIn={() => navigation.navigate(NavigationStrings.EDITOR)}
                         />
                         <TextInput
                             label="Author"

@@ -2,6 +2,7 @@ import { createReducer } from 'reduxsauce'
 import { Types } from '../Action/Action'
 
 export const INITIAL_STATE = {
+    content: '',
     isUserLoggedIn: false,
     userIdentification: "",
     userBlogs: {},
@@ -38,6 +39,7 @@ export const UserAuth = (state = INITIAL_STATE, action) => {
         userBlogs: state.userBlogs,
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
+        content: state.content,
     }
 }
 
@@ -49,6 +51,7 @@ export const UserIdUpdate = (state = INITIAL_STATE, action) => {
         userBlogs: state.userBlogs,
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
+        content: state.content,
     }
 }
 
@@ -61,6 +64,7 @@ export const UserBlogsUpdate = (state = INITIAL_STATE, action) => {
         userBlogs: action.userblogs,
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
+        content: state.content,
     }
 }
 
@@ -73,6 +77,7 @@ export const allBlogsUpdate = (state = INITIAL_STATE, action) => {
         userBlogs: state.userBlogs,
         userFavorites: state.userFavorites,
         allBlogs: action.allblogs,
+        content: state.content,
     }
 }
 
@@ -86,11 +91,23 @@ export const UserFavoritesUpdate = (state = INITIAL_STATE, action) => {
         userBlogs: state.userBlogs,
         userFavorites: action.userfavorites,
         allBlogs: state.allBlogs,
+        content: state.content,
     }
 }
 
 
 
+export const Content = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUserLoggedIn: state.isUserLoggedIn,
+        userIdentification: state.userIdentification,
+        userBlogs: state.userBlogs,
+        userFavorites: state.userFavorites,
+        allBlogs: state.allBlogs,
+        content: action.content,
+    }
+}
 
 
 export const HANDLER = {
@@ -99,6 +116,7 @@ export const HANDLER = {
     [Types.USER_BLOGS]: UserBlogsUpdate,
     [Types.ALL_BLOGS]: allBlogsUpdate,
     [Types.USER_FAVORITES]: UserFavoritesUpdate,
+    [Types.CONTENT]: Content,
 }
 
 export default createReducer(INITIAL_STATE, HANDLER)

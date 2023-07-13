@@ -4,6 +4,7 @@ import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import MyBlogs from '../../Screens/MyBlogs/MyBlogs'
 import AddBlog from '../../Screens/AddBlog/AddBlog'
 import CustomHeader from '../../Components/CustomHeader'
+import Editor from '../../Screens/Editor/Editor'
 
 const Stack = createNativeStackNavigator()
 
@@ -27,6 +28,14 @@ const BlogNavigation = () => {
                 component={AddBlog}
                 options={{
                     title: NavigationStrings.ADDBLOG,
+                    header: (props) => <CustomHeader props={props} />
+                }}
+            />
+            <Stack.Screen
+                name={NavigationStrings.EDITOR}
+                component={Editor}
+                options={{
+                    title: NavigationStrings.EDITOR,
                     header: (props) => <CustomHeader props={props} />
                 }}
             />
