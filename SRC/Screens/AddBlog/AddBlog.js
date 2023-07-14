@@ -1,28 +1,29 @@
 import { connect } from 'react-redux'
 import React, { useState } from 'react'
-import RNFetchBlob from 'rn-fetch-blob'
 import { Dimensions } from 'react-native'
 import Lottie from 'lottie-react-native';
+import RNFetchBlob from 'rn-fetch-blob';
+import HTMLView from "react-native-htmlview";
 import { Creators } from '../../Redux/Action/Action'
-import storage from '@react-native-firebase/storage'
-import { TextInput, Button } from 'react-native-paper'
 import { ms, mvs, vs } from 'react-native-size-matters'
 import firestore from '@react-native-firebase/firestore'
 import { showMessage } from 'react-native-flash-message'
 import { useNavigation } from '@react-navigation/native'
+import storage from '@react-native-firebase/storage'
 import DocumentPicker from 'react-native-document-picker'
+import { TextInput, Button, useTheme } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native'
 
-const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
+const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent }) => {
     const [Title, setTitle] = useState("");
-    const [Content, setContent] = useState("");
+    // const [content, setContent] = useState("");
     const [Author, setAuthor] = useState("");
     const [ImageUrl, setImageUrl] = useState('')
     const { width, height } = Dimensions.get('screen')
-
+    const theme = useTheme()
     const navigation = useNavigation()
 
     const publishHandler = () => {
@@ -54,9 +55,10 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
                 message: "Author is empty.",
                 type: "warning",
             });
-        } else if (ImageUrl == '') {
+        }
+        else if (ImageUrl == '') {
             showMessage({
-                message: "Image is not uploaded.",
+                message: "Blog cover image  is not uploaded.",
                 type: "warning",
             });
         }
@@ -91,7 +93,6 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
                 })
             }
         }
-
     }
 
     const uploadToFBCloudStorage = async (fileName, base64String, fileType) => {
@@ -182,7 +183,8 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
                     navigation.navigate(NavigationStrings.MYBLOGS)
                     setTitle('')
                     setAuthor('')
-                    setContent('')
+                    // setContent('')
+                    myContent('')
                     setImageUrl('')
                 });
         } catch (error) {
@@ -227,7 +229,8 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
                     navigation.navigate(NavigationStrings.MYBLOGS)
                     setTitle('')
                     setAuthor('')
-                    setContent('')
+                    myContent('')
+                    // setContent('')
                     setImageUrl('')
                 });
         } catch (error) {
@@ -267,12 +270,15 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
     if (isUserLoggedIn) {
         return (
             <View style={STYLES.mainCont}>
+                <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.EDITOR)}>
+                    <MaterialCommunityIcons name='pencil' color={ThemeColors.CGREEN} size={40} />
+                </TouchableOpacity>
                 {ImageUrl == '' &&
-                    <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={imageUploadHandler}>
-                        <MaterialCommunityIcons name='image-plus' color={ThemeColors.CGREEN} size={50} />
+                    <TouchableOpacity style={[STYLES.iconCont, { bottom: 75 }]} activeOpacity={0.7} onPress={imageUploadHandler}>
+                        <MaterialCommunityIcons name='image-plus' color={ThemeColors.CGREEN} size={40} />
                     </TouchableOpacity>
                 }
-                <ScrollView showsVerticalScrollIndicator={false} >
+                <ScrollView showsVerticalScrollIndicator={false}  >
                     <View style={STYLES.inputCont}>
                         <TextInput
                             label="Title"
@@ -281,15 +287,16 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
                             onChangeText={text => setTitle(text)}
                             style={STYLES.input}
                         />
-                        <TextInput
-                            label="Blog content"
+                        {/* <TextInput
+                            label="Blog Content"
                             value={Content}
                             type='outlined'
                             multiline
                             onChangeText={text => setContent(text)}
                             style={STYLES.input}
                             onPressIn={() => navigation.navigate(NavigationStrings.EDITOR)}
-                        />
+                        /> */}
+                        <HTMLView value={Content != '' ? Content : 'Click on edit icon to write a blog' } style={STYLES.htmlView(theme)} />
                         <TextInput
                             label="Author"
                             value={Author}
@@ -328,16 +335,24 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs }) => {
     }
 }
 
+
 const mapDispatchToProps = {
     myUserState: Creators.userState,
+    myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
+    myuserFavorites: Creators.userFavorites,
+    myallBlogs: Creators.allBlogs,
+    myContent: Creators.content,
 }
 
 const mapStateToProps = (state) => {
     return {
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
-        userIdentification: state.UserAuth.userIdentification,
         userBlogs: state.UserAuth.userBlogs,
+        userIdentification: state.UserAuth.userIdentification,
+        allBlogs: state.UserAuth.allBlogs,
+        userFavorites: state.UserAuth.userFavorites,
+        Content: state.UserAuth.content,
     }
 }
 
@@ -348,6 +363,7 @@ const STYLES = StyleSheet.create({
         flex: 1,
         marginHorizontal: ms(15),
         marginVertical: vs(5),
+
     },
     mainContNL: {
         flex: 1,
@@ -355,6 +371,14 @@ const STYLES = StyleSheet.create({
         marginVertical: vs(5),
         justifyContent: 'center',
     },
+    htmlView: (theme) => ({
+        backgroundColor: theme.colors.primaryContainer,
+        borderTopStartRadius: 5,
+        borderTopEndRadius: 5,
+        borderBottomWidth: 0.5,
+        padding: ms(15),
+
+    }),
     headingCont: {
         marginVertical: vs(20),
         alignItems: 'center',

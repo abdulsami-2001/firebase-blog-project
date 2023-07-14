@@ -88,6 +88,7 @@ const Test = () => {
                 }}
                 insertVideo={insertVideo}
             />
+            {/* <Text style={styles.text}>Result</Text> */}
         </ScrollView>
     );
 };

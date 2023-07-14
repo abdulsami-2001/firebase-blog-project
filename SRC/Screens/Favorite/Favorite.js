@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import Lottie from 'lottie-react-native';
-import { vs } from 'react-native-size-matters'
+import { ms, vs } from 'react-native-size-matters'
 import { Card, Text } from 'react-native-paper'
 import React, { useEffect, useState } from 'react'
 import { Creators } from '../../Redux/Action/Action'
@@ -32,15 +32,10 @@ const Favorite = ({ isUserLoggedIn, userIdentification, userFavorites }) => {
                         return (
                             <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)}>
                                 <Card>
-                                    <Card.Cover source={{ uri: userFavorites[item]?.ImageUrl }} resizeMode='contain'/>
+                                    <Card.Cover source={{ uri: userFavorites[item]?.ImageUrl }} resizeMode='contain' />
                                     <Card.Content>
                                         <Text variant="titleLarge" style={STYLES.textHeading} >{userFavorites[item]?.Title}</Text>
-
-                                        {userFavorites[item]?.Content?.length > 135 ?
-                                            <Text variant="bodyMedium" style={STYLES.text}>{userFavorites[item]?.Content.substr(0, 135)}...</Text>
-                                            :
-                                            <Text variant="bodyMedium" style={STYLES.text}>{userFavorites[item]?.Content}</Text>
-                                        }
+                                        <Text variant="bodyMedium" style={STYLES.text}>Tap to read</Text>
                                         <View style={STYLES.authorCont} >
                                             <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
                                             <Text style={STYLES.text}>{userFavorites[item]?.Author}</Text>
@@ -129,6 +124,7 @@ const STYLES = StyleSheet.create({
     },
     cardCont: (width) => ({
         marginVertical: 5,
+        width: width - ms(30)
     }),
     headingCont: {
         marginVertical: vs(20),

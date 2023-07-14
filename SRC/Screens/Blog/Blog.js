@@ -1,6 +1,7 @@
-import { connect } from 'react-redux'
-import { Card, Text } from 'react-native-paper'
 import React from 'react'
+import { connect } from 'react-redux'
+import HTMLView from 'react-native-htmlview'
+import { Card, Text } from 'react-native-paper'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import { showMessage } from 'react-native-flash-message'
@@ -122,7 +123,8 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
                     <Card.Cover source={{ uri: allBlogs[params]?.ImageUrl }} resizeMode='contain' />
                     <Card.Content>
                         <Text variant="titleLarge">{allBlogs[params]?.Title}</Text>
-                        <Text variant="bodyMedium">{allBlogs[params]?.Content}</Text>
+                        <HTMLView value={allBlogs[params]?.Content} ></HTMLView>
+                        {/* <Text variant="bodyMedium">{allBlogs[params]?.Content}</Text> */}
                         <View style={STYLES.infoCont}>
                             <View>
                                 <Text variant="titleSmall">Author: {allBlogs[params]?.Author}</Text>

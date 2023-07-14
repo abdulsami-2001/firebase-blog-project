@@ -1,4 +1,3 @@
-import { StyleSheet, Text, View, ScrollView, Button, Dimensions, KeyboardAvoidingView } from 'react-native'
 import React, { useRef, useState } from 'react'
 import {
     actions,
@@ -6,13 +5,17 @@ import {
     RichEditor,
     RichToolbar,
 } from "react-native-pell-rich-editor";
-import HTMLView from "react-native-htmlview";
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import RNFetchBlob from 'rn-fetch-blob';
 import { connect } from 'react-redux';
-import { Creators } from '../../Redux/Action/Action';
 import { ms } from 'react-native-size-matters';
 import { vs } from 'react-native-size-matters';
+import storage from '@react-native-firebase/storage'
+import { Creators } from '../../Redux/Action/Action';
+import DocumentPicker from 'react-native-document-picker'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
+import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native'
+import { showMessage } from 'react-native-flash-message';
 
 const Editor = ({ content, mycontent }) => {
     const RichText = useRef();
@@ -29,27 +32,92 @@ const Editor = ({ content, mycontent }) => {
         });
     }
 
-    // Callback after height change
-    function handleHeightChange(height) {
-        // console.log("editor height change:", height);
+    const imageUploadHandler = async () => {
+        try {
+            const res = await DocumentPicker.pick({
+                // allowMultiSelection: true,
+                type: [DocumentPicker.types.images]
+            })
+            const { uri: path, name: fileName, type: fileType } = res[0]
+            const base64String = await RNFetchBlob.fs.readFile(path, 'base64')
+            uploadToFBCloudStorage(fileName, base64String, fileType)
+        } catch (error) {
+            if (DocumentPicker.isCancel(error)) {
+                showMessage({
+                    message: "You didn't choose any image.",
+                    type: "danger",
+                })
+            }
+            else {
+                showMessage({
+                    message: "Something went wrong",
+                    type: "danger",
+                })
+            }
+        }
     }
 
-    function onPressAddImage() {
-        // you can easily add images from your gallery
-        RichText.current?.insertImage(
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/100px-React-icon.svg.png"
-        );
+    const uploadToFBCloudStorage = async (fileName, base64String, fileType) => {
+        showMessage({
+            message: "Image uploading in process",
+            type: "info",
+            duration: 3000
+        })
+        const uploadContent = storage().ref(`allFiles/${fileName}`)
+            .putString(base64String, 'base64', { contentType: fileType })
+        uploadContent.on('state_changed', (snapshot) => {
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            showMessage({
+                message: `Image upload is ${progress} % done`,
+                type: "info",
+            })
+            switch (snapshot.state) {
+                case 'paused':
+                    showMessage({
+                        message: `Upload is paused`,
+                        description: 'Make sure you have working internet',
+                        type: "warning",
+                    })
+                    break;
+                case 'running':
+                    showMessage({
+                        message: `Upload is running`,
+                        type: "info",
+                    })
+                    console.log('Upload is running');
+                    break;
+            }
+        },
+            (error) => {
+                // Handle unsuccessful uploads
+                console.log(error)
+                showMessage({
+                    message: "Something went wrong",
+                    description: error.message,
+                    type: "warning",
+                })
+            },
+            () => {
+                // Handle successful uploads on complete
+                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                uploadContent.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    console.log('File available at', downloadURL);
+                    // setImageUrl(downloadURL)
+                    // you can easily add images from your gallery
+                    RichText.current?.insertImage(downloadURL);
+                    showMessage({
+                        message: "Image Uploaded Successfully.",
+                        type: "success",
+                    })
+                });
+            }
+        )
     }
 
-    function insertVideo() {
-        // you can easily add videos from your gallery
-        RichText.current?.insertVideo(
-            "https://mdn.github.io/learning-area/html/multimedia-and-embedding/video-and-audio-content/rabbit320.mp4"
-        );
-    }
-
-
-    console.log("content: ", content)
+    // console.log("content: ", content)
     return (
         <View style={STYLES.mainCont}>
             <RichToolbar
@@ -58,14 +126,14 @@ const Editor = ({ content, mycontent }) => {
                 disabled={false}
                 iconTint={ThemeColors.CGREEN}
                 selectedIconTint={ThemeColors.WHITE}
-                disabledIconTint={"purple"}
-                onPressAddImage={onPressAddImage}
+                disabledIconTint={ThemeColors.BLACKOPACITY80}
+                onPressAddImage={imageUploadHandler}
                 iconSize={20}
                 actions={[
+                    actions.insertImage,
                     ...defaultActions,
                     actions.setStrikethrough,
                     actions.heading1,
-                    "insertVideo",
                 ]}
                 // map icons for self made actions
                 iconMap={{
@@ -73,26 +141,21 @@ const Editor = ({ content, mycontent }) => {
                         <Text style={[STYLES.tib, { color: tintColor }]}>H1</Text>
                     ),
                     [actions.setStrikethrough]: () => <FontAwesome name={'strikethrough'} color={ThemeColors.CGREEN} size={20} />,
-                    ["insertVideo"]: () => <FontAwesome name={'camera'} color={ThemeColors.CGREEN} size={20} />,
                 }}
-                insertVideo={insertVideo}
             />
             <View style={STYLES.subCont(height)} >
-                <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding' >
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <RichEditor
-                            disabled={false}
-                            containerStyle={STYLES.editor(height)}
-                            ref={RichText}
-                            style={STYLES.rich}
-                            placeholder={"Start Writing Here"}
-                            onChange={(text) => mycontent(text)}
-                            editorInitializedCallback={editorInitializedCallback}
-                            onHeightChange={handleHeightChange}
-                            initialContentHTML={content}
-                        />
-                    </ScrollView>
-                </KeyboardAvoidingView>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <RichEditor
+                        disabled={false}
+                        containerStyle={STYLES.editor(height)}
+                        ref={RichText}
+                        style={STYLES.rich}
+                        placeholder={"Start Writing Blog Content"}
+                        onChange={(text) => mycontent(text)}
+                        editorInitializedCallback={editorInitializedCallback}
+                        initialContentHTML={content}
+                    />
+                </ScrollView>
             </View>
         </View>
     )

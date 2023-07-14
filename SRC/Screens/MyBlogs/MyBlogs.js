@@ -32,16 +32,12 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => {
                             return (
-                                <TouchableOpacity style={STYLES.cardCont} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
+                                <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
                                     <Card  >
                                         <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
                                         <Card.Content>
                                             <Text variant="titleLarge" style={STYLES.textHeading} >{userBlogs[item]?.Title}</Text>
-                                            {userBlogs[item]?.Content?.length > 135 ?
-                                                <Text variant="bodyMedium" style={STYLES.text}>{userBlogs[item]?.Content.substr(0, 135)}...</Text>
-                                                :
-                                                <Text variant="bodyMedium" style={STYLES.text}>{userBlogs[item]?.Content}</Text>
-                                            }
+                                            <Text variant="bodyMedium" style={STYLES.text}>Tap to read</Text>
                                             <View style={STYLES.authorCont} >
                                                 <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
                                                 <Text style={STYLES.text}>{userBlogs[item]?.Author}</Text>
@@ -141,9 +137,10 @@ const STYLES = StyleSheet.create({
     myBlogsCont: {
         flex: 1
     },
-    cardCont: {
-        marginVertical: vs(5)
-    },
+    cardCont: (width) => ({
+        marginVertical: vs(5),
+        width: width - ms(30)
+    }),
     btnCont: {
         position: 'absolute',
         zIndex: 1,
