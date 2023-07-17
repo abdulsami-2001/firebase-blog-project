@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import HTMLView from 'react-native-htmlview'
+// import HTMLView from 'react-native-htmlview'
+import RenderHtml from 'react-native-render-html'
 import { Card, Text } from 'react-native-paper'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
@@ -8,12 +9,14 @@ import { showMessage } from 'react-native-flash-message'
 import firestore from '@react-native-firebase/firestore'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import { StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native'
+import { StyleSheet, TouchableOpacity, View, ScrollView, useWindowDimensions } from 'react-native'
 
 const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavorites }) => {
     const { params } = route
-
+    const { width } = useWindowDimensions();
     const isLoved = false
+
+
     const iconPresHandler = () => {
         if (userIdentification) {
             getFavoritesFromFirestore()
@@ -116,6 +119,8 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
         }
     }
 
+    console.log(allBlogs[params]?.Content)
+
     return (
         <View style={STYLES.mainCont}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -123,7 +128,13 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
                     <Card.Cover source={{ uri: allBlogs[params]?.ImageUrl }} resizeMode='contain' />
                     <Card.Content>
                         <Text variant="titleLarge">{allBlogs[params]?.Title}</Text>
-                        <HTMLView value={allBlogs[params]?.Content} ></HTMLView>
+                        {/* <HTMLView value={allBlogs[params]?.Content} ></HTMLView> */}
+                        <ScrollView horizontal >
+                            <RenderHtml
+                                source={{ html: allBlogs[params]?.Content }}
+                                contentWidth={width}
+                            />
+                        </ScrollView>
                         {/* <Text variant="bodyMedium">{allBlogs[params]?.Content}</Text> */}
                         <View style={STYLES.infoCont}>
                             <View>

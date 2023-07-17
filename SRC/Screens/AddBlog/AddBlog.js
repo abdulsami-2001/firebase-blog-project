@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import { Dimensions } from 'react-native'
 import Lottie from 'lottie-react-native';
 import RNFetchBlob from 'rn-fetch-blob';
-import HTMLView from "react-native-htmlview";
+// import HTMLView from "react-native-htmlview";
+import RenderHtml from 'react-native-render-html'
 import { Creators } from '../../Redux/Action/Action'
 import { ms, mvs, vs } from 'react-native-size-matters'
 import firestore from '@react-native-firebase/firestore'
@@ -296,7 +297,13 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                             style={STYLES.input}
                             onPressIn={() => navigation.navigate(NavigationStrings.EDITOR)}
                         /> */}
-                        <HTMLView value={Content != '' ? Content : 'Click on edit icon to write a blog' } style={STYLES.htmlView(theme)} />
+                        {/* <HTMLView value={Content != '' ? Content : 'Click on edit icon to write a blog'} style={STYLES.htmlView(theme)} /> */}
+                        <ScrollView style={STYLES.htmlView(theme)} horizontal>
+                            <RenderHtml
+                                source={{ html: Content != '' ? Content : 'Click on edit icon to write a blog' }}
+                                contentWidth={width}
+                            />
+                        </ScrollView>
                         <TextInput
                             label="Author"
                             value={Author}
@@ -376,7 +383,7 @@ const STYLES = StyleSheet.create({
         borderTopStartRadius: 5,
         borderTopEndRadius: 5,
         borderBottomWidth: 0.5,
-        padding: ms(15),
+        // padding: ms(15),
 
     }),
     headingCont: {

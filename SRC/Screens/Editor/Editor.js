@@ -21,6 +21,8 @@ const Editor = ({ content, mycontent }) => {
     const RichText = useRef();
     const { height } = Dimensions.get('screen')
 
+    console.log("content", content)
+
     // this function will be called when the editor has been initialized
     function editorInitializedCallback() {
         RichText.current?.registerToolbar(function (items) {
@@ -134,6 +136,8 @@ const Editor = ({ content, mycontent }) => {
                     ...defaultActions,
                     actions.setStrikethrough,
                     actions.heading1,
+                    actions.undo,
+                    actions.redo,
                 ]}
                 // map icons for self made actions
                 iconMap={{

@@ -23,6 +23,7 @@ const MainTabNavigation = () => {
                     tabBarStyle: {
                         backgroundColor: ThemeColors.CGREEN,
                     },
+                    tabBarHideOnKeyboard: true,
                     tabBarActiveTintColor: ThemeColors.BLACKOPACITY80,
                     tabBarInactiveTintColor: ThemeColors.WHITE,
                 }}
