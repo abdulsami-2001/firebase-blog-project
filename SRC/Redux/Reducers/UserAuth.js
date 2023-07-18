@@ -5,6 +5,7 @@ export const INITIAL_STATE = {
     content: '',
     isUserLoggedIn: false,
     userIdentification: "",
+    userLike: {},
     userBlogs: {},
     userFavorites: {},
     allBlogs: {
@@ -40,6 +41,7 @@ export const UserAuth = (state = INITIAL_STATE, action) => {
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
+        userLike: state.userLike,
     }
 }
 
@@ -52,6 +54,7 @@ export const UserIdUpdate = (state = INITIAL_STATE, action) => {
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
+        userLike: state.userLike,
     }
 }
 
@@ -65,6 +68,7 @@ export const UserBlogsUpdate = (state = INITIAL_STATE, action) => {
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
+        userLike: state.userLike,
     }
 }
 
@@ -78,6 +82,7 @@ export const allBlogsUpdate = (state = INITIAL_STATE, action) => {
         userFavorites: state.userFavorites,
         allBlogs: action.allblogs,
         content: state.content,
+        userLike: state.userLike,
     }
 }
 
@@ -92,11 +97,10 @@ export const UserFavoritesUpdate = (state = INITIAL_STATE, action) => {
         userFavorites: action.userfavorites,
         allBlogs: state.allBlogs,
         content: state.content,
+        userLike: state.userLike,
+
     }
 }
-
-
-
 export const Content = (state = INITIAL_STATE, action) => {
     return {
         ...state,
@@ -106,9 +110,22 @@ export const Content = (state = INITIAL_STATE, action) => {
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: action.content,
+        userLike: state.userLike,
     }
 }
 
+export const UserLikeUpdate = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUserLoggedIn: state.isUserLoggedIn,
+        userIdentification: state.userIdentification,
+        userBlogs: state.userBlogs,
+        userFavorites: state.userFavorites,
+        allBlogs: state.allBlogs,
+        content: state.content,
+        userLike: action.userlike,
+    }
+}
 
 export const HANDLER = {
     [Types.USER_STATE]: UserAuth,
@@ -117,6 +134,7 @@ export const HANDLER = {
     [Types.ALL_BLOGS]: allBlogsUpdate,
     [Types.USER_FAVORITES]: UserFavoritesUpdate,
     [Types.CONTENT]: Content,
+    [Types.USER_LIKE]: UserLikeUpdate,
 }
 
 export default createReducer(INITIAL_STATE, HANDLER)

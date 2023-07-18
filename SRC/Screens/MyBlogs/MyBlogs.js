@@ -42,6 +42,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                                                 <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
                                                 <Text style={STYLES.text}>{userBlogs[item]?.Author}</Text>
                                             </View>
+                                            <Text variant="bodyMedium" style={STYLES.text}>{userBlogs[item]?.BlogId}</Text>
                                         </Card.Content>
                                     </Card>
                                 </TouchableOpacity>

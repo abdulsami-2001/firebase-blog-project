@@ -10,7 +10,7 @@ import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 
-const Home = ({ userBlogs, myallBlogs, allBlogs }) => {
+const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
     const navigation = useNavigation()
     let BlogData = Object.keys(allBlogs)
     const { width } = Dimensions.get('screen')
@@ -18,6 +18,36 @@ const Home = ({ userBlogs, myallBlogs, allBlogs }) => {
     useEffect(() => {
         getDataFromFirestore()
     }, [userBlogs])
+    useEffect(() => {
+        getLikeFromFirestore()
+    }, [])
+
+    const getLikeFromFirestore = async () => {
+        try {
+            let datatemp = {}
+            let dataRef = firestore().collection('Like');
+            let snapshot = await dataRef?.get()
+            snapshot.forEach(doc => {
+                let tempdoc = doc?.data()
+                let anotherTemp = doc.id
+                datatemp = { [anotherTemp]: tempdoc, ...datatemp }
+            });
+
+            // console.log(datatemp)
+            myUserLike({ ...datatemp })
+
+
+        } catch (error) {
+            console.log(error)
+            showMessage({
+                duration: 2000,
+                message: 'Error while fetching Blog Likes',
+                description: "Make sure you have working internet",
+            })
+        }
+    }
+
+    // getLikeFromFirestore()
 
     const getDataFromFirestore = async () => {
         try {
@@ -41,11 +71,16 @@ const Home = ({ userBlogs, myallBlogs, allBlogs }) => {
         }
     }
 
+    const generateKey = (pre) => {
+        return `${pre}_${new Date().getTime()}`;
+    }
+
     return (
         <View style={STYLES.mainCont}>
             <View style={STYLES.subCont}>
                 <FlatList
                     data={BlogData}
+                    key={Math.random()}
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => {
                         return (
@@ -61,6 +96,18 @@ const Home = ({ userBlogs, myallBlogs, allBlogs }) => {
                                                 <Text style={STYLES.text}>{allBlogs[item]?.Author}</Text>
                                             </View>
                                         </View>
+                                        <Text variant="bodyMedium" style={STYLES.text}>{allBlogs[item]?.BlogId}: id</Text>
+                                        {/* <View style={STYLES.engagementCont} >
+                                            <TouchableOpacity onPress={{}} style={STYLES.likeCont} >
+                                                <Text variant="titleSmall" style={STYLES.textHeading}>L</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={{}} style={STYLES.commentCont} >
+                                                <Text variant="titleSmall" style={STYLES.textHeading}>C</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={{}} style={STYLES.shareCont} >
+                                                <Text variant="titleSmall" style={STYLES.textHeading}>S</Text>
+                                            </TouchableOpacity>
+                                        </View> */}
                                     </Card.Content>
                                 </Card>
                             </TouchableOpacity>
@@ -68,7 +115,7 @@ const Home = ({ userBlogs, myallBlogs, allBlogs }) => {
                     }}
                 />
             </View>
-        </View >
+        </View>
     )
 }
 
@@ -77,6 +124,7 @@ const mapDispatchToProps = {
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
     myallBlogs: Creators.allBlogs,
+    myUserLike: Creators.userLike,
 }
 
 const mapStateToProps = (state) => {
@@ -85,12 +133,19 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
+        userLike: state.UserAuth.userLike,
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const STYLES = StyleSheet.create({
+    engagementCont: {
+        flexDirection: 'row',
+        // backgroundColor: 'pink',
+        marginTop: vs(10),
+        justifyContent: 'space-around',
+    },
     mainCont: {
         flex: 1,
         alignItems: 'center',

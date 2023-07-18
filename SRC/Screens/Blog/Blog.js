@@ -11,7 +11,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { StyleSheet, TouchableOpacity, View, ScrollView, useWindowDimensions } from 'react-native'
 
-const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavorites }) => {
+const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavorites, userLike }) => {
     const { params } = route
     const { width } = useWindowDimensions();
     const isLoved = false
@@ -119,7 +119,7 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
         }
     }
 
-    console.log(allBlogs[params]?.Content)
+    console.log(route)
 
     return (
         <View style={STYLES.mainCont}>
@@ -148,6 +148,18 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
                                 }
                             </TouchableOpacity>
                         </View>
+                        <View style={STYLES.engagementCont} >
+                            <TouchableOpacity onPress={{}} style={STYLES.likeCont} >
+                                <Text variant="titleSmall" style={STYLES.textHeading}>L</Text>
+                                <Text>{userLike[allBlogs[params]?.BlogId]?.LikeCount}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={{}} style={STYLES.commentCont} >
+                                <Text variant="titleSmall" style={STYLES.textHeading}>C</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={{}} style={STYLES.shareCont} >
+                                <Text variant="titleSmall" style={STYLES.textHeading}>S</Text>
+                            </TouchableOpacity>
+                        </View>
                     </Card.Content>
                 </Card>
             </ScrollView>
@@ -155,15 +167,13 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
     )
 }
 
-
-
-
 const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
     myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
+    myUserLike: Creators.userLike,
 }
 
 const mapStateToProps = (state) => {
@@ -173,6 +183,7 @@ const mapStateToProps = (state) => {
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
         userFavorites: state.UserAuth.userFavorites,
+        userLike: state.UserAuth.userLike,
     }
 }
 
@@ -181,6 +192,32 @@ export default connect(mapStateToProps, mapDispatchToProps)(Blog)
 
 
 const STYLES = StyleSheet.create({
+    likeCont: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        flex: 3,
+        // backgroundColor: 'red',
+    },
+    commentCont: {
+        // flexDirection: 'row',
+        // justifyContent: 'space-between',
+        // backgroundColor: 'purple',
+        flex: 2,
+    },
+    shareCont: {
+        // flexDirection: 'row',
+        // backgroundColor: 'blue',
+        // justifyContent: 'space-between',
+        flex: 2,
+    },
+    engagementCont: {
+        borderWidth: 1,
+        borderRadius: ms(3),
+        flexDirection: 'row',
+        // backgroundColor: 'pink',
+        marginTop: vs(5),
+        justifyContent: 'space-around',
+    },
     mainCont: {
         flex: 1,
         // alignItems: 'center',
@@ -196,13 +233,23 @@ const STYLES = StyleSheet.create({
         marginVertical: vs(5)
     },
     infoCont: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        // borderBottomWidth: 0.5,
+        marginVertical: vs(4)
     },
     btnCont: {
         alignItems: 'center',
         justifyContent: 'center',
         // backgroundColor:"purple",
         paddingHorizontal: ms(10),
-    }
+    },
+    textHeading: {
+        fontWeight: 'bold',
+        fontSize: 18,
+    },
+    text: {
+        color: ThemeColors.GRAY,
+        fontSize: 15,
+    },
 })
 

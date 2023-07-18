@@ -27,6 +27,10 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
     const theme = useTheme()
     const navigation = useNavigation()
 
+    const generateKey = (title) => {
+        return `${title}_${new Date().getTime()}`;
+        
+    }
     const publishHandler = () => {
         if (Title != '' && Content != '' && Author != '' && ImageUrl != '') {
             // run func
@@ -164,7 +168,8 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                         Title,
                         Content,
                         Author,
-                        ImageUrl
+                        ImageUrl,
+                        BlogId: generateKey(Title)
                     }
                 })
                 .then(() => {
@@ -178,7 +183,8 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                             Title,
                             Content,
                             Author,
-                            ImageUrl
+                            ImageUrl,
+                            BlogId: generateKey(Title)
                         }
                     })
                     navigation.navigate(NavigationStrings.MYBLOGS)
@@ -209,7 +215,8 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                         Title,
                         Content,
                         Author,
-                        ImageUrl
+                        ImageUrl,
+                        BlogId: generateKey(Title)
                     }
                 })
                 .then(() => {
@@ -223,7 +230,8 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                             Title,
                             Content,
                             Author,
-                            ImageUrl
+                            ImageUrl,
+                            BlogId: generateKey(Title)
                         },
                         ...data,
                     })
