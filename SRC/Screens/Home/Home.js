@@ -22,6 +22,9 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
         getLikeFromFirestore()
     }, [])
 
+    console.log('Home')
+
+
     const getLikeFromFirestore = async () => {
         try {
             let datatemp = {}
@@ -47,8 +50,6 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
         }
     }
 
-    // getLikeFromFirestore()
-
     const getDataFromFirestore = async () => {
         try {
             let datatemp = {}
@@ -71,9 +72,6 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
         }
     }
 
-    const generateKey = (pre) => {
-        return `${pre}_${new Date().getTime()}`;
-    }
 
     return (
         <View style={STYLES.mainCont}>
@@ -96,7 +94,6 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
                                                 <Text style={STYLES.text}>{allBlogs[item]?.Author}</Text>
                                             </View>
                                         </View>
-                                        <Text variant="bodyMedium" style={STYLES.text}>{allBlogs[item]?.BlogId}: id</Text>
                                         {/* <View style={STYLES.engagementCont} >
                                             <TouchableOpacity onPress={{}} style={STYLES.likeCont} >
                                                 <Text variant="titleSmall" style={STYLES.textHeading}>L</Text>
