@@ -6,9 +6,9 @@ import { Creators } from '../../Redux/Action/Action'
 import { useNavigation } from '@react-navigation/native'
 import { showMessage } from 'react-native-flash-message'
 import firestore from '@react-native-firebase/firestore'
+import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
-import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 
 const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
     const navigation = useNavigation()
@@ -21,9 +21,6 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
     useEffect(() => {
         getLikeFromFirestore()
     }, [])
-
-    console.log('Home')
-
 
     const getLikeFromFirestore = async () => {
         try {
@@ -46,6 +43,7 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
                 duration: 2000,
                 message: 'Error while fetching Blog Likes',
                 description: "Make sure you have working internet",
+                type: 'warning',
             })
         }
     }
@@ -68,6 +66,7 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
                 duration: 2000,
                 message: 'Error while fetching blogs',
                 description: "Make sure you have working internet",
+                type: 'warning',
             })
         }
     }

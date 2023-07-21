@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-// import HTMLView from 'react-native-htmlview'
+import React, { useEffect, useState } from 'react'
 import RenderHtml from 'react-native-render-html'
-import { Card, Text } from 'react-native-paper'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import { showMessage } from 'react-native-flash-message'
+import { Card, Surface, Text } from 'react-native-paper'
 import firestore from '@react-native-firebase/firestore'
-import AntDesign from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { StyleSheet, TouchableOpacity, View, ScrollView, useWindowDimensions } from 'react-native'
@@ -23,8 +22,8 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
         setfirst(!first)
     }, [userLike])
 
-    console.log('userLike', userLike)
-
+    // For Favorite feature
+    // ----------------
     const iconPresHandler = () => {
         if (userIdentification) {
             getFavoritesFromFirestore()
@@ -63,6 +62,7 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
                 duration: 2000,
                 message: 'Error while fetching blogs',
                 description: "Make sure you have working internet",
+                type: 'warning',
             })
         }
     }
@@ -127,7 +127,8 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
         }
     }
 
-    // -------------------------
+    // For Like feature
+    // ----------------
 
     const likePressHandler = (BlogId) => {
         if (userIdentification) {
@@ -165,6 +166,7 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
                 duration: 2000,
                 message: 'Error while fetching blogs',
                 description: "Make sure you have working internet",
+                type: 'warning',
             })
         }
     }
@@ -177,8 +179,6 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
 
             // console.log(userLike)
             let liked = false; // not liked by user
-            // let usrIdArray = [...userLike[allBlogs[params]?.BlogId]?.LikedByUsers]
-            // console.log(data)
             let usrIdArray = [...data?.LikedByUsers]
             usrIdArray.push(userIdentification)
 
@@ -192,8 +192,6 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
                 }
             })
 
-            console.log('usrIdArray', usrIdArray)
-
             liked ? updateLikeToFirestore(liked, usrIdArray) : updateLikeToFirestore(liked, usrIdArray)
 
         } catch (error) {
@@ -202,7 +200,6 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
     }
 
     const updateLikeToFirestore = async (liked, usrIdArray) => {
-
         try {
             firestore()
                 .collection('Like')
@@ -264,6 +261,46 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
         }
     }
 
+    // {
+    //     commentId: {
+    //         userId: 'samimdi'
+    //         userComment: 'My comment'
+    //     }
+    // }
+
+
+    // For Comment feature
+    // ----------------
+    const commentPressHandler = () => {
+        if (userIdentification) {
+            // getCommentFromFirestore(BlogId)
+
+        } else if (!userIdentification) {
+            showMessage({
+                message: "You're in guest mode",
+                description: 'Do login/signup from profile',
+                duration: 3000,
+                type: 'warning'
+            })
+        } else {
+            showMessage({
+                message: 'Something went wrong',
+                description: 'Restart the app',
+                type: 'warning'
+            })
+        }
+    }
+
+
+    // For Share feature
+    // ----------------
+    const sharePressHandler = () => {
+        showMessage({
+            duration: 2000,
+            message: 'Share feature will implement soon',
+            type: 'info',
+        })
+    }
 
     return (
         <View style={STYLES.mainCont}>
@@ -290,29 +327,24 @@ const Blog = ({ route, userIdentification, allBlogs, myuserFavorites, userFavori
                                 }
                             </TouchableOpacity>
                         </View>
-                        <View style={STYLES.engagementCont} >
-                            <TouchableOpacity onPress={() => likePressHandler(allBlogs[params]?.BlogId)} style={STYLES.likeCont} >
+                        <Surface style={STYLES.engagementCont} elevation={1} >
+                            <TouchableOpacity onPress={() => likePressHandler(allBlogs[params]?.BlogId)} style={STYLES.engagementSubCont} >
                                 {userLike[allBlogs[params]?.BlogId]?.LikedByUsers?.find((item) => item == userIdentification) ?
                                     (
-                                        <>
-                                            <AntDesign name={'like1'} size={25} color={ThemeColors.CGREEN} />
-                                        </>
+                                        <AntDesign name={'like1'} size={22} color={ThemeColors.CGREEN} />
+                                    ) : (
+                                        <AntDesign name={'like2'} size={22} color={ThemeColors.CGREEN} />
                                     )
-                                    :
-                                    (
-                                        <>
-                                            <AntDesign name={'like2'} size={25} color={ThemeColors.CGREEN} />
-                                        </>
-                                    )}
-                                {userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length ? <Text>{userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length}</Text> : <Text>0</Text>}
+                                }
+                                <Text variant="titleSmall" style={STYLES.likeText} >{userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length ? userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length : 0}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={{}} style={STYLES.commentCont} >
-                                <Fontisto name={'comment'} size={25} color={ThemeColors.CGREEN} />
+                            <TouchableOpacity onPress={() => commentPressHandler()} style={STYLES.engagementSubCont} >
+                                <Fontisto name={'comments'} size={20} color={ThemeColors.CGREEN} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={{}} style={STYLES.shareCont} >
-                                <Fontisto name={'share'} size={25} color={ThemeColors.CGREEN} />
+                            <TouchableOpacity onPress={() => sharePressHandler()} style={STYLES.engagementSubCont} >
+                                <Fontisto name={'share'} size={20} color={ThemeColors.CGREEN} />
                             </TouchableOpacity>
-                        </View>
+                        </Surface>
                     </Card.Content>
                 </Card>
             </ScrollView>
@@ -345,62 +377,38 @@ export default connect(mapStateToProps, mapDispatchToProps)(Blog)
 
 
 const STYLES = StyleSheet.create({
-    likeCont: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        // flex: 3,
-        // backgroundColor: 'red',
-        paddingVertical: vs(6),
+    likeText: {
+        marginLeft: ms(10)
     },
-    commentCont: {
+    engagementSubCont: {
         flexDirection: 'row',
-        // backgroundColor: 'purple',
+        justifyContent: 'center',
+        alignItems: 'center',
         paddingVertical: vs(6),
-        justifyContent: 'center',
-        alignItems: 'center',
-        // flex: 2,
-    },
-    shareCont: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        // backgroundColor: 'blue',
-        // flex: 2,
     },
     engagementCont: {
-        borderWidth: 1,
-        borderRadius: ms(3),
+        borderRadius: ms(15),
         flexDirection: 'row',
-        // backgroundColor: 'pink',
-        padding: ms(5),
-        marginTop: vs(5),
+        paddingVertical: ms(5),
+        paddingHorizontal: ms(10),
         alignContent: 'center',
         justifyContent: 'space-between',
     },
     mainCont: {
         flex: 1,
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // flexDirection: 'row',
         marginHorizontal: ms(15),
         marginVertical: vs(5),
-        // backgroundColor: 'purple'
-    },
-    subCont: {
     },
     cardCont: {
         marginVertical: vs(5)
     },
     infoCont: {
         flexDirection: 'row',
-        // borderBottomWidth: 0.5,
         marginVertical: vs(4)
     },
     btnCont: {
         alignItems: 'center',
         justifyContent: 'center',
-        // backgroundColor:"purple",
         paddingHorizontal: ms(10),
     },
     textHeading: {

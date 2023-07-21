@@ -29,7 +29,7 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
 
     const generateKey = (title) => {
         return `${title}_${new Date().getTime()}`;
-        
+
     }
     const publishHandler = () => {
         if (Title != '' && Content != '' && Author != '' && ImageUrl != '') {
@@ -266,12 +266,14 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                 showMessage({
                     duration: 2000,
                     message: "Make sure you have working internet",
+                    type: 'warning',
                 })
             }
         } catch (error) {
             showMessage({
                 duration: 2000,
                 message: "Make sure you have working internet",
+                type: 'warning',
             })
         }
     }
