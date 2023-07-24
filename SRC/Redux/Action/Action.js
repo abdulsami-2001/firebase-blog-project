@@ -8,4 +8,5 @@ export const { Types, Creators } = createActions({
     userFavorites: ['userfavorites'],
     content: ['content'],
     userLike: ['userlike'],
+    userComments: ['usercomments'],
 })

@@ -10,7 +10,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 
-const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
+const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComments, myUserComments }) => {
     const navigation = useNavigation()
     let BlogData = Object.keys(allBlogs)
     const { width } = Dimensions.get('screen')
@@ -20,8 +20,35 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
     }, [userBlogs])
     useEffect(() => {
         getLikeFromFirestore()
+        getCommentsFromFirestore()
     }, [])
 
+    console.log("userComments", userComments)
+
+    // user data from firebase firestore
+    const getDataFromFirestore = async () => {
+        try {
+            let datatemp = {}
+            let dataRef = firestore().collection('Users');
+            let snapshot = await dataRef?.get()
+            snapshot.forEach(doc => {
+                let tempdoc = doc?.data()
+                datatemp = { ...tempdoc, ...datatemp }
+            });
+
+            myallBlogs({ ...datatemp })
+
+        } catch (error) {
+            console.log(error)
+            showMessage({
+                duration: 2000,
+                message: 'Error while fetching blogs',
+                description: "Make sure you have working internet",
+                type: 'warning',
+            })
+        }
+    }
+    // Likes data from firebase firestore
     const getLikeFromFirestore = async () => {
         try {
             let datatemp = {}
@@ -48,29 +75,27 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike }) => {
         }
     }
 
-    const getDataFromFirestore = async () => {
+    // comments data from firebase firestore
+    const getCommentsFromFirestore = async () => {
         try {
             let datatemp = {}
-            let dataRef = firestore().collection('Users');
+            let dataRef = firestore().collection('Comments');
             let snapshot = await dataRef?.get()
             snapshot.forEach(doc => {
                 let tempdoc = doc?.data()
-                datatemp = { ...tempdoc, ...datatemp }
+                let anotherTemp = doc.id
+                datatemp = { [anotherTemp]: tempdoc, ...datatemp }
             });
-
-            myallBlogs({ ...datatemp })
+            myUserComments({ ...datatemp })
 
         } catch (error) {
-            console.log(error)
             showMessage({
                 duration: 2000,
-                message: 'Error while fetching blogs',
-                description: "Make sure you have working internet",
-                type: 'warning',
+                message: "Unable to fetch your blogs",
+                description: 'Make sure internet is working.'
             })
         }
     }
-
 
     return (
         <View style={STYLES.mainCont}>
@@ -121,6 +146,7 @@ const mapDispatchToProps = {
     myuserBlogs: Creators.userBlogs,
     myallBlogs: Creators.allBlogs,
     myUserLike: Creators.userLike,
+    myUserComments: Creators.userComments,
 }
 
 const mapStateToProps = (state) => {
@@ -130,6 +156,7 @@ const mapStateToProps = (state) => {
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
         userLike: state.UserAuth.userLike,
+        userComments: state.UserAuth.userComments,
     }
 }
 

@@ -6,6 +6,7 @@ export const INITIAL_STATE = {
     isUserLoggedIn: false,
     userIdentification: "",
     userLike: {},
+    userComments: {},
     userBlogs: {},
     userFavorites: {},
     allBlogs: {
@@ -42,6 +43,7 @@ export const UserAuth = (state = INITIAL_STATE, action) => {
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
+        userComments: state.userComments,
     }
 }
 
@@ -55,6 +57,7 @@ export const UserIdUpdate = (state = INITIAL_STATE, action) => {
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
+        userComments: state.userComments,
     }
 }
 
@@ -69,6 +72,7 @@ export const UserBlogsUpdate = (state = INITIAL_STATE, action) => {
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
+        userComments: state.userComments,
     }
 }
 
@@ -83,6 +87,7 @@ export const allBlogsUpdate = (state = INITIAL_STATE, action) => {
         allBlogs: action.allblogs,
         content: state.content,
         userLike: state.userLike,
+        userComments: state.userComments,
     }
 }
 
@@ -98,7 +103,7 @@ export const UserFavoritesUpdate = (state = INITIAL_STATE, action) => {
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
-
+        userComments: state.userComments,
     }
 }
 export const Content = (state = INITIAL_STATE, action) => {
@@ -111,6 +116,7 @@ export const Content = (state = INITIAL_STATE, action) => {
         allBlogs: state.allBlogs,
         content: action.content,
         userLike: state.userLike,
+        userComments: state.userComments,
     }
 }
 
@@ -124,6 +130,21 @@ export const UserLikeUpdate = (state = INITIAL_STATE, action) => {
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: action.userlike,
+        userComments: state.userComments,
+    }
+}
+
+export const UserCommentsUpdate = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUserLoggedIn: state.isUserLoggedIn,
+        userIdentification: state.userIdentification,
+        userBlogs: state.userBlogs,
+        userFavorites: state.userFavorites,
+        allBlogs: state.allBlogs,
+        content: state.content,
+        userLike: state.userLike,
+        userComments: action.usercomments,
     }
 }
 
@@ -135,6 +156,7 @@ export const HANDLER = {
     [Types.USER_FAVORITES]: UserFavoritesUpdate,
     [Types.CONTENT]: Content,
     [Types.USER_LIKE]: UserLikeUpdate,
+    [Types.USER_COMMENTS]: UserCommentsUpdate,
 }
 
 export default createReducer(INITIAL_STATE, HANDLER)
