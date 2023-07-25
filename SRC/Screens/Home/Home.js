@@ -23,7 +23,7 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
         getCommentsFromFirestore()
     }, [])
 
-    console.log("userComments", userComments)
+    // console.log("userComments", userComments)
 
     // user data from firebase firestore
     const getDataFromFirestore = async () => {

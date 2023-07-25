@@ -46,7 +46,6 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
                     <FlatList
                         showsVerticalScrollIndicator={false}
                         data={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])}
-                        // data={extractAllCommentsWithUser(userComments[params])}
                         ListHeaderComponent={() => <HeaderComponent params={params} />}
                         renderItem={({ item }) => {
                             return (
@@ -55,8 +54,8 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
                                         <FontAwesome name={'user-circle'} size={40} />
                                     </View>
                                     <TouchableOpacity onPress={() => console.log('Comment Press')} style={STYLES.cmntTextCont(width)} >
-                                        <Text>{item?.user}</Text>
-                                        <Text style={STYLES.cmntText} >{item?.comment}</Text>
+                                        <Text variant='labelSmall' >{item?.user}</Text>
+                                        <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
                                     </TouchableOpacity>
                                 </View>
                             )
@@ -100,53 +99,25 @@ const STYLES = StyleSheet.create({
     cmntTextCont: (width) => ({
         marginLeft: ms(8),
         width: (width) - (width / 3),
-        // backgroundColor: 'red',
         borderRadius: 10,
-        padding: ms(5)
+        padding: ms(5),
     }),
     cmnt: {
         marginVertical: vs(5),
-        // backgroundColor: 'red',
-        borderRadius: ms(15),
+        borderRadius: ms(10),
         paddingVertical: vs(10),
         paddingHorizontal: ms(10),
         flexDirection: 'row',
-        // alignItems: 'center',
-        borderWidth: 1
+        borderWidth: 1,
     },
     commentSectionCont: {
         marginVertical: vs(5),
-        padding: ms(10)
+        padding: ms(10),
     },
-    inputCont: {
-        marginTop: vs(5),
-        padding: ms(5),
-        // justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        borderRadius: ms(10),
-    },
-    input: (width) => ({
-        // height: vs(35),
-        // backgroundColor: 'orange',
-        width: width - ms(90),
-        borderWidth: 1,
-        borderRadius: ms(10),
-    }),
-
     mainCont: {
         flex: 1,
         marginHorizontal: ms(15),
         marginVertical: vs(5),
-    },
-
-    textHeading: {
-        fontWeight: 'bold',
-        fontSize: 18,
-    },
-    text: {
-        color: ThemeColors.GRAY,
-        fontSize: 15,
     },
 })
 

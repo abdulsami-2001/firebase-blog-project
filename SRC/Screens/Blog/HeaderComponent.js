@@ -173,6 +173,38 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
         }
     }
 
+
+    const uploadLikeToFirestore = async () => {
+        try {
+            firestore()
+                .collection('Like')
+                .doc(allBlogs[params]?.BlogId)
+                .set({
+                    LikedByUsers: [userIdentification],
+                })
+                .then(() => {
+                    showMessage({
+                        duration: 2000,
+                        message: 'Blog Liked',
+                        type: 'success'
+                    })
+                    myUserLike({
+                        ...userLike,
+                        [allBlogs[params]?.BlogId]: {
+                            LikedByUsers: [userIdentification],
+                        },
+                    })
+                });
+        } catch (error) {
+            showMessage({
+                duration: 2000,
+                message: 'Error while liking blogs',
+                description: "Make sure you have working internet",
+                type: 'warning'
+            })
+        }
+    }
+
     const checkLikeByIdOnFirestore = async () => {
         try {
             const { _data: data } = await firestore()
@@ -197,7 +229,12 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
             liked ? updateLikeToFirestore(liked, usrIdArray) : updateLikeToFirestore(liked, usrIdArray)
 
         } catch (error) {
-            console.log("error on checkLikeByIdOnFirestore ", error)
+            showMessage({
+                duration: 2000,
+                message: 'Error while Commenting',
+                description: "Make sure you have working internet",
+                type: 'warning'
+            })
         }
     }
 
@@ -232,36 +269,6 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
         }
     }
 
-    const uploadLikeToFirestore = async () => {
-        try {
-            firestore()
-                .collection('Like')
-                .doc(allBlogs[params]?.BlogId)
-                .set({
-                    LikedByUsers: [userIdentification],
-                })
-                .then(() => {
-                    showMessage({
-                        duration: 2000,
-                        message: 'Blog Liked',
-                        type: 'success'
-                    })
-                    myUserLike({
-                        ...userLike,
-                        [allBlogs[params]?.BlogId]: {
-                            LikedByUsers: [userIdentification],
-                        },
-                    })
-                });
-        } catch (error) {
-            showMessage({
-                duration: 2000,
-                message: 'Error while liking blogs',
-                description: "Make sure you have working internet",
-                type: 'warning'
-            })
-        }
-    }
 
 
     // For Comment feature
@@ -269,13 +276,18 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
 
     const commentPressHandler = (BlogId) => {
         console.log('BlogId', BlogId)
-        if (userIdentification) {
-            // getCommentFromFirestore(BlogId)
+        if (userIdentification && CommentText != '') {
             getCommentsFromFirestore(BlogId)
         } else if (!userIdentification) {
             showMessage({
                 message: "You're in guest mode",
                 description: 'Do login/signup from profile',
+                duration: 3000,
+                type: 'warning'
+            })
+        } else if (CommentText == '') {
+            showMessage({
+                message: "Comment can't be empty",
                 duration: 3000,
                 type: 'warning'
             })
@@ -299,7 +311,7 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
                 }
             });
             console.log('getCommentsFromFirestore')
-            newComment ? uploadCommentToFirestore() : console.log('idhr')
+            newComment ? uploadCommentToFirestore() : updateCommentToFirestore()
             // newComment ? uploadCommentToFirestore() : checkCommentByIdOnFirestore()
         } catch (error) {
             console.log(error)
@@ -314,7 +326,6 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
 
     const generateCommentId = (cmt) => {
         return `${cmt}_${new Date().getTime()}`;
-
     }
 
     const uploadCommentToFirestore = async () => {
@@ -322,7 +333,6 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
         let cmtid = generateCommentId(CommentText.substring(0, 5))
 
         try {
-            console.log('uploadCommentToFirestore')
             firestore()
                 .collection('Comments')
                 .doc(allBlogs[params]?.BlogId)
@@ -336,7 +346,7 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
                 .then(() => {
                     showMessage({
                         duration: 2000,
-                        message: 'Like/dislike update',
+                        message: 'Comment Added',
                         type: 'success'
                     })
                     myUserComments({
@@ -349,50 +359,63 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
                             }
                         }
                     })
+                    setCommentText('')
                 });
         } catch (error) {
             showMessage({
                 duration: 2000,
-                message: 'Error while liking blogs',
+                message: 'Error while commenting',
                 description: "Make sure you have working internet",
                 type: 'warning'
             })
         }
     }
 
-    const checkCommentByIdOnFirestore = async () => {
+    const updateCommentToFirestore = async (comment) => {
+        let cmtid = generateCommentId(CommentText.substring(0, 5))
+
         try {
-            const { _data: data } = await firestore()
+            firestore()
                 .collection('Comments')
-                .doc(allBlogs[params]?.BlogId).get()
-
-            // console.log(userLike)
-            let liked = false; // not liked by user
-            let usrIdArray = [...data?.LikedByUsers]
-            usrIdArray.push(userIdentification)
-
-            data?.LikedByUsers.map((item) => {
-                if (item == userIdentification) {
-                    liked = true // found on server that blog is already liked 
-                    // now further we going to dislike the blog
-                    usrIdArray = data?.LikedByUsers.filter((item) => {
-                        return item != userIdentification
+                .doc(allBlogs[params]?.BlogId)
+                .update({
+                    ...userComments[allBlogs[params]?.BlogId],
+                    [userIdentification]: {
+                        [cmtid]: {
+                            cmt: CommentText
+                        },
+                        ...userComments[allBlogs[params]?.BlogId]?.[userIdentification],
+                    }
+                })
+                .then(() => {
+                    showMessage({
+                        duration: 2000,
+                        message: 'Comment Added',
+                        type: 'success'
                     })
-                }
-            })
-
-            // liked ? updateLikeToFirestore(liked, usrIdArray) : updateLikeToFirestore(liked, usrIdArray)
-
+                    myUserComments({
+                        ...userComments,
+                        [allBlogs[params]?.BlogId]: {
+                            ...userComments[allBlogs[params]?.BlogId],
+                            [userIdentification]: {
+                                [cmtid]: {
+                                    cmt: CommentText
+                                },
+                                ...userComments[allBlogs[params]?.BlogId]?.[userIdentification],
+                            }
+                        },
+                    })
+                    setCommentText('')
+                });
         } catch (error) {
-            console.log("error on checkLikeByIdOnFirestore ", error)
+            showMessage({
+                duration: 2000,
+                message: 'Error while Commenting',
+                description: "Make sure you have working internet",
+                type: 'warning'
+            })
         }
     }
-
-
-
-
-
-
 
 
     // For Share feature
@@ -430,25 +453,25 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
                             }
                         </TouchableOpacity>
                     </View>
-                    <Surface style={STYLES.engagementCont} elevation={1} >
-                        <TouchableOpacity onPress={() => likePressHandler(allBlogs[params]?.BlogId)} style={STYLES.engagementSubCont} >
-                            {userLike[allBlogs[params]?.BlogId]?.LikedByUsers?.find((item) => item == userIdentification) ?
-                                (
-                                    <AntDesign name={'like1'} size={22} color={ThemeColors.CGREEN} />
-                                ) : (
-                                    <AntDesign name={'like2'} size={22} color={ThemeColors.CGREEN} />
-                                )
-                            }
-                            <Text variant="titleSmall" style={STYLES.likeText} >{userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length ? userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length : 0}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => commentPressHandler(allBlogs[params]?.BlogId)} style={STYLES.engagementSubCont} >
-                            <Fontisto name={'comments'} size={20} color={ThemeColors.CGREEN} />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => sharePressHandler()} style={STYLES.engagementSubCont} >
-                            <Fontisto name={'share'} size={20} color={ThemeColors.CGREEN} />
-                        </TouchableOpacity>
-                    </Surface>
                 </Card.Content>
+                <Surface style={STYLES.engagementCont(width)} elevation={1} >
+                    <TouchableOpacity onPress={() => likePressHandler(allBlogs[params]?.BlogId)} style={STYLES.engagementSubCont} >
+                        {userLike[allBlogs[params]?.BlogId]?.LikedByUsers?.find((item) => item == userIdentification) ?
+                            (
+                                <AntDesign name={'like1'} size={22} color={ThemeColors.CGREEN} />
+                            ) : (
+                                <AntDesign name={'like2'} size={22} color={ThemeColors.CGREEN} />
+                            )
+                        }
+                        <Text variant="titleSmall" style={STYLES.likeText} >{userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length ? userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length : 0}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity  style={STYLES.engagementSubCont} >
+                        <Fontisto name={'comments'} size={20} color={ThemeColors.CGREEN} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => sharePressHandler()} style={STYLES.engagementSubCont} >
+                        <Fontisto name={'share'} size={20} color={ThemeColors.CGREEN} />
+                    </TouchableOpacity>
+                </Surface>
             </View>
             <Surface style={STYLES.inputCont} >
                 <TextInput
@@ -501,18 +524,15 @@ const STYLES = StyleSheet.create({
     cmntTextCont: (width) => ({
         marginLeft: ms(8),
         width: (width) - (width / 3),
-        // backgroundColor: 'red',
         borderRadius: 10,
         padding: ms(5)
     }),
     cmnt: {
         marginVertical: vs(5),
-        // backgroundColor: 'red',
         borderRadius: ms(15),
         paddingVertical: vs(10),
         paddingHorizontal: ms(10),
         flexDirection: 'row',
-        // alignItems: 'center',
         borderWidth: 1
     },
     commentSectionCont: {
@@ -520,16 +540,14 @@ const STYLES = StyleSheet.create({
         padding: ms(10)
     },
     inputCont: {
-        marginTop: vs(5),
+        marginVertical: vs(5),
         padding: ms(5),
-        // justifyContent: 'center',
+        borderWidth: 1,
         alignItems: 'center',
         flexDirection: 'row',
         borderRadius: ms(10),
     },
     input: (width) => ({
-        // height: vs(35),
-        // backgroundColor: 'orange',
         width: width - ms(90),
         borderWidth: 1,
         borderRadius: ms(10),
@@ -547,14 +565,15 @@ const STYLES = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: vs(6),
     },
-    engagementCont: {
-        borderRadius: ms(15),
+    engagementCont: (width) => ({
+        borderRadius: ms(10),
         flexDirection: 'row',
         paddingVertical: ms(5),
         paddingHorizontal: ms(10),
+        borderWidth: 1,
         alignContent: 'center',
         justifyContent: 'space-between',
-    },
+    }),
     btnCont: {
         alignItems: 'center',
         justifyContent: 'center',
