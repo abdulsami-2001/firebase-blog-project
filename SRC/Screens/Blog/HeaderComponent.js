@@ -1,4 +1,5 @@
 import { connect } from 'react-redux'
+import Share from 'react-native-share';
 import React, { useEffect, useState } from 'react'
 import RenderHtml from 'react-native-render-html'
 import { ms, vs } from 'react-native-size-matters'
@@ -153,6 +154,10 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
 
     const getLikeFromFirestore = async (BlogId) => {
         try {
+            showMessage({
+                message: "Blog Liking...",
+                type: "info",
+            });
             let dataRef = firestore().collection('Like');
             let snapshot = await dataRef?.get()
             let newLike = true
@@ -302,6 +307,10 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
 
     const getCommentsFromFirestore = async (BlogId) => {
         try {
+            showMessage({
+                message: "Commenting...",
+                type: "info",
+            });
             let dataRef = firestore().collection('Comments');
             let snapshot = await dataRef?.get()
             let newComment = true
@@ -310,7 +319,6 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
                     newComment = false
                 }
             });
-            console.log('getCommentsFromFirestore')
             newComment ? uploadCommentToFirestore() : updateCommentToFirestore()
             // newComment ? uploadCommentToFirestore() : checkCommentByIdOnFirestore()
         } catch (error) {
@@ -421,11 +429,27 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
     // For Share feature
     // ----------------
     const sharePressHandler = () => {
-        showMessage({
-            duration: 2000,
-            message: 'Share feature will implement soon',
-            type: 'info',
-        })
+        const options = {
+            message: `Read a blog post *${allBlogs[params]?.Title}* on the blog app`,
+        }
+
+        Share.open(options)
+            .then((res) => {
+                showMessage({
+                    duration: 2000,
+                    message: 'Blog post share successfully',
+                    type: 'info',
+                })
+                console.log(res)
+            })
+            .catch((err) => {
+                showMessage({
+                    duration: 2000,
+                    message: 'Error during sharing the blog post',
+                    description: 'Try again after reopening app',
+                    type: 'warning',
+                })
+            });
     }
 
 
@@ -465,7 +489,7 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
                         }
                         <Text variant="titleSmall" style={STYLES.likeText} >{userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length ? userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length : 0}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity  style={STYLES.engagementSubCont} >
+                    <TouchableOpacity style={STYLES.engagementSubCont} >
                         <Fontisto name={'comments'} size={20} color={ThemeColors.CGREEN} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => sharePressHandler()} style={STYLES.engagementSubCont} >
