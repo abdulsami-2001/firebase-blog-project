@@ -13,7 +13,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { StyleSheet, TouchableOpacity, View, ScrollView, TextInput, useWindowDimensions } from 'react-native'
 
-const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites, userFavorites, userLike, myUserLike, userComments, myUserComments }) => {
+const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, myuserFavorites, userFavorites, userLike, myUserLike, userComments, myUserComments }) => {
     const [CommentText, setCommentText] = useState('')
     const { width } = useWindowDimensions();
     const isLoved = false
@@ -431,24 +431,30 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
     const sharePressHandler = () => {
         const options = {
             message: `Read a blog post *${allBlogs[params]?.Title}* on the blog app`,
+            url: `Blog post poster: ${allBlogs[params]?.ImageUrl}`
         }
 
         Share.open(options)
             .then((res) => {
-                showMessage({
-                    duration: 2000,
-                    message: 'Blog post share successfully',
-                    type: 'info',
-                })
                 console.log(res)
+                return (
+                    showMessage({
+                        duration: 2000,
+                        message: 'Blog post share successfully',
+                        type: 'info',
+                    })
+                )
             })
             .catch((err) => {
-                showMessage({
-                    duration: 2000,
-                    message: 'Error during sharing the blog post',
-                    description: 'Try again after reopening app',
-                    type: 'warning',
-                })
+                console.log(err)
+                return (
+                    showMessage({
+                        duration: 2000,
+                        message: 'Error during sharing the blog post',
+                        description: 'Try again after reopening app',
+                        type: 'warning',
+                    })
+                )
             });
     }
 
@@ -489,8 +495,9 @@ const HeaderComponent = ({ params, userIdentification, allBlogs, myuserFavorites
                         }
                         <Text variant="titleSmall" style={STYLES.likeText} >{userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length ? userLike[allBlogs[params]?.BlogId]?.LikedByUsers.length : 0}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={STYLES.engagementSubCont} >
+                    <TouchableOpacity onPress={() => setShow(!Show)} style={STYLES.engagementSubCont} >
                         <Fontisto name={'comments'} size={20} color={ThemeColors.CGREEN} />
+                        <Text variant="titleSmall" style={STYLES.likeText} >{commentsForLength.length ? commentsForLength.length : 0}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => sharePressHandler()} style={STYLES.engagementSubCont} >
                         <Fontisto name={'share'} size={20} color={ThemeColors.CGREEN} />

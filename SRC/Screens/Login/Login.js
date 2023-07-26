@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import Lottie from 'lottie-react-native';
 import auth from '@react-native-firebase/auth';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action';
 import { TextInput, Button } from 'react-native-paper';
@@ -18,7 +18,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
     const [user, setUser] = useState(null);
     const [initializing, setInitializing] = useState(true);
     const { width, height } = Dimensions.get('screen')
-
+    const password_ref = useRef()
     const navigation = useNavigation()
 
     function onAuthStateChanged(user) {
@@ -161,7 +161,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
 
     return (
         <View style={STYLES.mainCont}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false}>
                 <View style={STYLES.lottieCont(width, height)} >
                     <Lottie source={require('../../Assets/Lottie/login-signup.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
                 </View>
@@ -173,6 +173,9 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                         type='outlined'
                         onChangeText={text => SetEmail(text)}
                         style={STYLES.input}
+                        onSubmitEditing={() => {
+                            password_ref.current.focus()
+                        }}
                     />
                     <TextInput
                         label="Password"
@@ -181,6 +184,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                         type='outlined'
                         onChangeText={text => SetPassword(text)}
                         style={STYLES.input}
+                        ref={password_ref}
                     />
                     <TouchableOpacity onPress={() => navigation.navigate(NavigationStrings.FORGETPASSWORD)}>
                         <Text style={STYLES.forgetPasword} >Forget password ?</Text>

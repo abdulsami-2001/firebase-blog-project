@@ -15,4 +15,5 @@ export default NavigationString = {
     VERIFYEMAIL: "VERIFY EMAIL",
     FORGETPASSWORD: "FORGET PASSWORD",
     EDITOR: "EDITOR",
+    SIGNOUT: 'SIGN OUT'
 }

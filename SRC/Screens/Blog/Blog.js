@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import { Card, Text } from 'react-native-paper'
-import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import HeaderComponent from './HeaderComponent'
 import { StyleSheet, TouchableOpacity, View, FlatList, useWindowDimensions } from 'react-native'
@@ -12,6 +11,7 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
     const { params } = route
     const { width } = useWindowDimensions();
     const [first, setfirst] = useState(true)
+    const [Show, setShow] = useState(true)
 
 
     useEffect(() => {
@@ -46,19 +46,23 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
                     <FlatList
                         showsVerticalScrollIndicator={false}
                         data={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])}
-                        ListHeaderComponent={() => <HeaderComponent params={params} />}
+                        ListHeaderComponent={() => <HeaderComponent commentsForLength={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])} params={params} Show={Show} setShow={setShow} />}
                         renderItem={({ item }) => {
-                            return (
-                                <View style={STYLES.cmnt} >
-                                    <View style={STYLES.cmntImgCont} >
-                                        <FontAwesome name={'user-circle'} size={40} />
+                            if (Show) {
+                                return (
+                                    <View View style={STYLES.cmnt} >
+                                        <View style={STYLES.cmntImgCont} >
+                                            <FontAwesome name={'user-circle'} size={40} />
+                                        </View>
+                                        <TouchableOpacity activeOpacity={0.5} onPress={() => console.log('Comment Press')} style={STYLES.cmntTextCont(width)} >
+                                            <Text variant='labelSmall' >{item?.user}</Text>
+                                            <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
+                                        </TouchableOpacity>
                                     </View>
-                                    <TouchableOpacity onPress={() => console.log('Comment Press')} style={STYLES.cmntTextCont(width)} >
-                                        <Text variant='labelSmall' >{item?.user}</Text>
-                                        <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )
+                                )
+                            } else {
+                                <Text>Click comments to show</Text>
+                            }
                         }}
                     />
                 </Card>
