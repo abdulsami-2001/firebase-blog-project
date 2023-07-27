@@ -137,7 +137,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                 } else if (error.code === 'auth/user-disabled') {
                     showMessage({
                         message: "Account is disabled",
-                        description: 'Contact Support Team',
+                        description: 'Contact support team',
                         type: "warning",
                     });
                 } else if (error.code === 'auth/user-not-found') {

@@ -3,13 +3,12 @@ import Lottie from 'lottie-react-native';
 import auth from '@react-native-firebase/auth';
 import { ms, vs } from 'react-native-size-matters'
 import React, { useState, useEffect } from 'react'
-import { Button, Text, Card, Avatar } from 'react-native-paper'
 import { Creators } from '../../Redux/Action/Action'
 import { useNavigation } from '@react-navigation/native'
 import { showMessage } from 'react-native-flash-message'
-import { View, StyleSheet, Dimensions, StatusBar, TouchableOpacity, ScrollView } from 'react-native'
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import { Button, Text, Card, Avatar } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
+import { View, StyleSheet, Dimensions, TouchableOpacity, } from 'react-native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 
 
@@ -58,79 +57,44 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
     if (user != undefined && user != null) {
         return (
             <>
-                <StatusBar backgroundColor={ThemeColors.CGREEN} />
                 <View style={STYLES.upperCont}>
                     <Card style={STYLES.card(width, height)} >
                         <Avatar.Icon size={100} color={ThemeColors.WHITE} style={STYLES.profileAvatar} icon={'account-circle'} />
-                        <Text style={STYLES.text} >{user?.email}</Text>
-                        <Text style={STYLES.uid} >{user?.uid}</Text>
+                        <Text style={STYLES.textBold} >{user?.email}</Text>
+                        <Text style={STYLES.textNormal} >{user?.uid}</Text>
                     </Card>
                 </View>
                 <View style={STYLES.midCont}>
                     <TouchableOpacity style={STYLES.cont} activeOpacity={0.7}  >
                         <Avatar.Icon size={50} color={ThemeColors.WHITE} style={STYLES.bottomAvatar} icon={'login'} />
-                        <Text style={STYLES.signoutText} >Last login: {new Date(user?.metadata?.lastSignInTime).toDateString()} {new Date(user?.metadata?.lastSignInTime).toLocaleTimeString()}</Text>
+                        <View style={STYLES.timeCont}>
+                            <Text style={STYLES.textBold} >Last login: </Text>
+                            <Text style={STYLES.textNormal} >{new Date(user?.metadata?.lastSignInTime).toDateString()} {new Date(user?.metadata?.lastSignInTime).toLocaleTimeString()}</Text>
+                        </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={STYLES.cont} activeOpacity={0.7} >
                         <Avatar.Icon size={50} color={ThemeColors.WHITE} style={STYLES.bottomAvatar} icon={'clock-time-three'} />
-                        <Text style={STYLES.signoutText} >Account creation: {new Date(user?.metadata?.creationTime).toDateString()} {new Date(user?.metadata?.creationTime).toLocaleTimeString()}</Text>
+                        <View style={STYLES.timeCont}>
+                            <Text style={STYLES.textBold} >Account creation:</Text>
+                            <Text style={STYLES.textNormal} >{new Date(user?.metadata?.creationTime).toDateString()} {new Date(user?.metadata?.creationTime).toLocaleTimeString()}</Text>
+                        </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={STYLES.cont} activeOpacity={0.7}  onPress={() => navigation.navigate(NavigationStrings.VERIFYEMAIL)}>
+                    <TouchableOpacity style={STYLES.cont} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.VERIFYEMAIL)}>
                         <Avatar.Icon size={50} color={ThemeColors.WHITE} style={STYLES.bottomAvatar} icon={'email-check'} />
-                        <Text style={STYLES.signoutText} >Verify email</Text>
+                        <Text style={STYLES.textBold} >Verify email</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={STYLES.cont} activeOpacity={0.7}  onPress={() => navigation.navigate(NavigationStrings.CHANGEPASSWORD)}>
+                    <TouchableOpacity style={STYLES.cont} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.CHANGEPASSWORD)}>
                         <Avatar.Icon size={50} color={ThemeColors.WHITE} style={STYLES.bottomAvatar} icon={'key-arrow-right'} />
-                        <Text style={STYLES.signoutText} >Change Password</Text>
+                        <Text style={STYLES.textBold} >Change Password</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={STYLES.cont} activeOpacity={0.7}  onPress={() => singOutHandler()}>
+                    <TouchableOpacity style={STYLES.cont} activeOpacity={0.7} onPress={() => singOutHandler()}>
                         <Avatar.Icon size={50} color={ThemeColors.WHITE} style={STYLES.bottomAvatar} icon={'logout'} />
-                        <Text style={STYLES.signoutText} >{NavigationStrings.SIGNOUT}</Text>
+                        <Text style={STYLES.textBold} >{NavigationStrings.SIGNOUT}</Text>
                     </TouchableOpacity>
                 </View>
             </>
         )
 
-        // return (
-        //     <View style={STYLES.mainCont}>
-        //         <View style={STYLES.headingCont}>
-        //             <View style={STYLES.lottieCont(width, height)} >
-        //                 <FontAwesome name='user-circle' color={ThemeColors.GRAY} size={130} />
-        //             </View>
-        //             <View style={STYLES.textCont} >
-        //                 <Text style={STYLES.textHeading}>Email verified</Text>
-        //                 <Text style={STYLES.text}>{user?.emailVerified ? "Yes" : "No"}</Text>
-        //             </View>
-        //             <View style={STYLES.textCont} >
-        //                 <Text style={STYLES.textHeading}>Email</Text>
-        //                 <Text style={STYLES.text}>{user?.email}</Text>
-        //             </View>
-        //             <View style={STYLES.textCont} >
-        //                 <Text style={STYLES.textHeading}>Last login</Text>
-        //                 <Text style={STYLES.text}>{new Date(user?.metadata?.lastSignInTime).toDateString()} {new Date(user?.metadata?.lastSignInTime).toLocaleTimeString()}</Text>
-        //             </View>
-        //             <View style={STYLES.textCont} >
-        //                 <Text style={STYLES.textHeading}>Account creation</Text>
-        //                 <Text style={STYLES.text}>{new Date(user?.metadata?.creationTime).toDateString()} {new Date(user?.metadata?.creationTime).toLocaleTimeString()}</Text>
-        //             </View>
-        //             <View style={STYLES.textCont} >
-        //                 <Text style={STYLES.textHeading}>User id</Text>
-        //                 <Text style={STYLES.text}>{user?.uid}</Text>
-        //             </View>
-        //         </View>
-        //         <View style={STYLES.btnCont} >
-        //             <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.CHANGEPASSWORD)}>
-        //                 {NavigationStrings.CHANGEPASSWORD}
-        //             </Button>
-        //             <Button mode="contained" style={STYLES.btn} onPress={() => navigation.navigate(NavigationStrings.VERIFYEMAIL)}>
-        //                 {NavigationStrings.VERIFYEMAIL}
-        //             </Button>
-        //             <Button mode="contained" style={STYLES.btn} onPress={() => singOutHandler()}>
-        //                 SIGN OUT
-        //             </Button>
-        //         </View>
-        //     </View>
-        // )
     } else {
         return (
             <View style={STYLES.mainContNL}>
@@ -171,6 +135,16 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)
 
 const STYLES = StyleSheet.create({
+    textNormal: {
+        paddingLeft: ms(10),
+        fontSize: ms(11),
+        alignSelf: 'center',
+    },
+    textBold: {
+        fontWeight: 'bold',
+        fontSize: ms(14),
+        paddingLeft: ms(10),
+    },
     profileAvatar: {
         backgroundColor: ThemeColors.CGREEN,
         alignSelf: 'center',
@@ -178,15 +152,11 @@ const STYLES = StyleSheet.create({
     bottomAvatar: {
         backgroundColor: ThemeColors.CGREEN
     },
-    signoutText: {
-        paddingLeft: ms(10),
-    },
     cont: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: ms(10),
         paddingVertical: vs(4),
-        // backgroundColor: 'orange',
         marginBottom: vs(3)
     },
     upperCont: {
@@ -208,29 +178,6 @@ const STYLES = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     }),
-    textCont: {
-        flexDirection: 'column',
-        marginHorizontal: ms(12),
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginVertical: vs(2)
-    },
-    textHeading: {
-        fontWeight: 'bold',
-        fontSize: 18,
-    },
-    text: {
-        marginLeft: ms(5),
-        // fontSize: 15,
-        marginTop: vs(2),
-        color: ThemeColors.GRAY,
-    },
-    mainCont: {
-        flex: 1,
-        // marginHorizontal: ms(15),
-        // alignItems: 'center',
-        // marginBottom: vs(5),
-    },
     mainContNL: {
         flex: 1,
         marginHorizontal: ms(15),
@@ -249,15 +196,6 @@ const STYLES = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     }),
-    subContNL: {
-        // justifyContent: 'space-evenly',
-        // alignItems: 'center',
-        // backgroundColor: "pink"
-    },
-    headingCont: {
-        marginVertical: vs(5),
-        alignItems: 'center',
-    },
     btnCont: {
         alignItems: 'center',
         justifyContent: 'center'

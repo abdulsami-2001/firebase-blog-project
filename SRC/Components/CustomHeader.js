@@ -34,6 +34,7 @@ const STYLES = StyleSheet.create({
         color: ThemeColors.WHITE,
         fontSize: s(14),
         marginHorizontal: ms(5),
+        fontWeight: 'bold',
     },
     backbtn: {
         width: ms(50),
@@ -43,9 +44,9 @@ const STYLES = StyleSheet.create({
         backgroundColor: ThemeColors.CGREEN,
         height: portrait == 'portrait' ? mvs(height / 15) : mvs(height / 8),
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: ms(15)
+        paddingHorizontal: ms(15),
     }),
     wrapper1: {
         alignItems: 'center',

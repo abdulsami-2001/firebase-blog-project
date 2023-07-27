@@ -1,17 +1,21 @@
 import { connect } from 'react-redux'
+import { Card, Text } from 'react-native-paper'
+import HeaderComponent from './HeaderComponent'
+import FooterComponent from './FooterComponent'
 import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
-import { Card, Text } from 'react-native-paper'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import HeaderComponent from './HeaderComponent'
-import { StyleSheet, TouchableOpacity, View, FlatList, useWindowDimensions } from 'react-native'
+import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
+import { StyleSheet, Modal, TouchableOpacity, View, FlatList, useWindowDimensions } from 'react-native'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
     const { params } = route
     const { width } = useWindowDimensions();
     const [first, setfirst] = useState(true)
     const [Show, setShow] = useState(true)
+    const [Visible, setVisible] = useState(false)
 
 
     useEffect(() => {
@@ -42,15 +46,47 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
     return (
         <>
             <View style={STYLES.mainCont}>
+                <Modal
+                    animationType='slide'
+                    visible={Visible}
+                    transparent={true}
+                    style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
+                >
+                    <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={() => setVisible(false)}>
+                        <MaterialCommunityIcons name='close' color={ThemeColors.WHITE} size={20} />
+                    </TouchableOpacity>
+                    <View style={STYLES.modalCont} >
+                        <View style={STYLES.modalSubCont} >
+                            <FlatList
+                                showsVerticalScrollIndicator={false}
+                                data={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])}
+                                renderItem={({ item }) => {
+                                    return (
+                                        <View style={STYLES.cmnt} >
+                                            <View style={STYLES.cmntImgCont} >
+                                                <FontAwesome name={'user-circle'} size={40} />
+                                            </View>
+                                            <TouchableOpacity activeOpacity={0.5} onPress={() => console.log('Comment Press')} style={STYLES.cmntTextCont(width)} >
+                                                <Text variant='labelSmall' >{item?.user}</Text>
+                                                <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
+                                }}
+                            />
+                        </View>
+                    </View>
+                </Modal>
                 <Card style={STYLES.commentSectionCont}>
                     <FlatList
                         showsVerticalScrollIndicator={false}
-                        data={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])}
+                        data={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])?.slice(0, 3)}
                         ListHeaderComponent={() => <HeaderComponent commentsForLength={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])} params={params} Show={Show} setShow={setShow} />}
+                        ListFooterComponent={() => <FooterComponent commentsForLength={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])} setVisible={setVisible} />}
                         renderItem={({ item }) => {
                             if (Show) {
                                 return (
-                                    <View View style={STYLES.cmnt} >
+                                    <View style={STYLES.cmnt} >
                                         <View style={STYLES.cmntImgCont} >
                                             <FontAwesome name={'user-circle'} size={40} />
                                         </View>
@@ -60,8 +96,6 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
                                         </TouchableOpacity>
                                     </View>
                                 )
-                            } else {
-                                <Text>Click comments to show</Text>
                             }
                         }}
                     />
@@ -96,9 +130,24 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Blog)
 
-
 const STYLES = StyleSheet.create({
-    cmntText: {
+    iconCont: {
+        position: 'absolute',
+        zIndex: 1,
+        top: 15,
+        right: 5,
+        backgroundColor: ThemeColors.CGREEN,
+        borderRadius: 50,
+    },
+    modalCont: {
+        flex: 1,
+    },
+    modalSubCont: {
+        paddingVertical: vs(10),
+        flex: 1,
+        justifyContent: "center",
+        alignItems: 'center',
+        backgroundColor: ThemeColors.WHITE
     },
     cmntTextCont: (width) => ({
         marginLeft: ms(8),
