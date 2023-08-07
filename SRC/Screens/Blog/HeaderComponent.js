@@ -11,13 +11,17 @@ import Fontisto from 'react-native-vector-icons/Fontisto'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import { StyleSheet, TouchableOpacity, View, ScrollView, TextInput, useWindowDimensions } from 'react-native'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StyleSheet, TouchableOpacity, Modal, View, ScrollView, TextInput, useWindowDimensions } from 'react-native'
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, myuserFavorites, userFavorites, userLike, myUserLike, userComments, myUserComments }) => {
     const [CommentText, setCommentText] = useState('')
     const { width } = useWindowDimensions();
-    const isLoved = false
     const [first, setfirst] = useState(true)
+    const [Visible, setVisible] = useState(false)
+
+    const isLoved = false
 
 
     useEffect(() => {
@@ -461,8 +465,33 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
 
     return (
         <>
+            <Modal
+                animationType='slide'
+                visible={Visible}
+                transparent={true}
+                style={STYLES.modal}
+            >
+                <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={() => setVisible(false)}>
+                    <MaterialCommunityIcons name='close' color={ThemeColors.WHITE} size={20} />
+                </TouchableOpacity>
+                <View style={STYLES.modalCont} >
+                    <View style={STYLES.modalSubCont} >
+                        {/* <Text>Hello from modal</Text> */}
+                        <ImageViewer
+                            imageUrls={[{ url: allBlogs[params]?.ImageUrl, }]}
+                            enableSwipeDown
+                            onSwipeDown={() => setVisible(false)}
+                            backgroundColor={ThemeColors.BLACKOPACITY50}
+                            enablePreload
+                            loadingRender={() => (<Text>laoding...</Text>)}
+                        />
+                    </View>
+                </View>
+            </Modal>
             <View style={STYLES.cardCont} >
-                <Card.Cover source={{ uri: allBlogs[params]?.ImageUrl }} resizeMode='contain' />
+                <TouchableOpacity onPress={() => setVisible(true)}>
+                    <Card.Cover source={{ uri: allBlogs[params]?.ImageUrl }} resizeMode='contain' />
+                </TouchableOpacity>
                 <Card.Content>
                     <Text variant="titleLarge">{allBlogs[params]?.Title}</Text>
                     <ScrollView horizontal >
@@ -547,6 +576,29 @@ export default connect(mapStateToProps, mapDispatchToProps)(HeaderComponent)
 
 
 const STYLES = StyleSheet.create({
+    modal: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1,
+    },
+    modalCont: {
+        flex: 1,
+    },
+    modalSubCont: {
+        // paddingVertical: vs(10),
+        flex: 1,
+        // justifyContent: "center",
+        // alignItems: 'center',
+        backgroundColor: ThemeColors.WHITE
+    },
+    iconCont: {
+        position: 'absolute',
+        zIndex: 1,
+        top: 15,
+        right: 5,
+        backgroundColor: ThemeColors.CGREEN,
+        borderRadius: 50,
+    },
     cardCont: {
         marginVertical: vs(5)
     },

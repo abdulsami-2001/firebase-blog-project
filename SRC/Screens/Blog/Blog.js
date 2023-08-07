@@ -7,8 +7,8 @@ import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
-import { StyleSheet, Modal, TouchableOpacity, View, FlatList, useWindowDimensions } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StyleSheet, Modal, TouchableOpacity, View, FlatList, useWindowDimensions } from 'react-native'
 
 const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
     const { params } = route
@@ -50,7 +50,7 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
                     animationType='slide'
                     visible={Visible}
                     transparent={true}
-                    style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
+                    style={STYLES.modal}
                 >
                     <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={() => setVisible(false)}>
                         <MaterialCommunityIcons name='close' color={ThemeColors.WHITE} size={20} />
@@ -138,6 +138,11 @@ const STYLES = StyleSheet.create({
         right: 5,
         backgroundColor: ThemeColors.CGREEN,
         borderRadius: 50,
+    },
+    modal: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1,
     },
     modalCont: {
         flex: 1,

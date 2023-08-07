@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { Dimensions } from 'react-native'
 import Lottie from 'lottie-react-native';
 import RNFetchBlob from 'rn-fetch-blob';
-// import HTMLView from "react-native-htmlview";
 import RenderHtml from 'react-native-render-html'
 import { Creators } from '../../Redux/Action/Action'
 import { ms, mvs, vs } from 'react-native-size-matters'
@@ -20,7 +19,6 @@ import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'rea
 
 const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent }) => {
     const [Title, setTitle] = useState("");
-    // const [content, setContent] = useState("");
     const [Author, setAuthor] = useState("");
     const [ImageUrl, setImageUrl] = useState('')
     const { width, height } = Dimensions.get('screen')
@@ -190,7 +188,6 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                     navigation.navigate(NavigationStrings.MYBLOGS)
                     setTitle('')
                     setAuthor('')
-                    // setContent('')
                     myContent('')
                     setImageUrl('')
                 });
@@ -239,7 +236,6 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                     setTitle('')
                     setAuthor('')
                     myContent('')
-                    // setContent('')
                     setImageUrl('')
                 });
         } catch (error) {
@@ -298,16 +294,6 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                             onChangeText={text => setTitle(text)}
                             style={STYLES.input}
                         />
-                        {/* <TextInput
-                            label="Blog Content"
-                            value={Content}
-                            type='outlined'
-                            multiline
-                            onChangeText={text => setContent(text)}
-                            style={STYLES.input}
-                            onPressIn={() => navigation.navigate(NavigationStrings.EDITOR)}
-                        /> */}
-                        {/* <HTMLView value={Content != '' ? Content : 'Click on edit icon to write a blog'} style={STYLES.htmlView(theme)} /> */}
                         <ScrollView style={STYLES.htmlView(theme)} horizontal>
                             <RenderHtml
                                 source={{ html: Content != '' ? Content : 'Click on edit icon to write a blog' }}
