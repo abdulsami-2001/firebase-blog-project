@@ -156,7 +156,7 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
                 showMessage({
                     message: "Name Update Unsuccessfully.",
                     type: "warning",
-                    description: error.message,
+                    duration: 3000,
                 })
             });
         }

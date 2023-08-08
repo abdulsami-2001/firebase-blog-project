@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Dimensions } from 'react-native'
 import Lottie from 'lottie-react-native';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -17,13 +17,21 @@ import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native'
 
-const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent }) => {
+const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent, userFromStore }) => {
     const [Title, setTitle] = useState("");
-    const [Author, setAuthor] = useState("");
+    const [Author, setAuthor] = useState(userFromStore?.displayName);
     const [ImageUrl, setImageUrl] = useState('')
     const { width, height } = Dimensions.get('screen')
     const theme = useTheme()
     const navigation = useNavigation()
+
+    useEffect(() => {
+        setAuthor(userFromStore?.displayName)
+        console.log('use effect add blog')
+    }, [userFromStore])
+
+    console.log('re rednere add blog')
+
 
     const generateKey = (title) => {
         return `${title}_${new Date().getTime()}`;
@@ -356,6 +364,7 @@ const mapStateToProps = (state) => {
         allBlogs: state.UserAuth.allBlogs,
         userFavorites: state.UserAuth.userFavorites,
         Content: state.UserAuth.content,
+        userFromStore: state.UserAuth.user,
     }
 }
 
