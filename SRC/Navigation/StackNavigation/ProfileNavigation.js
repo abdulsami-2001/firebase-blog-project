@@ -8,6 +8,7 @@ import CustomHeader from '../../Components/CustomHeader'
 import ChangePassword from '../../Screens/ChangePassword/ChangePassword'
 import VerifyEmail from '../../Screens/VerifyEmail/VerifyEmail'
 import ForgetPassword from '../../Screens/ForgetPassword/ForgetPassword'
+import UpdateProfile from '../../Screens/UpdateProfile/UpdateProfile'
 
 const Stack = createNativeStackNavigator()
 
@@ -63,6 +64,14 @@ const ProfileNavigation = () => {
                 component={ForgetPassword}
                 options={{
                     title: NavigationStrings.FORGETPASSWORD,
+                    header: (props) => <CustomHeader props={props} />
+                }}
+            />
+            <Stack.Screen
+                name={NavigationStrings.UPDATEPROFILE}
+                component={UpdateProfile}
+                options={{
+                    title: NavigationStrings.UPDATEPROFILE,
                     header: (props) => <CustomHeader props={props} />
                 }}
             />

@@ -2,6 +2,7 @@ import { createReducer } from 'reduxsauce'
 import { Types } from '../Action/Action'
 
 export const INITIAL_STATE = {
+    user: {},
     content: '',
     isUserLoggedIn: false,
     userIdentification: "",
@@ -38,6 +39,7 @@ export const UserAuth = (state = INITIAL_STATE, action) => {
         ...state,
         isUserLoggedIn: action.userstateflag,
         userIdentification: state.userIdentification,
+        user: state.user,
         userBlogs: state.userBlogs,
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
@@ -52,6 +54,7 @@ export const UserIdUpdate = (state = INITIAL_STATE, action) => {
         ...state,
         isUserLoggedIn: state.isUserLoggedIn,
         userIdentification: action.uid,
+        user: state.user,
         userBlogs: state.userBlogs,
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
@@ -67,6 +70,7 @@ export const UserBlogsUpdate = (state = INITIAL_STATE, action) => {
         ...state,
         isUserLoggedIn: state.isUserLoggedIn,
         userIdentification: state.userIdentification,
+        user: state.user,
         userBlogs: action.userblogs,
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
@@ -84,6 +88,7 @@ export const allBlogsUpdate = (state = INITIAL_STATE, action) => {
         userIdentification: state.userIdentification,
         userBlogs: state.userBlogs,
         userFavorites: state.userFavorites,
+        user: state.user,
         allBlogs: action.allblogs,
         content: state.content,
         userLike: state.userLike,
@@ -99,6 +104,7 @@ export const UserFavoritesUpdate = (state = INITIAL_STATE, action) => {
         isUserLoggedIn: state.isUserLoggedIn,
         userIdentification: state.userIdentification,
         userBlogs: state.userBlogs,
+        user: state.user,
         userFavorites: action.userfavorites,
         allBlogs: state.allBlogs,
         content: state.content,
@@ -112,6 +118,7 @@ export const Content = (state = INITIAL_STATE, action) => {
         isUserLoggedIn: state.isUserLoggedIn,
         userIdentification: state.userIdentification,
         userBlogs: state.userBlogs,
+        user: state.user,
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: action.content,
@@ -127,6 +134,7 @@ export const UserLikeUpdate = (state = INITIAL_STATE, action) => {
         userIdentification: state.userIdentification,
         userBlogs: state.userBlogs,
         userFavorites: state.userFavorites,
+        user: state.user,
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: action.userlike,
@@ -139,6 +147,7 @@ export const UserCommentsUpdate = (state = INITIAL_STATE, action) => {
         ...state,
         isUserLoggedIn: state.isUserLoggedIn,
         userIdentification: state.userIdentification,
+        user: state.user,
         userBlogs: state.userBlogs,
         userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
@@ -148,15 +157,34 @@ export const UserCommentsUpdate = (state = INITIAL_STATE, action) => {
     }
 }
 
+
+export const User = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUserLoggedIn: state.isUserLoggedIn,
+        userIdentification: state.userIdentification,
+        user: action.user,
+        userBlogs: state.userBlogs,
+        userFavorites: state.userFavorites,
+        allBlogs: state.allBlogs,
+        content: state.content,
+        userLike: state.userLike,
+        userComments: state.userComments,
+    }
+}
+
+
+
 export const HANDLER = {
+    [Types.USER]: User,
+    [Types.CONTENT]: Content,
     [Types.USER_STATE]: UserAuth,
     [Types.USER_ID]: UserIdUpdate,
-    [Types.USER_BLOGS]: UserBlogsUpdate,
-    [Types.ALL_BLOGS]: allBlogsUpdate,
-    [Types.USER_FAVORITES]: UserFavoritesUpdate,
-    [Types.CONTENT]: Content,
     [Types.USER_LIKE]: UserLikeUpdate,
+    [Types.ALL_BLOGS]: allBlogsUpdate,
+    [Types.USER_BLOGS]: UserBlogsUpdate,
     [Types.USER_COMMENTS]: UserCommentsUpdate,
+    [Types.USER_FAVORITES]: UserFavoritesUpdate,
 }
 
 export default createReducer(INITIAL_STATE, HANDLER)

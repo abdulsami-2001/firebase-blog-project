@@ -8,21 +8,25 @@ import { useNavigation } from '@react-navigation/native'
 import { showMessage } from 'react-native-flash-message'
 import { Button, Text, Card, Avatar } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
-import { View, StyleSheet, Dimensions, TouchableOpacity, } from 'react-native'
+import { View, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 
 
-const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
+const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites, userFromStore, myUser }) => {
     const navigation = useNavigation()
     const { width, height } = Dimensions.get('screen')
-
     const [user, setUser] = useState(null);
     const [initializing, setInitializing] = useState(true);
 
     function onAuthStateChanged(user) {
         setUser(user);
+        if (user != null) {
+            myUser(user)
+        }
         if (initializing) setInitializing(false);
     }
+
+
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
 
@@ -45,6 +49,7 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
                 myUserId('')
                 myuserFavorites({})
                 myuserBlogs({})
+                myUser({})
             }
             ).catch(() => {
                 showMessage({
@@ -58,10 +63,16 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
         return (
             <>
                 <View style={STYLES.upperCont}>
-                    <Card style={STYLES.card(width, height)} >
-                        <Avatar.Icon size={100} color={ThemeColors.WHITE} style={STYLES.profileAvatar} icon={'account-circle'} />
-                        <Text style={STYLES.textBold} >{user?.email}</Text>
-                        <Text style={STYLES.textNormal} >{user?.uid}</Text>
+                    <Card style={STYLES.card(width, height)}>
+                        <TouchableOpacity onPress={() => { navigation.navigate(NavigationStrings.UPDATEPROFILE) }} activeOpacity={0.3}>
+                            <Avatar.Icon size={30} color={ThemeColors.GRAY} icon={'pencil'} style={STYLES.editIcon} />
+                        </TouchableOpacity>
+                        {userFromStore?.photoURL != null ? <Image source={{ uri: userFromStore?.photoURL }} style={STYLES.profilePicture} /> : <Avatar.Icon size={100} color={ThemeColors.WHITE} style={STYLES.profileAvatar} icon={'account-circle'} />}
+                        <View>
+                            <Text style={{ ...STYLES.textBold, paddingLeft: 0, alignSelf: 'center' }} >{userFromStore?.displayName}</Text>
+                            <Text style={STYLES.textBold} >{userFromStore?.email}</Text>
+                            <Text style={STYLES.textNormal} >{userFromStore?.uid}</Text>
+                        </View>
                     </Card>
                 </View>
                 <View style={STYLES.midCont}>
@@ -85,11 +96,11 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites }) => {
                     </TouchableOpacity>
                     <TouchableOpacity style={STYLES.cont} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.CHANGEPASSWORD)}>
                         <Avatar.Icon size={50} color={ThemeColors.WHITE} style={STYLES.bottomAvatar} icon={'key-arrow-right'} />
-                        <Text style={STYLES.textBold} >Change Password</Text>
+                        <Text style={STYLES.textBold} >Change password</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={STYLES.cont} activeOpacity={0.7} onPress={() => singOutHandler()}>
                         <Avatar.Icon size={50} color={ThemeColors.WHITE} style={STYLES.bottomAvatar} icon={'logout'} />
-                        <Text style={STYLES.textBold} >{NavigationStrings.SIGNOUT}</Text>
+                        <Text style={STYLES.textBold} >Signout</Text>
                     </TouchableOpacity>
                 </View>
             </>
@@ -120,6 +131,7 @@ const mapDispatchToProps = {
     myuserBlogs: Creators.userBlogs,
     myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
+    myUser: Creators.user,
 }
 
 const mapStateToProps = (state) => {
@@ -129,6 +141,7 @@ const mapStateToProps = (state) => {
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
         userFavorites: state.UserAuth.userFavorites,
+        userFromStore: state.UserAuth.user,
     }
 }
 
@@ -138,16 +151,25 @@ const STYLES = StyleSheet.create({
     textNormal: {
         paddingLeft: ms(10),
         fontSize: ms(11),
-        alignSelf: 'center',
     },
     textBold: {
         fontWeight: 'bold',
         fontSize: ms(14),
         paddingLeft: ms(10),
     },
+    profilePicture: {
+        width: 100,
+        height: 100,
+        borderRadius: ms(50),
+        alignSelf: 'center',
+    },
     profileAvatar: {
         backgroundColor: ThemeColors.CGREEN,
         alignSelf: 'center',
+    },
+    editIcon: {
+        backgroundColor: 'transparent',
+        alignSelf: 'flex-end'
     },
     bottomAvatar: {
         backgroundColor: ThemeColors.CGREEN
@@ -173,7 +195,7 @@ const STYLES = StyleSheet.create({
     },
     card: (width, height) => ({
         width: width / 1.3,
-        height: height / 4.5,
+        height: height / 4,
         borderRadius: ms(20),
         justifyContent: 'center',
         alignItems: 'center',
