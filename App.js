@@ -17,7 +17,7 @@ const App = () => {
                     <StatusBar  backgroundColor={ThemeColors.CGREEN} />
                     <View style={{ flex: 1 }} >
                         <MainTabNavigation />
-                        <FlashMessage position="bottom" />
+                        <FlashMessage position="center" />
                     </View>
                 </PaperProvider>
             </PersistGate>

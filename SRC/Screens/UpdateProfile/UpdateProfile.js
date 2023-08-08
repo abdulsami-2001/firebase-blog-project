@@ -46,7 +46,7 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
 
     const uploadToFBCloudStorage = async (fileName, base64String, fileType) => {
         // const user = userFromStore
-        const user = userFromStore?._user
+        const user = userFromStore?._user || userFromStore
         console.log("user", user)
         showMessage({
             message: "Picture uploading in process",
@@ -134,7 +134,7 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
     }
 
     const updateName = async () => {
-        const user = userFromStore?._user
+        const user = userFromStore?._user || userFromStore
         // const user = userFromStore
         showMessage({
             message: "Updating Name...",

@@ -8,8 +8,8 @@ import { useNavigation } from '@react-navigation/native'
 import { showMessage } from 'react-native-flash-message'
 import { Button, Text, Card, Avatar } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
-import { View, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
+import { View, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native'
 
 
 const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites, userFromStore, myUser }) => {
@@ -59,6 +59,8 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites, userFrom
             })
     }
 
+    console.log(userFromStore)
+
     if (user != undefined && user != null) {
         return (
             <>
@@ -70,7 +72,7 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites, userFrom
                         {userFromStore?.photoURL != null ? <Image source={{ uri: userFromStore?.photoURL }} style={STYLES.profilePicture} /> : <Avatar.Icon size={100} color={ThemeColors.WHITE} style={STYLES.profileAvatar} icon={'account-circle'} />}
                         <View>
                             <Text style={{ ...STYLES.textBold, paddingLeft: 0, alignSelf: 'center' }} >{userFromStore?.displayName}</Text>
-                            <Text style={STYLES.textBold} >{userFromStore?.email}</Text>
+                            <Text style={{ ...STYLES.textBold, paddingLeft: 0, alignSelf: 'center' }} >{userFromStore?.email}</Text>
                             <Text style={STYLES.textNormal} >{userFromStore?.uid}</Text>
                         </View>
                     </Card>
