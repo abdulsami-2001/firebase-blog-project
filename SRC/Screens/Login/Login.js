@@ -128,7 +128,6 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                 navigation.navigate(NavigationStrings.PROFILE)
             })
             .catch(error => {
-                console.log(error)
                 if (error.code === 'auth/invalid-email') {
                     showMessage({
                         message: "Email address is not valid",

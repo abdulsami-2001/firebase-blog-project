@@ -1,15 +1,15 @@
 import { connect } from 'react-redux'
-import React, { useState, useEffect } from 'react'
 import { Dimensions } from 'react-native'
 import Lottie from 'lottie-react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RenderHtml from 'react-native-render-html'
+import React, { useState, useEffect } from 'react'
 import { Creators } from '../../Redux/Action/Action'
+import storage from '@react-native-firebase/storage'
 import { ms, mvs, vs } from 'react-native-size-matters'
 import firestore from '@react-native-firebase/firestore'
 import { showMessage } from 'react-native-flash-message'
 import { useNavigation } from '@react-navigation/native'
-import storage from '@react-native-firebase/storage'
 import DocumentPicker from 'react-native-document-picker'
 import { TextInput, Button, useTheme } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
@@ -27,11 +27,7 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
 
     useEffect(() => {
         setAuthor(userFromStore?.displayName)
-        console.log('use effect add blog')
     }, [userFromStore])
-
-    console.log('re rednere add blog')
-
 
     const generateKey = (title) => {
         return `${title}_${new Date().getTime()}`;

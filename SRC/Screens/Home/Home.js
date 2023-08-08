@@ -23,7 +23,6 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
         getCommentsFromFirestore()
     }, [])
 
-    // console.log("userComments", userComments)
 
     // user data from firebase firestore
     const getDataFromFirestore = async () => {
@@ -39,7 +38,6 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
             myallBlogs({ ...datatemp })
 
         } catch (error) {
-            console.log(error)
             showMessage({
                 duration: 2000,
                 message: 'Error while fetching blogs',
@@ -60,12 +58,9 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
                 datatemp = { [anotherTemp]: tempdoc, ...datatemp }
             });
 
-            // console.log(datatemp)
             myUserLike({ ...datatemp })
 
-
         } catch (error) {
-            console.log(error)
             showMessage({
                 duration: 2000,
                 message: 'Error while fetching Blog Likes',

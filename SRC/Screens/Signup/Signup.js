@@ -81,7 +81,6 @@ const SignUp = ({ myUserState, myUserId }) => {
                 navigation.navigate(NavigationStrings.PROFILE)
             })
             .catch(error => {
-                console.log(error)
                 if (error.code === 'auth/email-already-in-use') {
                     showMessage({
                         message: "Email address is already in use!",

@@ -59,8 +59,6 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites, userFrom
             })
     }
 
-    console.log(userFromStore)
-
     if (user != undefined && user != null) {
         return (
             <>

@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import Lottie from 'lottie-react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import auth from '@react-native-firebase/auth';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import storage from '@react-native-firebase/storage'
@@ -10,7 +10,7 @@ import { showMessage } from 'react-native-flash-message'
 import DocumentPicker from 'react-native-document-picker'
 import { Avatar, Card, Text, Button, TextInput } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
-import { StyleSheet, View, Dimensions, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, View, Dimensions, Image } from 'react-native'
 
 
 const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
@@ -47,7 +47,6 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
     const uploadToFBCloudStorage = async (fileName, base64String, fileType) => {
         // const user = userFromStore
         const user = userFromStore?._user || userFromStore
-        console.log("user", user)
         showMessage({
             message: "Picture uploading in process",
             type: "info",

@@ -14,7 +14,6 @@ const CommentSection = ({ userIdentification, params, allBlogs, userComments, my
     const { width } = useWindowDimensions()
     const [CommentText, setCommentText] = useState('')
 
-    console.log(allBlogs[params]?.BlogId)
 
     function extractAllCommentsWithUser(commentsObject) {
         const commentsWithUser = [];
@@ -78,7 +77,7 @@ const CommentSection = ({ userIdentification, params, allBlogs, userComments, my
                                 <View style={STYLES.cmntImgCont} >
                                     <FontAwesome name={'user-circle'} size={40} />
                                 </View>
-                                <TouchableOpacity onPress={() => console.log('Comment Press')} style={STYLES.cmntTextCont(width)} >
+                                <TouchableOpacity style={STYLES.cmntTextCont(width)} >
                                     <Text>{item?.user}</Text>
                                     <Text style={STYLES.cmntText} >{item?.comment}</Text>
                                 </TouchableOpacity>

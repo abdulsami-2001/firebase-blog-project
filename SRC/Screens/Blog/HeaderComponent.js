@@ -63,7 +63,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
             newUser ? uploadFavoritesToFirestore() : updateFavoritesToFirestore()
 
         } catch (error) {
-            console.log(error)
             showMessage({
                 duration: 2000,
                 message: 'Error while fetching blogs',
@@ -172,7 +171,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
             });
             newLike ? uploadLikeToFirestore() : checkLikeByIdOnFirestore()
         } catch (error) {
-            console.log(error)
             showMessage({
                 duration: 2000,
                 message: 'Error while fetching blogs',
@@ -220,7 +218,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 .collection('Like')
                 .doc(allBlogs[params]?.BlogId).get()
 
-            // console.log(userLike)
             let liked = false; // not liked by user
             let usrIdArray = [...data?.LikedByUsers]
             usrIdArray.push(userIdentification)
@@ -284,7 +281,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
     // ----------------
 
     const commentPressHandler = (BlogId) => {
-        console.log('BlogId', BlogId)
         if (userIdentification && CommentText != '') {
             getCommentsFromFirestore(BlogId)
         } else if (!userIdentification) {
@@ -326,7 +322,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
             newComment ? uploadCommentToFirestore() : updateCommentToFirestore()
             // newComment ? uploadCommentToFirestore() : checkCommentByIdOnFirestore()
         } catch (error) {
-            console.log(error)
             showMessage({
                 duration: 2000,
                 message: 'Error while fetching blogs',
@@ -440,7 +435,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
 
         Share.open(options)
             .then((res) => {
-                console.log(res)
                 return (
                     showMessage({
                         duration: 2000,
@@ -450,7 +444,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 )
             })
             .catch((err) => {
-                console.log(err)
                 return (
                     showMessage({
                         duration: 2000,

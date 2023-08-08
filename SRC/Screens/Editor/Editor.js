@@ -21,7 +21,6 @@ const Editor = ({ content, mycontent }) => {
     const RichText = useRef();
     const { height } = Dimensions.get('screen')
 
-    console.log("content", content)
 
     // this function will be called when the editor has been initialized
     function editorInitializedCallback() {
@@ -95,7 +94,6 @@ const Editor = ({ content, mycontent }) => {
         },
             (error) => {
                 // Handle unsuccessful uploads
-                console.log(error)
                 showMessage({
                     message: "Something went wrong",
                     description: error.message,
@@ -119,7 +117,6 @@ const Editor = ({ content, mycontent }) => {
         )
     }
 
-    // console.log("content: ", content)
     return (
         <View style={STYLES.mainCont}>
             <RichToolbar

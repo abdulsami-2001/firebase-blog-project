@@ -66,7 +66,7 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
                                             <View style={STYLES.cmntImgCont} >
                                                 <FontAwesome name={'user-circle'} size={40} />
                                             </View>
-                                            <TouchableOpacity activeOpacity={0.5} onPress={() => console.log('Comment Press')} style={STYLES.cmntTextCont(width)} >
+                                            <TouchableOpacity activeOpacity={0.5} style={STYLES.cmntTextCont(width)} >
                                                 <Text variant='labelSmall' >{item?.user}</Text>
                                                 <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
                                             </TouchableOpacity>
@@ -90,7 +90,7 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
                                         <View style={STYLES.cmntImgCont} >
                                             <FontAwesome name={'user-circle'} size={40} />
                                         </View>
-                                        <TouchableOpacity activeOpacity={0.5} onPress={() => console.log('Comment Press')} style={STYLES.cmntTextCont(width)} >
+                                        <TouchableOpacity activeOpacity={0.5} style={STYLES.cmntTextCont(width)} >
                                             <Text variant='labelSmall' >{item?.user}</Text>
                                             <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
                                         </TouchableOpacity>
