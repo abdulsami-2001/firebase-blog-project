@@ -10,7 +10,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 
-const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComments, myUserComments }) => {
+const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComments, myUserComments, blogViewsCount, myBlogViewsCount, }) => {
     const navigation = useNavigation()
     let BlogData = Object.keys(allBlogs)
     const { width } = Dimensions.get('screen')
@@ -18,9 +18,11 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
     useEffect(() => {
         getDataFromFirestore()
     }, [userBlogs])
+    
     useEffect(() => {
         getLikeFromFirestore()
         getCommentsFromFirestore()
+        getblogViewsCountFromFirestore()
     }, [])
 
 
@@ -87,7 +89,31 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
             showMessage({
                 duration: 2000,
                 message: "Unable to fetch your blogs",
-                description: 'Make sure internet is working.'
+                description: 'Make sure internet is working.',
+                type: 'warning',
+            })
+        }
+    }
+
+
+    const getblogViewsCountFromFirestore = async () => {
+        try {
+            let datatemp = {}
+            let dataRef = firestore().collection('BlogViewsCount');
+            let snapshot = await dataRef?.get()
+            snapshot.forEach(doc => {
+                let tempdoc = doc?.data()
+                let anotherTemp = doc.id
+                datatemp = { [anotherTemp]: tempdoc, ...datatemp }
+            });
+            myBlogViewsCount({ ...datatemp })
+
+        } catch (error) {
+            showMessage({
+                duration: 2000,
+                message: "Unable to fetch blog views",
+                description: 'Make sure internet is working.',
+                type: 'warning',
             })
         }
     }
@@ -136,22 +162,24 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
 }
 
 const mapDispatchToProps = {
-    myUserState: Creators.userState,
     myUserId: Creators.userId,
-    myuserBlogs: Creators.userBlogs,
     myallBlogs: Creators.allBlogs,
     myUserLike: Creators.userLike,
+    myuserBlogs: Creators.userBlogs,
+    myUserState: Creators.userState,
     myUserComments: Creators.userComments,
+    myBlogViewsCount: Creators.blogViewsCount,
 }
 
 const mapStateToProps = (state) => {
     return {
-        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userBlogs: state.UserAuth.userBlogs,
-        userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
         userLike: state.UserAuth.userLike,
         userComments: state.UserAuth.userComments,
+        blogViewsCount: state.UserAuth.blogViewsCount,
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userIdentification: state.UserAuth.userIdentification,
     }
 }
 

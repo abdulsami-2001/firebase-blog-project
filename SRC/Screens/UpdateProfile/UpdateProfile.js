@@ -284,7 +284,7 @@ const STYLES = StyleSheet.create({
     },
     card: (width, height) => ({
         width: width / 1.3,
-        height: height / 4,
+        height: height / 3.5,
         borderRadius: ms(20),
         justifyContent: 'center',
         alignItems: 'center',

@@ -1,13 +1,15 @@
 import { createActions } from 'reduxsauce'
 
 export const { Types, Creators } = createActions({
-    userState: ['userstateflag'],
+    user: ['user'],
     userId: ['uid'],
-    userBlogs: ['userblogs'],
-    allBlogs: ['allblogs'],
-    userFavorites: ['userfavorites'],
     content: ['content'],
+    allBlogs: ['allblogs'],
     userLike: ['userlike'],
+    userBlogs: ['userblogs'],
+    userState: ['userstateflag'],
     userComments: ['usercomments'],
-    user:['user']
+    userFavorites: ['userfavorites'],
+    blogViewsCount: ['blogviewscount'],
+
 })

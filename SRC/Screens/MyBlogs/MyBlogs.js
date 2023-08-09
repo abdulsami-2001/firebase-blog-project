@@ -1,24 +1,36 @@
 import { connect } from 'react-redux'
 import Lottie from 'lottie-react-native';
-import { Card, Text } from 'react-native-paper'
 import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
+import { Avatar, Card, Text } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native'
 
-const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
+const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs, allBlogs, blogViewsCount }) => {
     const navigation = useNavigation()
     const [first, setfirst] = useState(true)
     const { width, height } = Dimensions.get('screen')
     let BlogData = Object.keys(userBlogs)
 
+
     useEffect(() => {
         setfirst(!first)
     }, [userBlogs, userIdentification, isUserLoggedIn])
+
+
+    const postViews = {}; // Object to store total views for each post
+
+    for (const postId in blogViewsCount) {
+        postViews[postId] = 0; // Initialize total views for this post
+
+        for (const userId in blogViewsCount[postId]) {
+            postViews[postId] += blogViewsCount[postId][userId].ViewsCount;
+        }
+    }
 
     if (isUserLoggedIn && BlogData.length > 0) {
         return (
@@ -33,7 +45,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                         renderItem={({ item }) => {
                             return (
                                 <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
-                                    <Card  >
+                                    <Card>
                                         <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
                                         <Card.Content>
                                             <Text variant="titleLarge" style={STYLES.textHeading} >{userBlogs[item]?.Title}</Text>
@@ -42,7 +54,11 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
                                                 <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
                                                 <Text style={STYLES.text}>{userBlogs[item]?.Author}</Text>
                                             </View>
-                                            <Text variant="bodyMedium" style={STYLES.text}>{userBlogs[item]?.BlogId}</Text>
+                                            <View style={STYLES.blogViewCont} >
+                                                <Text variant="titleSmall" style={{ ...STYLES.textHeading, fontSize: 15 }}>Blog views: </Text>
+                                                <Text style={{ ...STYLES.text, marginLeft: ms(3) }}>{postViews[userBlogs[item]?.BlogId] || 0}</Text>
+                                                <Avatar.Icon size={25} color={ThemeColors.CGREEN} icon={'eye-outline'} style={STYLES.eyeIcon} />
+                                            </View>
                                         </Card.Content>
                                     </Card>
                                 </TouchableOpacity>
@@ -85,7 +101,9 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs }) => {
 
 const mapDispatchToProps = {
     myUserState: Creators.userState,
+    myallBlogs: Creators.allBlogs,
     myuserBlogs: Creators.userBlogs,
+    myBlogViewsCount: Creators.blogViewsCount,
 }
 
 const mapStateToProps = (state) => {
@@ -93,12 +111,18 @@ const mapStateToProps = (state) => {
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userIdentification: state.UserAuth.userIdentification,
         userBlogs: state.UserAuth.userBlogs,
+        allBlogs: state.UserAuth.allBlogs,
+        blogViewsCount: state.UserAuth.blogViewsCount,
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyBlogs)
 
 const STYLES = StyleSheet.create({
+    eyeIcon: {
+        backgroundColor: 'transparent',
+        paddingTop: vs(3),
+    },
     mainCont: {
         flex: 1,
         marginHorizontal: ms(15),
@@ -140,7 +164,7 @@ const STYLES = StyleSheet.create({
     },
     cardCont: (width) => ({
         marginVertical: vs(5),
-        width: width - ms(30)
+        width: width - ms(30),
     }),
     btnCont: {
         position: 'absolute',
@@ -160,5 +184,10 @@ const STYLES = StyleSheet.create({
     },
     authorCont: {
         flexDirection: 'row',
+        marginTop: vs(4)
     },
+    blogViewCont: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    }
 })

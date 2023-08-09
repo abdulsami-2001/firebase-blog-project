@@ -5,12 +5,13 @@ import FooterComponent from './FooterComponent'
 import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
+import firestore from '@react-native-firebase/firestore'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StyleSheet, Modal, TouchableOpacity, View, FlatList, useWindowDimensions } from 'react-native'
 
-const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
+const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount, userIdentification, userFromStore }) => {
     const { params } = route
     const { width } = useWindowDimensions();
     const [first, setfirst] = useState(true)
@@ -21,6 +22,12 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
     useEffect(() => {
         setfirst(!first)
     }, [userComments])
+
+    useEffect(() => {
+        // cal the counter function
+        blogViewsCountHandler()
+
+    }, [])
 
 
     // For Comment feature
@@ -41,6 +48,91 @@ const Blog = ({ route, allBlogs, userComments, myUserComments }) => {
         }
 
         return commentsWithUser;
+    }
+
+
+    // For blogViewsCount state
+    const blogViewsCountHandler = () => {
+        if (userIdentification) {
+            getblogViewsCountFromFirestore(allBlogs[params]?.BlogId)
+        } else if (!userIdentification) {
+            // getblogViewsCountFromFirestore(BlogId)
+        } else {
+            // case when error occur while updating blog view count
+        }
+    }
+
+
+    const getblogViewsCountFromFirestore = async (BlogId) => {
+        try {
+            let dataRef = firestore().collection('BlogViewsCount');
+            let snapshot = await dataRef?.get()
+            let newBlogViewsCount = true
+            snapshot.forEach(doc => {
+                if (doc.id == BlogId) {
+                    newBlogViewsCount = false
+                }
+            });
+            // newBlogViewsCount ? uploadblogViewsCountToFirestore() : console.log('purana')
+            newBlogViewsCount ? uploadblogViewsCountToFirestore() : updateblogViewsCountToFirestore()
+        } catch (error) {
+            // error while fetching data from fb fs.
+            console.log(error, 'error on getblogViewsCountFromFirestore')
+        }
+    }
+    const uploadblogViewsCountToFirestore = async () => {
+        try {
+            firestore()
+                .collection('BlogViewsCount')
+                .doc(allBlogs[params]?.BlogId)
+                .set({ //adding userid with its comments also generating commentid
+                    [userIdentification]: {
+                        ViewsCount: 1
+                    }
+                })
+                .then(() => {
+                    myBlogViewsCount({
+                        ...blogViewsCount,
+                        [allBlogs[params]?.BlogId]: {
+                            [userIdentification]: {
+                                ViewsCount: 1
+                            }
+                        }
+                    })
+                });
+        } catch (error) {
+            // error while uploading blogveiw count
+            console.log(error, 'error on uploadblogViewsCountToFirestore')
+        }
+    }
+
+    const updateblogViewsCountToFirestore = async () => {
+        try {
+            firestore()
+                .collection('BlogViewsCount')
+                .doc(allBlogs[params]?.BlogId)
+                .update({
+                    ...blogViewsCount[allBlogs[params]?.BlogId],
+                    [userIdentification]: {
+                        ...blogViewsCount[allBlogs[params]?.BlogId]?.[userIdentification],
+                        ViewsCount: (blogViewsCount[allBlogs[params]?.BlogId]?.[userIdentification]?.ViewsCount || 0) + 1,
+                    }
+                })
+                .then(() => {
+                    myBlogViewsCount({
+                        ...blogViewsCount,
+                        [allBlogs[params]?.BlogId]: {
+                            ...blogViewsCount[allBlogs[params]?.BlogId],
+                            [userIdentification]: {
+                                ...blogViewsCount[allBlogs[params]?.BlogId]?.[userIdentification],
+                                ViewsCount: (blogViewsCount[allBlogs[params]?.BlogId]?.[userIdentification]?.ViewsCount || 0) + 1,
+                            }
+                        },
+                    })
+                });
+        } catch (error) {
+            console.log(error, 'error on updateblogViewsCountToFirestore')
+        }
     }
 
     return (
@@ -113,6 +205,8 @@ const mapDispatchToProps = {
     myallBlogs: Creators.allBlogs,
     myUserLike: Creators.userLike,
     myUserComments: Creators.userComments,
+    myBlogViewsCount: Creators.blogViewsCount,
+    myUser: Creators.user,
 }
 
 const mapStateToProps = (state) => {
@@ -124,6 +218,8 @@ const mapStateToProps = (state) => {
         userFavorites: state.UserAuth.userFavorites,
         userLike: state.UserAuth.userLike,
         userComments: state.UserAuth.userComments,
+        blogViewsCount: state.UserAuth.blogViewsCount,
+        userFromStore: state.UserAuth.user,
     }
 }
 
