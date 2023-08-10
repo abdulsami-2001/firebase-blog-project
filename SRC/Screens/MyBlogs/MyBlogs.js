@@ -4,13 +4,15 @@ import React, { useState, useEffect } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import { Avatar, Card, Text } from 'react-native-paper'
+import firestore from '@react-native-firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native'
+import { showMessage } from 'react-native-flash-message';
 
-const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs, allBlogs, blogViewsCount }) => {
+const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount, userLike, userComments, userBlogs, userFavorites, myallBlogs, myBlogViewsCount, myUserLike, myUserComments, myuserBlogs, myuserFavorites }) => {
     const navigation = useNavigation()
     const [first, setfirst] = useState(true)
     const { width, height } = Dimensions.get('screen')
@@ -19,7 +21,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs, allBlogs, blog
 
     useEffect(() => {
         setfirst(!first)
-    }, [userBlogs, userIdentification, isUserLoggedIn])
+    }, [userBlogs, userIdentification, isUserLoggedIn, blogViewsCount])
 
 
     const postViews = {}; // Object to store total views for each post
@@ -32,11 +34,163 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs, allBlogs, blog
         }
     }
 
+    // giving function a blogsData object with id of the blog to remove/delete from it and retruning the filtered data.
+    const filteredData = (blogsData, blogWithout_IdToDelete, blogWith_IdToDelete) => {
+        if (blogWithout_IdToDelete) {
+            const updatedBlogsData = Object.keys(blogsData)
+                .filter(blogId => blogId != blogWithout_IdToDelete);
+
+            const finalData = updatedBlogsData.reduce((newBlogsData, blogId) => {
+                newBlogsData[blogId] = blogsData[blogId];
+                return newBlogsData;
+            }, {});
+
+            return finalData
+        } else if (blogWith_IdToDelete) {
+            const updatedBlogsData = Object.keys(blogsData)
+                .filter(blogId => blogId != blogWith_IdToDelete);
+
+            const finalData = updatedBlogsData.reduce((newBlogsData, blogId) => {
+                newBlogsData[blogId] = blogsData[blogId];
+                return newBlogsData;
+            }, {});
+
+            return finalData
+        } else {
+            console.log('error on filtered data function')
+        }
+
+    }
+
+    console.log('blogViewCont ')
+
+    //update 'User' collection on firebase and also redux store.
+    const blogDeleteHandler = (blogWithout_IdToDelete, blogWith_IdToDelete) => {
+        const singleUserData = filteredData(userBlogs, blogWithout_IdToDelete, false)
+        const allBlogsData = filteredData(allBlogs, blogWithout_IdToDelete, false)
+        const userFavoritesData = filteredData(userFavorites, blogWithout_IdToDelete, false)
+        const blogViewsCountData = filteredData(blogViewsCount, false, blogWith_IdToDelete)
+        const userLikeData = filteredData(userLike, false, blogWith_IdToDelete)
+        const userCommentsData = filteredData(userComments, false, blogWith_IdToDelete)
+
+        // onwards ye krna ha: blog delete ky waqt remainig blogs ky views count 0 ho rhy usy fix krna ha
+
+        try {
+            firestore()
+                .collection('Users')
+                .doc(userIdentification)
+                .set({
+                    ...singleUserData
+                })
+                .then(() => {
+                    myuserBlogs({ ...singleUserData })
+                    myallBlogs({ ...allBlogsData })
+
+                    deleteUserFavoritesData(userFavoritesData)
+                    deleteBlogViewsCountData(blogViewsCountData, blogWith_IdToDelete)
+                    deleteUserLikeDataData(userLikeData, blogWith_IdToDelete)
+                    deleteUserCommentsData(userCommentsData, blogWith_IdToDelete)
+
+                    showMessage({
+                        duration: 2000,
+                        message: 'Blog Deleted',
+                        type: 'success'
+                    })
+                });
+        } catch (error) {
+            showMessage({
+                duration: 3000,
+                message: 'Error while deleting blog - User Blog',
+                description: "Make sure you have working internet",
+                type: 'warning'
+            })
+        }
+    }
+
+    //update 'Favorites' collection on firebase and also redux store.
+    const deleteUserFavoritesData = async (userFavoritesData) => {
+        try {
+            firestore()
+                .collection('Favorites')
+                .doc(userIdentification)
+                .set({
+                    ...userFavoritesData
+                })
+                .then(() => {
+                    myuserFavorites({
+                        ...userFavoritesData
+                    })
+                });
+        } catch (error) {
+            showMessage({
+                duration: 3000,
+                message: 'Error while deleting blog - User Favorites',
+                description: "Make sure you have working internet",
+                type: 'warning'
+            })
+        }
+    }
+
+    //update 'BlogViewsCount' collection on firebase and also redux store.
+    const deleteBlogViewsCountData = async (blogViewsCountData, blogWith_IdToDelete) => {
+        const documentRef = firestore().collection('BlogViewsCount').doc(blogWith_IdToDelete);
+
+        documentRef.delete()
+            .then(() => {
+                myBlogViewsCount({ ...blogViewsCountData })
+            })
+            .catch(error => {
+                showMessage({
+                    duration: 3000,
+                    message: 'Error while deleting blog - Blog Views Count',
+                    description: "Make sure you have working internet",
+                    type: 'warning'
+                })
+            });
+    }
+
+    //update 'Like' collection on firebase and also redux store.
+    const deleteUserLikeDataData = async (userLikeData, blogWith_IdToDelete) => {
+        const documentRef = firestore().collection('Like').doc(blogWith_IdToDelete);
+
+        documentRef.delete()
+            .then(() => {
+                myUserLike({ ...userLikeData })
+            })
+            .catch(error => {
+                showMessage({
+                    duration: 3000,
+                    message: 'Error while deleting blog - User Like',
+                    description: "Make sure you have working internet",
+                    type: 'warning'
+                })
+            });
+    }
+
+    //update 'Comments' collection on firebase and also redux store.
+    const deleteUserCommentsData = async (userCommentsData, blogWith_IdToDelete) => {
+        const documentRef = firestore().collection('Comments').doc(blogWith_IdToDelete);
+
+        documentRef.delete()
+            .then(() => {
+                myBlogViewsCount({ ...userCommentsData })
+            })
+            .catch(error => {
+                showMessage({
+                    duration: 3000,
+                    message: 'Error while deleting blog - User Comments',
+                    description: "Make sure you have working internet",
+                    type: 'warning'
+                })
+            });
+    }
+
+
     if (isUserLoggedIn && BlogData.length > 0) {
         return (
             <View style={STYLES.mainCont}>
                 <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}>
-                    <AntDesign name='pluscircle' color={ThemeColors.WHITE} size={50} />
+                    <AntDesign name='pluscircle' color={ThemeColors.CGREEN} size={50} />
                 </TouchableOpacity>
                 <View style={STYLES.myBlogsCont}>
                     <FlatList
@@ -44,24 +198,35 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs, allBlogs, blog
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => {
                             return (
-                                <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
-                                    <Card>
-                                        <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
-                                        <Card.Content>
-                                            <Text variant="titleLarge" style={STYLES.textHeading} >{userBlogs[item]?.Title}</Text>
-                                            <Text variant="bodyMedium" style={STYLES.text}>Tap to read</Text>
-                                            <View style={STYLES.authorCont} >
-                                                <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
-                                                <Text style={STYLES.text}>{userBlogs[item]?.Author}</Text>
+                                <>
+                                    <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
+                                        <Card>
+                                            <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
+                                            <View style={STYLES.iconCont} >
+                                                <TouchableOpacity style={STYLES.editIconCont} onPress={() => showMessage({ type: 'info', message: 'Blog edit feature coming soon.' })} >
+                                                    <Avatar.Icon size={30} color={ThemeColors.WHITE} icon={'pencil'} style={STYLES.editIcon} />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={STYLES.editIconCont} onPress={() => blogDeleteHandler(item, userBlogs[item]?.BlogId)} >
+                                                    <Avatar.Icon size={30} color={ThemeColors.WHITE} icon={'delete'} style={STYLES.editIcon} />
+                                                </TouchableOpacity>
                                             </View>
-                                            <View style={STYLES.blogViewCont} >
-                                                <Text variant="titleSmall" style={{ ...STYLES.textHeading, fontSize: 15 }}>Blog views: </Text>
-                                                <Text style={{ ...STYLES.text, marginLeft: ms(3) }}>{postViews[userBlogs[item]?.BlogId] || 0}</Text>
-                                                <Avatar.Icon size={25} color={ThemeColors.CGREEN} icon={'eye-outline'} style={STYLES.eyeIcon} />
-                                            </View>
-                                        </Card.Content>
-                                    </Card>
-                                </TouchableOpacity>
+                                            <Card.Content>
+                                                <Text variant="titleLarge" style={STYLES.textHeading} >{userBlogs[item]?.Title}</Text>
+                                                <Text variant="bodyMedium" style={STYLES.text}>Tap to read</Text>
+                                                <View style={STYLES.authorCont} >
+                                                    <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
+                                                    <Text style={STYLES.text}>{userBlogs[item]?.Author}</Text>
+                                                </View>
+                                                <View style={STYLES.blogViewCont} >
+                                                    <Text variant="titleSmall" style={{ ...STYLES.textHeading, fontSize: 15 }}>Blog views: </Text>
+                                                    <Text style={{ ...STYLES.text, marginLeft: ms(3) }}>{postViews[userBlogs[item]?.BlogId] || 0}</Text>
+                                                    <Avatar.Icon size={25} color={ThemeColors.CGREEN} icon={'eye-outline'} style={STYLES.eyeIcon} />
+                                                </View>
+                                            </Card.Content>
+                                        </Card>
+                                    </TouchableOpacity>
+                                    {/* now work on edit icon and functionality */}
+                                </>
                             )
                         }}
                     />
@@ -100,25 +265,45 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, userBlogs, allBlogs, blog
 }
 
 const mapDispatchToProps = {
-    myUserState: Creators.userState,
     myallBlogs: Creators.allBlogs,
+    myUserLike: Creators.userLike,
+    myUserState: Creators.userState,
     myuserBlogs: Creators.userBlogs,
+    myUserComments: Creators.userComments,
+    myuserFavorites: Creators.userFavorites,
     myBlogViewsCount: Creators.blogViewsCount,
 }
 
 const mapStateToProps = (state) => {
     return {
+        userBlogs: state.UserAuth.userBlogs,
+        userLike: state.UserAuth.userLike,
+        allBlogs: state.UserAuth.allBlogs,
+        userComments: state.UserAuth.userComments,
+        userFavorites: state.UserAuth.userFavorites,
+        blogViewsCount: state.UserAuth.blogViewsCount,
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userIdentification: state.UserAuth.userIdentification,
-        userBlogs: state.UserAuth.userBlogs,
-        allBlogs: state.UserAuth.allBlogs,
-        blogViewsCount: state.UserAuth.blogViewsCount,
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyBlogs)
 
 const STYLES = StyleSheet.create({
+    iconCont: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
+    },
+    editIcon: {
+        backgroundColor: 'transparent',
+    },
+    editIconCont: {
+        backgroundColor: ThemeColors.CGREEN,
+        borderRadius: ms(10),
+        padding: ms(3),
+        marginTop: vs(4),
+        marginLeft: ms(5),
+    },
     eyeIcon: {
         backgroundColor: 'transparent',
         paddingTop: vs(3),
@@ -171,7 +356,7 @@ const STYLES = StyleSheet.create({
         zIndex: 1,
         bottom: 15,
         right: 20,
-        backgroundColor: ThemeColors.CGREEN,
+        backgroundColor: ThemeColors.WHITE,
         borderRadius: 30,
     },
     textHeading: {

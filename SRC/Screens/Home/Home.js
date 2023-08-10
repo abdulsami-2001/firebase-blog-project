@@ -18,13 +18,12 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
     useEffect(() => {
         getDataFromFirestore()
     }, [userBlogs])
-    
+
     useEffect(() => {
         getLikeFromFirestore()
         getCommentsFromFirestore()
         getblogViewsCountFromFirestore()
     }, [])
-
 
     // user data from firebase firestore
     const getDataFromFirestore = async () => {
