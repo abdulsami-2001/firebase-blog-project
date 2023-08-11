@@ -57,8 +57,10 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
             getblogViewsCountFromFirestore(allBlogs[params]?.BlogId)
         } else if (!userIdentification) {
             // getblogViewsCountFromFirestore(BlogId)
+            console.log('user is not loggedIn - blogViewsCountHandler - Blog.js')
         } else {
             // case when error occur while updating blog view count
+            console.log('else case - blogViewsCountHandler - Blog.js')
         }
     }
 

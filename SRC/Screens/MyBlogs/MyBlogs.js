@@ -62,7 +62,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
 
     }
 
-    console.log('blogViewCont ')
+    console.log('userComments ', userComments)
 
     //update 'User' collection on firebase and also redux store.
     const blogDeleteHandler = (blogWithout_IdToDelete, blogWith_IdToDelete) => {
@@ -73,7 +73,8 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
         const userLikeData = filteredData(userLike, false, blogWith_IdToDelete)
         const userCommentsData = filteredData(userComments, false, blogWith_IdToDelete)
 
-        // onwards ye krna ha: blog delete ky waqt remainig blogs ky views count 0 ho rhy usy fix krna ha
+        // onwards ye krna ha: blog delete ky waqt remainig blogs ky views count 0 ho rhy usy fix krna
+
 
         try {
             firestore()
@@ -173,7 +174,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
 
         documentRef.delete()
             .then(() => {
-                myBlogViewsCount({ ...userCommentsData })
+                myUserComments({ ...userCommentsData })
             })
             .catch(error => {
                 showMessage({
@@ -237,7 +238,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
         return (
             <View style={STYLES.mainContNL}>
                 <TouchableOpacity style={STYLES.btnCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG)}>
-                    <AntDesign name='pluscircle' color={ThemeColors.WHITE} size={50} />
+                    <AntDesign name='pluscircle' color={ThemeColors.CGREEN} size={50} />
                 </TouchableOpacity>
                 <View style={STYLES.lottieCont(width, height)} >
                     <Lottie source={require('../../Assets/Lottie/announcement.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />

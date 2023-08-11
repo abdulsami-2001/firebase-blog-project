@@ -161,6 +161,8 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
     }
 
     const uploadDataToFirestore = async () => {
+        const BlogId = generateKey(Title)
+
         try {
             firestore()
                 .collection('Users')
@@ -171,7 +173,7 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                         Content,
                         Author,
                         ImageUrl,
-                        BlogId: generateKey(Title)
+                        BlogId: BlogId
                     }
                 })
                 .then(() => {
@@ -186,7 +188,7 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                             Content,
                             Author,
                             ImageUrl,
-                            BlogId: generateKey(Title)
+                            BlogId: BlogId
                         }
                     })
                     navigation.navigate(NavigationStrings.MYBLOGS)
@@ -206,6 +208,8 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
     }
 
     const updateDataToFirestore = async (data) => {
+        const BlogId = generateKey(Title)
+
         try {
             firestore()
                 .collection('Users')
@@ -217,7 +221,7 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                         Content,
                         Author,
                         ImageUrl,
-                        BlogId: generateKey(Title)
+                        BlogId: BlogId
                     }
                 })
                 .then(() => {
@@ -232,7 +236,7 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                             Content,
                             Author,
                             ImageUrl,
-                            BlogId: generateKey(Title)
+                            BlogId: BlogId
                         },
                         ...data,
                     })
