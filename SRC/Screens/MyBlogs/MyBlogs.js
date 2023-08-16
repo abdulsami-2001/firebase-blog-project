@@ -6,11 +6,11 @@ import { Creators } from '../../Redux/Action/Action'
 import { Avatar, Card, Text } from 'react-native-paper'
 import firestore from '@react-native-firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
+import { showMessage } from 'react-native-flash-message';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native'
-import { showMessage } from 'react-native-flash-message';
 
 const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount, userLike, userComments, userBlogs, userFavorites, myallBlogs, myBlogViewsCount, myUserLike, myUserComments, myuserBlogs, myuserFavorites }) => {
     const navigation = useNavigation()
@@ -62,7 +62,6 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
 
     }
 
-    console.log('userComments ', userComments)
 
     //update 'User' collection on firebase and also redux store.
     const blogDeleteHandler = (blogWithout_IdToDelete, blogWith_IdToDelete) => {
@@ -72,8 +71,6 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
         const blogViewsCountData = filteredData(blogViewsCount, false, blogWith_IdToDelete)
         const userLikeData = filteredData(userLike, false, blogWith_IdToDelete)
         const userCommentsData = filteredData(userComments, false, blogWith_IdToDelete)
-
-        // onwards ye krna ha: blog delete ky waqt remainig blogs ky views count 0 ho rhy usy fix krna
 
 
         try {
@@ -204,7 +201,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                                         <Card>
                                             <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
                                             <View style={STYLES.iconCont} >
-                                                <TouchableOpacity style={STYLES.editIconCont} onPress={() => showMessage({ type: 'info', message: 'Blog edit feature coming soon.' })} >
+                                                <TouchableOpacity style={STYLES.editIconCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG, { editItem: item, editImageUrl: userBlogs[item]?.ImageUrl, editTitle: userBlogs[item]?.Title, editBlogId: userBlogs[item]?.BlogId, editAuthor: userBlogs[item]?.Author, editContent: userBlogs[item]?.Content })}>
                                                     <Avatar.Icon size={30} color={ThemeColors.WHITE} icon={'pencil'} style={STYLES.editIcon} />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={STYLES.editIconCont} onPress={() => blogDeleteHandler(item, userBlogs[item]?.BlogId)} >
@@ -226,7 +223,6 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                                             </Card.Content>
                                         </Card>
                                     </TouchableOpacity>
-                                    {/* now work on edit icon and functionality */}
                                 </>
                             )
                         }}

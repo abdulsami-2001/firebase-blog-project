@@ -4,13 +4,14 @@ import { Types } from '../Action/Action'
 export const INITIAL_STATE = {
     user: {},
     content: '',
+    userLike: {},
+    userBlogs: {},
+    editContent: {},
+    userComments: {},
+    userFavorites: {},
+    blogViewsCount: {},
     isUserLoggedIn: false,
     userIdentification: "",
-    userLike: {},
-    userComments: {},
-    blogViewsCount: {},
-    userBlogs: {},
-    userFavorites: {},
     allBlogs: {
         ['Done is better than']: {
             Title: 'Done is better than perfect Done is better than perfect Done is better than perfect',
@@ -48,6 +49,7 @@ export const UserAuth = (state = INITIAL_STATE, action) => {
         userLike: state.userLike,
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
     }
 }
 
@@ -64,6 +66,7 @@ export const UserIdUpdate = (state = INITIAL_STATE, action) => {
         userLike: state.userLike,
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
     }
 }
 
@@ -81,6 +84,7 @@ export const UserBlogsUpdate = (state = INITIAL_STATE, action) => {
         userLike: state.userLike,
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
     }
 }
 
@@ -98,6 +102,7 @@ export const allBlogsUpdate = (state = INITIAL_STATE, action) => {
         userLike: state.userLike,
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
     }
 }
 
@@ -116,6 +121,7 @@ export const UserFavoritesUpdate = (state = INITIAL_STATE, action) => {
         userLike: state.userLike,
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
     }
 }
 export const Content = (state = INITIAL_STATE, action) => {
@@ -131,6 +137,7 @@ export const Content = (state = INITIAL_STATE, action) => {
         userLike: state.userLike,
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
     }
 }
 
@@ -147,6 +154,7 @@ export const UserLikeUpdate = (state = INITIAL_STATE, action) => {
         userLike: action.userlike,
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
     }
 }
 
@@ -163,6 +171,7 @@ export const UserCommentsUpdate = (state = INITIAL_STATE, action) => {
         userLike: state.userLike,
         userComments: action.usercomments,
         blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
     }
 }
 
@@ -180,6 +189,7 @@ export const User = (state = INITIAL_STATE, action) => {
         userLike: state.userLike,
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
     }
 }
 
@@ -197,8 +207,30 @@ export const BlogViewsCount = (state = INITIAL_STATE, action) => {
         userLike: state.userLike,
         userComments: state.userComments,
         blogViewsCount: action.blogviewscount,
+        editContent: state.editContent,
     }
 }
+
+
+
+export const EditContent = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUserLoggedIn: state.isUserLoggedIn,
+        userIdentification: state.userIdentification,
+        user: state.user,
+        userBlogs: state.userBlogs,
+        userFavorites: state.userFavorites,
+        allBlogs: state.allBlogs,
+        content: state.content,
+        userLike: state.userLike,
+        userComments: state.userComments,
+        blogViewsCount: state.blogViewsCount,
+        editContent: action.editcontent,
+    }
+}
+
+
 
 export const HANDLER = {
     [Types.USER]: User,
@@ -211,6 +243,7 @@ export const HANDLER = {
     [Types.BLOG_VIEWS_COUNT]: BlogViewsCount,
     [Types.USER_COMMENTS]: UserCommentsUpdate,
     [Types.USER_FAVORITES]: UserFavoritesUpdate,
+    [Types.EDIT_CONTENT]: EditContent,
 }
 
 export default createReducer(INITIAL_STATE, HANDLER)

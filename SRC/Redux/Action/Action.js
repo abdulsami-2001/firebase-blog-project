@@ -11,5 +11,5 @@ export const { Types, Creators } = createActions({
     userComments: ['usercomments'],
     userFavorites: ['userfavorites'],
     blogViewsCount: ['blogviewscount'],
-
+    editContent: ['editcontent'],
 })

@@ -11,32 +11,62 @@ import firestore from '@react-native-firebase/firestore'
 import { showMessage } from 'react-native-flash-message'
 import { useNavigation } from '@react-navigation/native'
 import DocumentPicker from 'react-native-document-picker'
-import { TextInput, Button, useTheme } from 'react-native-paper'
+import { TextInput, Button, useTheme, Card, Avatar } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native'
+import Editor from '../Editor/Editor';
 
-const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent, userFromStore }) => {
-    const [Title, setTitle] = useState("");
-    const [Author, setAuthor] = useState(userFromStore?.displayName);
-    const [ImageUrl, setImageUrl] = useState('')
-    const { width, height } = Dimensions.get('screen')
+const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent, userFromStore }) => {
+
     const theme = useTheme()
     const navigation = useNavigation()
+    const { width, height } = Dimensions.get('screen')
+
+    const [Title, setTitle] = useState("");
+    const [ImageUrl, setImageUrl] = useState('')
+    const [Author, setAuthor] = useState(userFromStore?.displayName);
+
+    const { params } = route
 
     useEffect(() => {
         setAuthor(userFromStore?.displayName)
     }, [userFromStore])
 
+    useEffect(() => {
+        let tempContent = Content
+        if (isUserLoggedIn && params?.editAuthor) {
+            setImageUrl(params?.editImageUrl)
+            setTitle(params?.editTitle)
+            setAuthor(params?.editAuthor)
+            myContent(params?.editContent)
+            console.log("edit")
+        }
+
+        // make btn dynamic based on params
+
+        return () => {
+            if (isUserLoggedIn && params?.editAuthor) {
+                setImageUrl('')
+                setTitle('')
+                myContent(tempContent)
+                setAuthor(userFromStore?.displayName)
+                console.log("unmount")
+            }
+        }
+    }, [])
+
+    console.log('params ', params)
+
     const generateKey = (title) => {
         return `${title}_${new Date().getTime()}`;
 
     }
-    const publishHandler = () => {
+    const publishHandler = (isEditing) => {
         if (Title != '' && Content != '' && Author != '' && ImageUrl != '') {
             // run func
-            getDataFromFirestore()
+            getDataFromFirestore(isEditing)
             showMessage({
                 message: "Publishing is in process",
                 type: "info",
@@ -74,6 +104,122 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                 message: "Some Unexpected Error",
                 type: "warning",
             });
+        }
+    }
+
+    const getDataFromFirestore = async (isEditing) => {
+        try {
+            const { _data: data } = await firestore()?.collection('Users')?.doc(userIdentification)?.get()
+
+            if (data == undefined) {
+                // First blog of user                    
+                uploadDataToFirestore()
+            } else if (data != undefined) {
+                // Already post min one blog                    
+                isEditing ? editDataToFirestore(data) : updateDataToFirestore(data)
+            } else {
+                showMessage({
+                    duration: 2000,
+                    message: "Make sure you have working internet",
+                    type: 'warning',
+                })
+            }
+        } catch (error) {
+            showMessage({
+                duration: 2000,
+                message: "Make sure you have working internet",
+                type: 'warning',
+            })
+        }
+    }
+
+    const uploadDataToFirestore = async () => {
+        const BlogId = generateKey(Title)
+
+        try {
+            firestore()
+                .collection('Users')
+                .doc(userIdentification)
+                .set({
+                    [Title]: {
+                        Title,
+                        Content,
+                        Author,
+                        ImageUrl,
+                        BlogId: BlogId
+                    }
+                })
+                .then(() => {
+                    showMessage({
+                        duration: 2000,
+                        message: 'Blog Added',
+                        type: 'success'
+                    })
+                    myuserBlogs({
+                        [Title]: {
+                            Title,
+                            Content,
+                            Author,
+                            ImageUrl,
+                            BlogId: BlogId
+                        }
+                    })
+                    navigation.navigate(NavigationStrings.MYBLOGS)
+                    setTitle('')
+                    setAuthor('')
+                    myContent('')
+                    setImageUrl('')
+                });
+        } catch (error) {
+            showMessage({
+                duration: 2000,
+                message: 'Error while uploading blogs',
+                description: "Make sure you have working internet",
+                type: 'warning'
+            })
+        }
+    }
+
+    const updateDataToFirestore = async (data) => {
+        const BlogId = generateKey(Title)
+        try {
+            firestore()
+                .collection('Users')
+                .doc(userIdentification)
+                .update({
+                    ...data,
+                    [Title]: {
+                        Title,
+                        Content,
+                        Author,
+                        ImageUrl,
+                        BlogId: BlogId
+                    }
+                })
+                .then(() => {
+                    showMessage({
+                        duration: 2000,
+                        message: 'Blog Added',
+                        type: 'success'
+                    })
+                    myuserBlogs({
+                        [Title]: {
+                            Title,
+                            Content,
+                            Author,
+                            ImageUrl,
+                            BlogId: BlogId
+                        },
+                        ...data,
+                    })
+                    navigation.navigate(NavigationStrings.MYBLOGS)
+                    setTitle('')
+                    setAuthor('')
+                    myContent('')
+                    setImageUrl('')
+                });
+        } catch (error) {
+            showMessage({ duration: 2000, message: 'Error while uploading blogs', description: "Make sure you have working internet", type: 'warning' })
         }
     }
 
@@ -160,140 +306,62 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
         )
     }
 
-    const uploadDataToFirestore = async () => {
-        const BlogId = generateKey(Title)
 
-        try {
-            firestore()
-                .collection('Users')
-                .doc(userIdentification)
-                .set({
-                    [Title]: {
-                        Title,
-                        Content,
-                        Author,
-                        ImageUrl,
-                        BlogId: BlogId
-                    }
-                })
-                .then(() => {
-                    showMessage({
-                        duration: 2000,
-                        message: 'Blog Added',
-                        type: 'success'
-                    })
-                    myuserBlogs({
-                        [Title]: {
-                            Title,
-                            Content,
-                            Author,
-                            ImageUrl,
-                            BlogId: BlogId
-                        }
-                    })
-                    navigation.navigate(NavigationStrings.MYBLOGS)
-                    setTitle('')
-                    setAuthor('')
-                    myContent('')
-                    setImageUrl('')
-                });
-        } catch (error) {
-            showMessage({
-                duration: 2000,
-                message: 'Error while uploading blogs',
-                description: "Make sure you have working internet",
-                type: 'warning'
-            })
-        }
-    }
+    // for editing existing blog post
 
-    const updateDataToFirestore = async (data) => {
-        const BlogId = generateKey(Title)
-
-        try {
-            firestore()
-                .collection('Users')
-                .doc(userIdentification)
-                .update({
-                    ...data,
-                    [Title]: {
-                        Title,
-                        Content,
-                        Author,
-                        ImageUrl,
-                        BlogId: BlogId
-                    }
-                })
-                .then(() => {
-                    showMessage({
-                        duration: 2000,
-                        message: 'Blog Added',
-                        type: 'success'
-                    })
-                    myuserBlogs({
-                        [Title]: {
-                            Title,
-                            Content,
-                            Author,
-                            ImageUrl,
-                            BlogId: BlogId
-                        },
-                        ...data,
-                    })
-                    navigation.navigate(NavigationStrings.MYBLOGS)
-                    setTitle('')
-                    setAuthor('')
-                    myContent('')
-                    setImageUrl('')
-                });
-        } catch (error) {
-            showMessage({
-                duration: 2000,
-                message: 'Error while uploading blogs',
-                description: "Make sure you have working internet",
-                type: 'warning'
-            })
-        }
-    }
-
-    const getDataFromFirestore = async () => {
-        try {
-            const { _data: data } = await firestore()?.collection('Users')?.doc(userIdentification)?.get()
-
-            if (data == undefined) {
-                // First blog of user                    
-                uploadDataToFirestore()
-            } else if (data != undefined) {
-                // Already post min one blog                    
-                updateDataToFirestore(data)
-            } else {
-                showMessage({
-                    duration: 2000,
-                    message: "Make sure you have working internet",
-                    type: 'warning',
-                })
+    const editDataToFirestore = (data) => {
+        let myObj = {
+            ...data,
+            [params?.editTitle]: {
+                Title,
+                Content,
+                Author,
+                ImageUrl,
+                BlogId: params?.editBlogId
             }
+        }
+
+        try {
+            const docRef = firestore()
+                .collection('Users')
+                .doc(userIdentification)
+
+            docRef.set({ ...myObj }, { merge: true })
+                .then(() => {
+                    showMessage({
+                        duration: 2000,
+                        message: 'Blog Edited',
+                        type: 'success'
+                    })
+                    myuserBlogs({
+                        ...myObj
+                    })
+                });
+
         } catch (error) {
-            showMessage({
-                duration: 2000,
-                message: "Make sure you have working internet",
-                type: 'warning',
-            })
+            showMessage({ duration: 3000, message: 'Blog Edit Fail', description: 'Try again later', type: 'warning' })
         }
     }
 
     if (isUserLoggedIn) {
         return (
             <View style={STYLES.mainCont}>
-                <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.EDITOR)}>
-                    <MaterialCommunityIcons name='pencil' color={ThemeColors.CGREEN} size={40} />
-                </TouchableOpacity>
-                {ImageUrl == '' &&
-                    <TouchableOpacity style={[STYLES.iconCont, { bottom: 75 }]} activeOpacity={0.7} onPress={imageUploadHandler}>
-                        <MaterialCommunityIcons name='image-plus' color={ThemeColors.CGREEN} size={40} />
-                    </TouchableOpacity>
-                }
-                <ScrollView showsVerticalScrollIndicator={false}  >
+                <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true} >
+                    <Card>
+                        {ImageUrl != '' &&
+                            <>
+                                <View style={{ position: 'relative' }} >
+                                    <Card.Cover source={{ uri: ImageUrl }} resizeMode='contain' />
+                                    <TouchableOpacity style={STYLES.editIconCont} onPress={imageUploadHandler} >
+                                        <Avatar.Icon size={35} color={ThemeColors.WHITE} icon={'pencil'} style={STYLES.editIcon} />
+                                    </TouchableOpacity>
+                                </View>
+                            </>
+                        }
+                        {ImageUrl == '' && <TouchableOpacity onPress={imageUploadHandler} activeOpacity={0.3} style={STYLES.coverImgCont}>
+                            <Avatar.Icon size={190} color={ThemeColors.WHITE} icon={'image-edit'} style={STYLES.editIcon} />
+                        </TouchableOpacity>}
+                    </Card>
                     <View style={STYLES.inputCont}>
                         <TextInput
                             label="Title"
@@ -302,32 +370,25 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
                             onChangeText={text => setTitle(text)}
                             style={STYLES.input}
                         />
-                        <ScrollView style={STYLES.htmlView(theme)} horizontal>
-                            <RenderHtml
-                                source={{ html: Content != '' ? Content : 'Click on edit icon to write a blog' }}
-                                contentWidth={width}
-                            />
+                        <ScrollView style={STYLES.htmlView(theme)} horizontal  >
+                            <Editor />
                         </ScrollView>
-                        <TextInput
-                            label="Author"
-                            value={Author}
-                            type='outlined'
-                            onChangeText={text => setAuthor(text)}
-                            style={STYLES.input}
-                        />
+                        {/* Virtualization , Nested list issue. ye solve krna ha , phr edit ky feature py work krna ha */}
                     </View>
+                    <TextInput
+                        label="Author"
+                        value={Author}
+                        type='outlined'
+                        onChangeText={text => setAuthor(text)}
+                        style={STYLES.input}
+                    />
                     <Button
                         mode="contained"
                         style={STYLES.btn}
-                        onPress={publishHandler}
+                        onPress={params?.editAuthor ? () => publishHandler(true) : () => publishHandler(false)}
                     >
-                        Publish Blog
+                        {params?.editAuthor ? 'Edit Blog' : 'Publish Blog'}
                     </Button>
-                    {ImageUrl != '' &&
-                        <View style={STYLES.imgCont} >
-                            <Image source={{ uri: ImageUrl }} width={200} height={200} />
-                        </View>
-                    }
                 </ScrollView>
             </View>
         )
@@ -348,23 +409,23 @@ const AddBlog = ({ isUserLoggedIn, userIdentification, myuserBlogs, Content, myC
 
 
 const mapDispatchToProps = {
-    myUserState: Creators.userState,
     myUserId: Creators.userId,
+    myContent: Creators.content,
+    myallBlogs: Creators.allBlogs,
+    myUserState: Creators.userState,
     myuserBlogs: Creators.userBlogs,
     myuserFavorites: Creators.userFavorites,
-    myallBlogs: Creators.allBlogs,
-    myContent: Creators.content,
 }
 
 const mapStateToProps = (state) => {
     return {
-        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
-        userBlogs: state.UserAuth.userBlogs,
-        userIdentification: state.UserAuth.userIdentification,
-        allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
         Content: state.UserAuth.content,
+        allBlogs: state.UserAuth.allBlogs,
         userFromStore: state.UserAuth.user,
+        userBlogs: state.UserAuth.userBlogs,
+        userFavorites: state.UserAuth.userFavorites,
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userIdentification: state.UserAuth.userIdentification,
     }
 }
 
@@ -384,7 +445,7 @@ const STYLES = StyleSheet.create({
         justifyContent: 'center',
     },
     htmlView: (theme) => ({
-        backgroundColor: theme.colors.primaryContainer,
+        // backgroundColor: theme.colors.primaryContainer,
         borderTopStartRadius: 5,
         borderTopEndRadius: 5,
         borderBottomWidth: 0.5,
@@ -427,7 +488,47 @@ const STYLES = StyleSheet.create({
         zIndex: 1,
         bottom: 15,
         right: 20,
-        backgroundColor: ThemeColors.WHITE,
+        backgroundColor: ThemeColors.CGREEN,
         borderRadius: 50,
-    }
+        padding: ms(10),
+    },
+    editIcon: {
+        backgroundColor: 'transparent',
+    },
+    editIconCont: {
+        backgroundColor: ThemeColors.CGREEN,
+        borderRadius: ms(10),
+        // padding: ms(3),
+        // marginTop: vs(4),
+        // marginLeft: ms(5),
+        position: 'absolute',
+        top: 2,
+        right: 2,
+    },
+    coverImgCont: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: ThemeColors.CGREEN,
+        borderRadius: ms(12),
+    },
 })
+
+
+// inside main cont items
+
+{/* <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.EDITOR)}>
+                    <MaterialCommunityIcons name='pencil' color={ThemeColors.WHITE} size={35} />
+                </TouchableOpacity> */}
+{/* {ImageUrl == '' &&
+                    <TouchableOpacity style={[STYLES.iconCont, { bottom: 75 }]} activeOpacity={0.7} onPress={imageUploadHandler}>
+                        <MaterialCommunityIcons name='image-plus' color={ThemeColors.WHITE} size={35} />
+                    </TouchableOpacity>
+                } */}
+
+// after publish btn 
+
+{/* {ImageUrl != '' &&
+                        <View style={STYLES.imgCont} >
+                            <Image source={{ uri: ImageUrl }} width={200} height={200} />
+                        </View>
+                    } */}

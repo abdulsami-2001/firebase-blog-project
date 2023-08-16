@@ -17,4 +17,5 @@ export default NavigationString = {
     EDITOR: "EDITOR",
     SIGNOUT: 'SIGN OUT',
     UPDATEPROFILE: 'UPDATE PROFILE',
+    MODIFYBLOG: 'MODIFY BLOG',
 }

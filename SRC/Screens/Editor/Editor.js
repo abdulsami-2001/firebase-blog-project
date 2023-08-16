@@ -145,7 +145,7 @@ const Editor = ({ content, mycontent }) => {
                 }}
             />
             <View style={STYLES.subCont(height)} >
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView showsVerticalScrollIndicator={false} >
                     <RichEditor
                         disabled={false}
                         containerStyle={STYLES.editor(height)}
@@ -198,26 +198,20 @@ const STYLES = StyleSheet.create({
         paddingHorizontal: ms(5)
     },
     subCont: (height) => ({
-        // borderWidth: 1,
         marginVertical: vs(10),
-        // backgroundColor: ThemeColors.PINK,
         height: height / 1.5,
         maxHeight: height / 1.5,
         borderRadius: ms(5),
         padding: ms(5)
     }),
     editor: (height) => ({
-        // borderWidth: 1,
-        // backgroundColor: ThemeColors.ORANGE,
-        // height: height / 1.5,
-        // maxHeight: height / 1.5,
+        backgroundColor: ThemeColors.ORANGE,
         borderRadius: ms(5),
 
     }),
     rich: (height) => ({
         height: height / 1.5,
         maxHeight: height / 1.5,
-        // borderWidth:1,
-        color: ThemeColors.PURPLE
+
     }),
 })
