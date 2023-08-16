@@ -145,18 +145,19 @@ const Editor = ({ content, mycontent }) => {
                 }}
             />
             <View style={STYLES.subCont(height)} >
-                <ScrollView showsVerticalScrollIndicator={false} >
-                    <RichEditor
-                        disabled={false}
-                        containerStyle={STYLES.editor(height)}
-                        ref={RichText}
-                        style={STYLES.rich}
-                        placeholder={"Start Writing Blog Content"}
-                        onChange={(text) => mycontent(text)}
-                        editorInitializedCallback={editorInitializedCallback}
-                        initialContentHTML={content}
-                    />
-                </ScrollView>
+                    <ScrollView showsVerticalScrollIndicator={false} >
+                        <RichEditor
+                            disabled={false}
+                            containerStyle={STYLES.editor(height)}
+                            ref={RichText}
+                            style={STYLES.rich}
+                            placeholder={"Start Writing Blog Content"}
+                            onChange={(text) => mycontent(text)}
+                            editorInitializedCallback={editorInitializedCallback}
+                            initialContentHTML={content}
+                            // scrollEnabled
+                        />
+                    </ScrollView>
             </View>
         </View>
     )

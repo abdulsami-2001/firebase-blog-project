@@ -325,7 +325,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
             const docRef = firestore()
                 .collection('Users')
                 .doc(userIdentification)
-
             docRef.set({ ...myObj }, { merge: true })
                 .then(() => {
                     showMessage({
@@ -370,10 +369,12 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                             onChangeText={text => setTitle(text)}
                             style={STYLES.input}
                         />
-                        <ScrollView style={STYLES.htmlView(theme)} horizontal  >
-                            <Editor />
-                        </ScrollView>
-                        {/* Virtualization , Nested list issue. ye solve krna ha , phr edit ky feature py work krna ha */}
+                        <TouchableOpacity style={STYLES.editContentCont} onPress={() => navigation.navigate(NavigationStrings.EDITOR)} >
+                            <Text style={STYLES.editContentText} >Edit Content</Text>
+                            <TouchableOpacity onPress={() => navigation.navigate(NavigationStrings.EDITOR)} >
+                                <Avatar.Icon size={35} color={ThemeColors.WHITE} icon={'pencil'} style={{ backgroundColor: ThemeColors.CGREEN, borderRadius: ms(10) }} />
+                            </TouchableOpacity>
+                        </TouchableOpacity>
                     </View>
                     <TextInput
                         label="Author"
@@ -432,11 +433,25 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, mapDispatchToProps)(AddBlog)
 
 const STYLES = StyleSheet.create({
+    editContentCont: {
+        justifyContent: 'space-between',
+        paddingLeft: ms(16),
+        paddingRight: ms(3),
+        alignItems: 'center',
+        flexDirection: 'row',
+        backgroundColor: ThemeColors.LIGHTGRAY,
+        borderTopLeftRadius: ms(5),
+        borderTopRightRadius: ms(5),
+        paddingVertical: vs(10),
+        borderBottomWidth: 1,
+    },
+    editContentText: {
+        color: ThemeColors.BLACKOPACITY80
+    },
     mainCont: {
         flex: 1,
         marginHorizontal: ms(15),
         marginVertical: vs(5),
-
     },
     mainContNL: {
         flex: 1,
@@ -462,6 +477,7 @@ const STYLES = StyleSheet.create({
     },
     input: {
         marginVertical: vs(8),
+        backgroundColor: ThemeColors.LIGHTGRAY
     },
     imgCont: {
         justifyContent: 'center',
