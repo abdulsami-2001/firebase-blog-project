@@ -15,7 +15,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { StyleSheet, TouchableOpacity, Modal, View, ScrollView, TextInput, useWindowDimensions } from 'react-native'
 import ImageViewer from 'react-native-image-zoom-viewer';
 
-const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, myuserFavorites, userFavorites, userLike, myUserLike, userComments, myUserComments }) => {
+const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, userLike, myUserLike, userComments, myUserComments }) => {
     const [CommentText, setCommentText] = useState('')
     const { width } = useWindowDimensions();
     const [first, setfirst] = useState(true)
@@ -32,7 +32,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
     // ----------------
     const iconPresHandler = () => {
         if (userIdentification) {
-            getFavoritesFromFirestore()
         } else if (!userIdentification) {
             showMessage({
                 message: "You're in guest mode",
@@ -49,88 +48,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
         }
     }
 
-    const getFavoritesFromFirestore = async () => {
-        try {
-            let dataRef = firestore().collection('Favorites');
-            let snapshot = await dataRef?.get()
-            let newUser = true
-            snapshot.forEach(doc => {
-                if (doc.id == userIdentification) {
-                    newUser = false
-                }
-            });
-
-            newUser ? uploadFavoritesToFirestore() : updateFavoritesToFirestore()
-
-        } catch (error) {
-            showMessage({
-                duration: 2000,
-                message: 'Error while fetching blogs',
-                description: "Make sure you have working internet",
-                type: 'warning',
-            })
-        }
-    }
-
-    const uploadFavoritesToFirestore = async () => {
-        try {
-            firestore()
-                .collection('Favorites')
-                .doc(userIdentification)
-                .set({
-                    [params]: allBlogs[params],
-                    ...userFavorites,
-                })
-                .then(() => {
-                    showMessage({
-                        duration: 2000,
-                        message: 'Favorites Added',
-                        type: 'success'
-                    })
-                    myuserFavorites({
-                        [params]: allBlogs[params],
-                        ...userFavorites,
-                    })
-                });
-        } catch (error) {
-            showMessage({
-                duration: 2000,
-                message: 'Error while updating favorite',
-                description: "Make sure you have working internet",
-                type: 'warning'
-            })
-        }
-    }
-
-    const updateFavoritesToFirestore = async () => {
-        try {
-            firestore()
-                .collection('Favorites')
-                .doc(userIdentification)
-                .update({
-                    [params]: allBlogs[params],
-                    ...userFavorites,
-                })
-                .then(() => {
-                    showMessage({
-                        duration: 2000,
-                        message: 'Favorite updated',
-                        type: 'success'
-                    })
-                    myuserFavorites({
-                        [params]: allBlogs[params],
-                        ...userFavorites,
-                    })
-                });
-        } catch (error) {
-            showMessage({
-                duration: 2000,
-                message: 'Error while updating favorite',
-                description: "Make sure you have working internet",
-                type: 'warning'
-            })
-        }
-    }
 
 
     // For Like feature
@@ -158,7 +75,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
     const getLikeFromFirestore = async (BlogId) => {
         try {
             showMessage({
-                message: "Blog Liking...",
+                message: "Blog Liking",
                 type: "info",
             });
             let dataRef = firestore().collection('Like');
@@ -308,7 +225,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
     const getCommentsFromFirestore = async (BlogId) => {
         try {
             showMessage({
-                message: "Commenting...",
+                message: "Commenting",
                 type: "info",
             });
             let dataRef = firestore().collection('Comments');
@@ -501,8 +418,9 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                             {isLoved ?
                                 <MaterialIcons name='favorite' size={24} color={ThemeColors.CGREEN} />
                                 :
-                                <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler()} />
+                                < MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => showMessage({ type: 'info', message: 'Add to favorite feature coming soon', duration: 3000 })} />
                             }
+                            {/* <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler()} /> */}
                         </TouchableOpacity>
                     </View>
                 </Card.Content>
@@ -546,7 +464,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
     myUserLike: Creators.userLike,
     myUserComments: Creators.userComments,
@@ -558,7 +475,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
         userLike: state.UserAuth.userLike,
         userComments: state.UserAuth.userComments,
     }

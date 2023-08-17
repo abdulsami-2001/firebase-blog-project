@@ -9,17 +9,18 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 
-const Favorite = ({ isUserLoggedIn, userIdentification, userFavorites }) => {
+const Favorite = ({ isUserLoggedIn, userIdentification, }) => {
     const { width, height } = Dimensions.get('screen')
     const navigation = useNavigation()
     const [first, setfirst] = useState(true)
 
     useEffect(() => {
         setfirst(!first)
-    }, [userFavorites, userIdentification, isUserLoggedIn])
+    }, [userIdentification, isUserLoggedIn])
 
+    // favorites population krni ha
 
-    let BlogData = Object.keys(userFavorites)
+    let BlogData = Object.keys({})
 
 
     if (isUserLoggedIn && BlogData.length > 0) {
@@ -80,7 +81,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
 }
 
@@ -90,7 +90,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
     }
 }
 

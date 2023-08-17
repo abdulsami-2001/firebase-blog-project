@@ -94,7 +94,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
     myUserLike: Creators.userLike,
     myUserComments: Creators.userComments,
@@ -106,7 +105,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
         userLike: state.UserAuth.userLike,
         userComments: state.UserAuth.userComments,
     }
@@ -120,18 +118,15 @@ const STYLES = StyleSheet.create({
     cmntTextCont: (width) => ({
         marginLeft: ms(8),
         width: (width) - (width / 3),
-        // backgroundColor: 'red',
         borderRadius: 10,
         padding: ms(5)
     }),
     cmnt: {
         marginVertical: vs(5),
-        // backgroundColor: 'red',
         borderRadius: ms(15),
         paddingVertical: vs(10),
         paddingHorizontal: ms(10),
         flexDirection: 'row',
-        // alignItems: 'center',
         borderWidth: 1
     },
     commentSectionCont: {
@@ -141,14 +136,11 @@ const STYLES = StyleSheet.create({
     inputCont: {
         marginTop: vs(5),
         padding: ms(5),
-        // justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
         borderRadius: ms(10),
     },
     input: (width) => ({
-        // height: vs(35),
-        // backgroundColor: 'orange',
         width: width - ms(80),
         borderWidth: 1,
         borderRadius: ms(10),

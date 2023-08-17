@@ -25,6 +25,8 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
         getblogViewsCountFromFirestore()
     }, [])
 
+    console.log('allBlogs ', allBlogs)
+
     // user data from firebase firestore
     const getDataFromFirestore = async () => {
         try {
@@ -40,7 +42,7 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
 
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: 'Error while fetching blogs',
                 description: "Make sure you have working internet",
                 type: 'warning',
@@ -63,8 +65,8 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
 
         } catch (error) {
             showMessage({
-                duration: 2000,
-                message: 'Error while fetching Blog Likes',
+                duration: 3000,
+                message: 'Error while fetching blog likes',
                 description: "Make sure you have working internet",
                 type: 'warning',
             })
@@ -86,9 +88,9 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
 
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: "Unable to fetch your blogs",
-                description: 'Make sure internet is working.',
+                description: 'Make sure internet is working',
                 type: 'warning',
             })
         }
@@ -109,9 +111,9 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
 
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: "Unable to fetch blog views",
-                description: 'Make sure internet is working.',
+                description: 'Make sure internet is working',
                 type: 'warning',
             })
         }
@@ -187,7 +189,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(Home)
 const STYLES = StyleSheet.create({
     engagementCont: {
         flexDirection: 'row',
-        // backgroundColor: 'pink',
         marginTop: vs(10),
         justifyContent: 'space-around',
     },

@@ -8,7 +8,6 @@ export const INITIAL_STATE = {
     userBlogs: {},
     editContent: {},
     userComments: {},
-    userFavorites: {},
     blogViewsCount: {},
     isUserLoggedIn: false,
     userIdentification: "",
@@ -43,7 +42,6 @@ export const UserAuth = (state = INITIAL_STATE, action) => {
         userIdentification: state.userIdentification,
         user: state.user,
         userBlogs: state.userBlogs,
-        userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
@@ -60,7 +58,6 @@ export const UserIdUpdate = (state = INITIAL_STATE, action) => {
         userIdentification: action.uid,
         user: state.user,
         userBlogs: state.userBlogs,
-        userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
@@ -78,7 +75,6 @@ export const UserBlogsUpdate = (state = INITIAL_STATE, action) => {
         userIdentification: state.userIdentification,
         user: state.user,
         userBlogs: action.userblogs,
-        userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
@@ -95,7 +91,6 @@ export const allBlogsUpdate = (state = INITIAL_STATE, action) => {
         isUserLoggedIn: state.isUserLoggedIn,
         userIdentification: state.userIdentification,
         userBlogs: state.userBlogs,
-        userFavorites: state.userFavorites,
         user: state.user,
         allBlogs: action.allblogs,
         content: state.content,
@@ -106,24 +101,6 @@ export const allBlogsUpdate = (state = INITIAL_STATE, action) => {
     }
 }
 
-
-export const UserFavoritesUpdate = (state = INITIAL_STATE, action) => {
-
-    return {
-        ...state,
-        isUserLoggedIn: state.isUserLoggedIn,
-        userIdentification: state.userIdentification,
-        userBlogs: state.userBlogs,
-        user: state.user,
-        userFavorites: action.userfavorites,
-        allBlogs: state.allBlogs,
-        content: state.content,
-        userLike: state.userLike,
-        userComments: state.userComments,
-        blogViewsCount: state.blogViewsCount,
-        editContent: state.editContent,
-    }
-}
 export const Content = (state = INITIAL_STATE, action) => {
     return {
         ...state,
@@ -131,7 +108,6 @@ export const Content = (state = INITIAL_STATE, action) => {
         userIdentification: state.userIdentification,
         userBlogs: state.userBlogs,
         user: state.user,
-        userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: action.content,
         userLike: state.userLike,
@@ -147,7 +123,6 @@ export const UserLikeUpdate = (state = INITIAL_STATE, action) => {
         isUserLoggedIn: state.isUserLoggedIn,
         userIdentification: state.userIdentification,
         userBlogs: state.userBlogs,
-        userFavorites: state.userFavorites,
         user: state.user,
         allBlogs: state.allBlogs,
         content: state.content,
@@ -165,7 +140,6 @@ export const UserCommentsUpdate = (state = INITIAL_STATE, action) => {
         userIdentification: state.userIdentification,
         user: state.user,
         userBlogs: state.userBlogs,
-        userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
@@ -183,7 +157,6 @@ export const User = (state = INITIAL_STATE, action) => {
         userIdentification: state.userIdentification,
         user: action.user,
         userBlogs: state.userBlogs,
-        userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
@@ -201,7 +174,6 @@ export const BlogViewsCount = (state = INITIAL_STATE, action) => {
         userIdentification: state.userIdentification,
         user: state.user,
         userBlogs: state.userBlogs,
-        userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
@@ -220,7 +192,6 @@ export const EditContent = (state = INITIAL_STATE, action) => {
         userIdentification: state.userIdentification,
         user: state.user,
         userBlogs: state.userBlogs,
-        userFavorites: state.userFavorites,
         allBlogs: state.allBlogs,
         content: state.content,
         userLike: state.userLike,
@@ -242,7 +213,6 @@ export const HANDLER = {
     [Types.USER_BLOGS]: UserBlogsUpdate,
     [Types.BLOG_VIEWS_COUNT]: BlogViewsCount,
     [Types.USER_COMMENTS]: UserCommentsUpdate,
-    [Types.USER_FAVORITES]: UserFavoritesUpdate,
     [Types.EDIT_CONTENT]: EditContent,
 }
 

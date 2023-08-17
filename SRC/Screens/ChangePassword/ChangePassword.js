@@ -36,14 +36,14 @@ const ChangePassword = ({ isUserLoggedIn }) => {
     const changePasswordHandlerFirebase = async () => {
         const singInUser = auth().currentUser
         showMessage({
-            message: "Changing Password...",
+            message: "Changing Password",
             type: "info",
         });
         singInUser.updatePassword(Password)
             .then(() => {
                 // Password successfully updated
                 showMessage({
-                    message: "Password Changed Successfully.",
+                    message: "Password Changed Successfully",
                     type: "info",
                 });
                 SetPassword('')
@@ -85,11 +85,13 @@ const ChangePassword = ({ isUserLoggedIn }) => {
                     <View style={STYLES.inputCont}>
                         <TextInput
                             label="New Password"
-                            keyboardType='visible-password'
+                            keyboardType='email-address'
                             value={Password}
                             type='outlined'
                             onChangeText={text => SetPassword(text)}
                             style={STYLES.input}
+                            underlineColor={ThemeColors.CGREEN}
+                            activeUnderlineColor={ThemeColors.CGREEN}
                         />
                     </View>
                     <View style={STYLES.btnCont}>
@@ -120,7 +122,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
 }
 
@@ -130,7 +131,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
     }
 }
 

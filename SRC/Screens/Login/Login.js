@@ -12,7 +12,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { StyleSheet, Dimensions, View, ScrollView, TouchableOpacity, Text } from 'react-native'
 
-const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavorites, userFavorites }) => {
+const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, }) => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
     const [user, setUser] = useState(null);
@@ -31,7 +31,6 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
         if (user != undefined && user != null) {
             myUserId(user.uid)
             getDataFromFirestore(user.uid)
-            getFavoritesFromFirestore(user.uid)
         }
         return subscriber; // unsubscribe on unmount
     }, [user])
@@ -44,39 +43,16 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                 myuserBlogs(data)
             } else {
                 showMessage({
-                    duration: 2000,
+                    duration: 3000,
                     message: "Unable to fetch your blogs",
-                    description: 'Make sure internet is working.'
+                    description: 'Make sure internet is working'
                 })
             }
-
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: "Unable to fetch your blogs",
-                description: 'Make sure internet is working.'
-            })
-        }
-    }
-
-
-    const getFavoritesFromFirestore = async (userTemp) => {
-        try {
-            const { _data: data } = await firestore()?.collection('Favorites')?.doc(userTemp)?.get()
-            if (data != undefined) {
-                myuserFavorites(data)
-            } else {
-                showMessage({
-                    duration: 2000,
-                    message: "Unable to fetch your favorites",
-                    description: 'Make sure internet is working.'
-                })
-            }
-        } catch (error) {
-            showMessage({
-                duration: 2000,
-                message: "Unable to fetch your favorites",
-                description: 'Make sure internet is working.'
+                description: 'Make sure internet is working'
             })
         }
     }
@@ -85,31 +61,36 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
         if (Email != '' && Password != '') {
             loginFirebase()
             showMessage({
-                message: "Logining In...",
+                message: "Logining In",
                 type: "info",
+                duration: 3000,
             });
         } else if (Email == '' && Password == '') {
             showMessage({
                 message: "Email & Password Not Be Empty",
                 type: "warning",
+                duration: 3000,
             });
         }
         else if (Password == '') {
             showMessage({
                 message: "Password Not Be Empty",
                 type: "warning",
+                duration: 3000,
             });
         }
         else if (Email == '') {
             showMessage({
                 message: "Email Not Be Empty",
                 type: "warning",
+                duration: 3000,
             });
         }
         else {
             showMessage({
                 message: "Some Unexpected Error",
                 type: "warning",
+                duration: 3000,
             });
         }
     }
@@ -121,6 +102,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                 showMessage({
                     message: "Login Successful",
                     type: "success",
+                    duration: 3000,
                 });
                 myUserState(true)
                 SetEmail('')
@@ -132,27 +114,32 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                     showMessage({
                         message: "Email address is not valid",
                         type: "warning",
+                        duration: 3000,
                     });
                 } else if (error.code === 'auth/user-disabled') {
                     showMessage({
                         message: "Account is disabled",
                         description: 'Contact support team',
                         type: "warning",
+                        duration: 3000,
                     });
                 } else if (error.code === 'auth/user-not-found') {
                     showMessage({
                         message: "No user corresponding to the given email",
                         type: "warning",
+                        duration: 3000,
                     });
                 } else if (error.code === 'auth/wrong-password') {
                     showMessage({
-                        message: "Password is invalid for the given email, or the account corresponding to the email does not have a password set.",
+                        message: "Password is invalid for the given email, or the account corresponding to the email does not have a password set",
                         type: "warning",
+                        duration: 3000,
                     });
                 } else {
                     showMessage({
                         message: "Something went wrong",
                         type: "warning",
+                        duration: 3000,
                     });
                 }
             });
@@ -160,7 +147,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
 
     return (
         <View style={STYLES.mainCont}>
-            <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
                 <View style={STYLES.lottieCont(width, height)} >
                     <Lottie source={require('../../Assets/Lottie/login-signup.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
                 </View>
@@ -169,6 +156,8 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                         label="Email"
                         value={Email}
                         keyboardType='email-address'
+                        underlineColor={ThemeColors.CGREEN}
+                        activeUnderlineColor={ThemeColors.CGREEN}
                         type='outlined'
                         onChangeText={text => SetEmail(text)}
                         style={STYLES.input}
@@ -178,9 +167,11 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, myuserFavor
                     />
                     <TextInput
                         label="Password"
-                        keyboardType='visible-password'
+                        keyboardType='email-address'
                         value={Password}
                         type='outlined'
+                        underlineColor={ThemeColors.CGREEN}
+                        activeUnderlineColor={ThemeColors.CGREEN}
                         onChangeText={text => SetPassword(text)}
                         style={STYLES.input}
                         ref={password_ref}
@@ -207,7 +198,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
 }
 
@@ -217,7 +207,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
     }
 }
 
@@ -251,6 +240,7 @@ const STYLES = StyleSheet.create({
     },
     input: {
         marginVertical: vs(8),
+        backgroundColor: ThemeColors.LIGHTGRAY
     },
     btnCont: {
         // alignItems: 'center',

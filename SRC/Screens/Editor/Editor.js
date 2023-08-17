@@ -45,7 +45,7 @@ const Editor = ({ content, mycontent }) => {
         } catch (error) {
             if (DocumentPicker.isCancel(error)) {
                 showMessage({
-                    message: "You didn't choose any image.",
+                    message: "You didn't choose any image",
                     type: "danger",
                 })
             }
@@ -96,8 +96,8 @@ const Editor = ({ content, mycontent }) => {
                 // Handle unsuccessful uploads
                 showMessage({
                     message: "Something went wrong",
-                    description: error.message,
                     type: "warning",
+                    duration: 3000,
                 })
             },
             () => {
@@ -109,8 +109,9 @@ const Editor = ({ content, mycontent }) => {
                     // you can easily add images from your gallery
                     RichText.current?.insertImage(downloadURL);
                     showMessage({
-                        message: "Image Uploaded Successfully.",
+                        message: "Image Uploaded Successfully",
                         type: "success",
+                        duration: 3000,
                     })
                 });
             }
@@ -145,19 +146,19 @@ const Editor = ({ content, mycontent }) => {
                 }}
             />
             <View style={STYLES.subCont(height)} >
-                    <ScrollView showsVerticalScrollIndicator={false} >
-                        <RichEditor
-                            disabled={false}
-                            containerStyle={STYLES.editor(height)}
-                            ref={RichText}
-                            style={STYLES.rich}
-                            placeholder={"Start Writing Blog Content"}
-                            onChange={(text) => mycontent(text)}
-                            editorInitializedCallback={editorInitializedCallback}
-                            initialContentHTML={content}
-                            // scrollEnabled
-                        />
-                    </ScrollView>
+                <ScrollView showsVerticalScrollIndicator={false} >
+                    <RichEditor
+                        disabled={false}
+                        containerStyle={STYLES.editor(height)}
+                        ref={RichText}
+                        style={STYLES.rich}
+                        placeholder={"Start Writing Blog Content"}
+                        onChange={(text) => mycontent(text)}
+                        editorInitializedCallback={editorInitializedCallback}
+                        initialContentHTML={content}
+                    // scrollEnabled
+                    />
+                </ScrollView>
             </View>
         </View>
     )
@@ -168,7 +169,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
     mycontent: Creators.content,
 }
@@ -179,7 +179,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
         content: state.UserAuth.content,
     }
 }
@@ -203,16 +202,15 @@ const STYLES = StyleSheet.create({
         height: height / 1.5,
         maxHeight: height / 1.5,
         borderRadius: ms(5),
-        padding: ms(5)
+        padding: ms(5),
     }),
     editor: (height) => ({
-        backgroundColor: ThemeColors.ORANGE,
         borderRadius: ms(5),
-
+        borderBottomWidth: 1,
+        borderBottomColor: ThemeColors.CGREEN,
     }),
     rich: (height) => ({
         height: height / 1.5,
         maxHeight: height / 1.5,
-
     }),
 })

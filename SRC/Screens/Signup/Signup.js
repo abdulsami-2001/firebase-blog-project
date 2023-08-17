@@ -41,32 +41,37 @@ const SignUp = ({ myUserState, myUserId }) => {
             showMessage({
                 message: "Email & Password Not Be Empty",
                 type: "warning",
+                duration: 3000,
             });
         }
         else if (Password == '') {
             showMessage({
                 message: "Password Not Be Empty",
                 type: "warning",
+                duration: 3000,
             });
         }
         else if (Email == '') {
             showMessage({
                 message: "Email Not Be Empty",
                 type: "warning",
+                duration: 3000,
             });
         }
         else {
             showMessage({
                 message: "Some Unexpected Error",
                 type: "warning",
+                duration: 3000,
             });
         }
     }
 
     const signupFirebase = async () => {
         showMessage({
-            message: "Signing up...",
+            message: "Signing up",
             type: "info",
+            duration: 3000,
         });
         await auth()
             .createUserWithEmailAndPassword(Email, Password)
@@ -74,6 +79,7 @@ const SignUp = ({ myUserState, myUserId }) => {
                 showMessage({
                     message: "Signup Successful",
                     type: "success",
+                    duration: 3000,
                 });
                 myUserState(true)
                 SetEmail('')
@@ -85,22 +91,26 @@ const SignUp = ({ myUserState, myUserId }) => {
                     showMessage({
                         message: "Email address is already in use!",
                         type: "warning",
+                        duration: 3000,
                     });
                 } else if (error.code === 'auth/weak-password') {
                     showMessage({
                         message: "Create a strong password",
-                        description: "Password should be atlease 6 characters.",
+                        description: "Password should be atlease 6 characters",
                         type: "warning",
+                        duration: 3000,
                     });
                 } else if (error.code === 'auth/invalid-email') {
                     showMessage({
                         message: "Email address is invalid!",
                         type: "warning",
+                        duration: 3000,
                     });
                 } else {
                     showMessage({
                         message: "Something went wrong",
                         type: "warning",
+                        duration: 3000,
                     });
                 }
             });
@@ -116,18 +126,22 @@ const SignUp = ({ myUserState, myUserId }) => {
                     <TextInput
                         label="Email"
                         value={Email}
-                        keyboardType='email-address'
                         type='outlined'
-                        onChangeText={text => SetEmail(text)}
                         style={STYLES.input}
+                        keyboardType='email-address'
+                        underlineColor={ThemeColors.CGREEN}
+                        onChangeText={text => SetEmail(text)}
+                        activeUnderlineColor={ThemeColors.CGREEN}
                     />
                     <TextInput
                         label="Password"
-                        keyboardType='visible-password'
                         value={Password}
                         type='outlined'
-                        onChangeText={text => SetPassword(text)}
                         style={STYLES.input}
+                        keyboardType='email-address'
+                        underlineColor={ThemeColors.CGREEN}
+                        onChangeText={text => SetPassword(text)}
+                        activeUnderlineColor={ThemeColors.CGREEN}
                     />
                 </View>
                 <View style={STYLES.btnCont}>
@@ -173,6 +187,7 @@ const STYLES = StyleSheet.create({
     }),
     input: {
         marginVertical: vs(8),
+        backgroundColor: ThemeColors.LIGHTGRAY,
     },
     btn: {
         marginVertical: vs(3),

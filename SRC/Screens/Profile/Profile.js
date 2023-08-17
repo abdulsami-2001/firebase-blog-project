@@ -12,7 +12,7 @@ import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { View, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native'
 
 
-const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites, userFromStore, myUser }) => {
+const Profile = ({ myUserState, myUserId, myuserBlogs, userFromStore, myUser }) => {
     const navigation = useNavigation()
     const { width, height } = Dimensions.get('screen')
     const [user, setUser] = useState(null);
@@ -35,8 +35,9 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites, userFrom
 
     const singOutHandler = async () => {
         showMessage({
-            message: "Signing Out...",
+            message: "Signing Out",
             type: "info",
+            duration: 3000,
         })
         await auth()
             .signOut()
@@ -44,10 +45,10 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites, userFrom
                 showMessage({
                     message: "Signout Successfull",
                     type: "success",
+                    duration: 3000,
                 })
                 myUserState(false)
                 myUserId('')
-                myuserFavorites({})
                 myuserBlogs({})
                 myUser({})
             }
@@ -55,6 +56,7 @@ const Profile = ({ myUserState, myUserId, myuserBlogs, myuserFavorites, userFrom
                 showMessage({
                     message: "Signout Unsuccessfull",
                     type: "danger",
+                    duration: 3000,
                 })
             })
     }
@@ -129,7 +131,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
     myUser: Creators.user,
 }
@@ -140,7 +141,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
         userFromStore: state.UserAuth.user,
     }
 }

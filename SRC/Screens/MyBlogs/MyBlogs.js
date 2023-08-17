@@ -12,7 +12,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native'
 
-const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount, userLike, userComments, userBlogs, userFavorites, myallBlogs, myBlogViewsCount, myUserLike, myUserComments, myuserBlogs, myuserFavorites }) => {
+const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount, userLike, userComments, userBlogs, myallBlogs, myBlogViewsCount, myUserLike, myUserComments, myuserBlogs }) => {
     const navigation = useNavigation()
     const [first, setfirst] = useState(true)
     const { width, height } = Dimensions.get('screen')
@@ -67,7 +67,6 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
     const blogDeleteHandler = (blogWithout_IdToDelete, blogWith_IdToDelete) => {
         const singleUserData = filteredData(userBlogs, blogWithout_IdToDelete, false)
         const allBlogsData = filteredData(allBlogs, blogWithout_IdToDelete, false)
-        const userFavoritesData = filteredData(userFavorites, blogWithout_IdToDelete, false)
         const blogViewsCountData = filteredData(blogViewsCount, false, blogWith_IdToDelete)
         const userLikeData = filteredData(userLike, false, blogWith_IdToDelete)
         const userCommentsData = filteredData(userComments, false, blogWith_IdToDelete)
@@ -84,13 +83,12 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                     myuserBlogs({ ...singleUserData })
                     myallBlogs({ ...allBlogsData })
 
-                    deleteUserFavoritesData(userFavoritesData)
                     deleteBlogViewsCountData(blogViewsCountData, blogWith_IdToDelete)
                     deleteUserLikeDataData(userLikeData, blogWith_IdToDelete)
                     deleteUserCommentsData(userCommentsData, blogWith_IdToDelete)
 
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Blog Deleted',
                         type: 'success'
                     })
@@ -99,30 +97,6 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
             showMessage({
                 duration: 3000,
                 message: 'Error while deleting blog - User Blog',
-                description: "Make sure you have working internet",
-                type: 'warning'
-            })
-        }
-    }
-
-    //update 'Favorites' collection on firebase and also redux store.
-    const deleteUserFavoritesData = async (userFavoritesData) => {
-        try {
-            firestore()
-                .collection('Favorites')
-                .doc(userIdentification)
-                .set({
-                    ...userFavoritesData
-                })
-                .then(() => {
-                    myuserFavorites({
-                        ...userFavoritesData
-                    })
-                });
-        } catch (error) {
-            showMessage({
-                duration: 3000,
-                message: 'Error while deleting blog - User Favorites',
                 description: "Make sure you have working internet",
                 type: 'warning'
             })
@@ -267,7 +241,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myuserBlogs: Creators.userBlogs,
     myUserComments: Creators.userComments,
-    myuserFavorites: Creators.userFavorites,
     myBlogViewsCount: Creators.blogViewsCount,
 }
 
@@ -277,7 +250,6 @@ const mapStateToProps = (state) => {
         userLike: state.UserAuth.userLike,
         allBlogs: state.UserAuth.allBlogs,
         userComments: state.UserAuth.userComments,
-        userFavorites: state.UserAuth.userFavorites,
         blogViewsCount: state.UserAuth.blogViewsCount,
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userIdentification: state.UserAuth.userIdentification,

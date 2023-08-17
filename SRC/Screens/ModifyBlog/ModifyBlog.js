@@ -12,7 +12,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native'
 
-const ModifyBlog = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount, userLike, userComments, userBlogs, userFavorites, myallBlogs, myBlogViewsCount, myUserLike, myUserComments, myuserBlogs, myuserFavorites }) => {
+const ModifyBlog = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount, userLike, userComments, userBlogs, myallBlogs, myBlogViewsCount, myUserLike, myUserComments, myuserBlogs, }) => {
     const navigation = useNavigation()
     const { width, height } = Dimensions.get('screen')
 
@@ -42,7 +42,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myuserBlogs: Creators.userBlogs,
     myUserComments: Creators.userComments,
-    myuserFavorites: Creators.userFavorites,
     myBlogViewsCount: Creators.blogViewsCount,
 }
 
@@ -52,7 +51,6 @@ const mapStateToProps = (state) => {
         userLike: state.UserAuth.userLike,
         allBlogs: state.UserAuth.allBlogs,
         userComments: state.UserAuth.userComments,
-        userFavorites: state.UserAuth.userFavorites,
         blogViewsCount: state.UserAuth.blogViewsCount,
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userIdentification: state.UserAuth.userIdentification,

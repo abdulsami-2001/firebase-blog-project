@@ -2,7 +2,6 @@ import { connect } from 'react-redux'
 import { Dimensions } from 'react-native'
 import Lottie from 'lottie-react-native';
 import RNFetchBlob from 'rn-fetch-blob';
-import RenderHtml from 'react-native-render-html'
 import React, { useState, useEffect } from 'react'
 import { Creators } from '../../Redux/Action/Action'
 import storage from '@react-native-firebase/storage'
@@ -14,9 +13,7 @@ import DocumentPicker from 'react-native-document-picker'
 import { TextInput, Button, useTheme, Card, Avatar } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native'
-import Editor from '../Editor/Editor';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
 
 const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent, userFromStore }) => {
 
@@ -44,8 +41,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
             console.log("edit")
         }
 
-        // make btn dynamic based on params
-
         return () => {
             if (isUserLoggedIn && params?.editAuthor) {
                 setImageUrl('')
@@ -57,11 +52,8 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
         }
     }, [])
 
-    console.log('params ', params)
-
     const generateKey = (title) => {
         return `${title}_${new Date().getTime()}`;
-
     }
     const publishHandler = (isEditing) => {
         if (Title != '' && Content != '' && Author != '' && ImageUrl != '') {
@@ -287,7 +279,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                 console.log(error)
                 showMessage({
                     message: "Something went wrong",
-                    description: error.message,
                     type: "warning",
                 })
             },
@@ -320,7 +311,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                 BlogId: params?.editBlogId
             }
         }
-
         try {
             const docRef = firestore()
                 .collection('Users')
@@ -336,7 +326,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                         ...myObj
                     })
                 });
-
         } catch (error) {
             showMessage({ duration: 3000, message: 'Blog Edit Fail', description: 'Try again later', type: 'warning' })
         }
@@ -366,6 +355,8 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                             label="Title"
                             value={Title}
                             type='outlined'
+                            underlineColor={ThemeColors.CGREEN}
+                            activeUnderlineColor={ThemeColors.CGREEN}
                             onChangeText={text => setTitle(text)}
                             style={STYLES.input}
                         />
@@ -380,6 +371,8 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                         label="Author"
                         value={Author}
                         type='outlined'
+                        underlineColor={ThemeColors.CGREEN}
+                        activeUnderlineColor={ThemeColors.CGREEN}
                         onChangeText={text => setAuthor(text)}
                         style={STYLES.input}
                     />
@@ -415,7 +408,6 @@ const mapDispatchToProps = {
     myallBlogs: Creators.allBlogs,
     myUserState: Creators.userState,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
 }
 
 const mapStateToProps = (state) => {
@@ -424,7 +416,6 @@ const mapStateToProps = (state) => {
         allBlogs: state.UserAuth.allBlogs,
         userFromStore: state.UserAuth.user,
         userBlogs: state.UserAuth.userBlogs,
-        userFavorites: state.UserAuth.userFavorites,
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userIdentification: state.UserAuth.userIdentification,
     }
@@ -444,6 +435,7 @@ const STYLES = StyleSheet.create({
         borderTopRightRadius: ms(5),
         paddingVertical: vs(10),
         borderBottomWidth: 1,
+        borderBottomColor: ThemeColors.CGREEN,
     },
     editContentText: {
         color: ThemeColors.BLACKOPACITY80
@@ -528,23 +520,3 @@ const STYLES = StyleSheet.create({
         borderRadius: ms(12),
     },
 })
-
-
-// inside main cont items
-
-{/* <TouchableOpacity style={STYLES.iconCont} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.EDITOR)}>
-                    <MaterialCommunityIcons name='pencil' color={ThemeColors.WHITE} size={35} />
-                </TouchableOpacity> */}
-{/* {ImageUrl == '' &&
-                    <TouchableOpacity style={[STYLES.iconCont, { bottom: 75 }]} activeOpacity={0.7} onPress={imageUploadHandler}>
-                        <MaterialCommunityIcons name='image-plus' color={ThemeColors.WHITE} size={35} />
-                    </TouchableOpacity>
-                } */}
-
-// after publish btn 
-
-{/* {ImageUrl != '' &&
-                        <View style={STYLES.imgCont} >
-                            <Image source={{ uri: ImageUrl }} width={200} height={200} />
-                        </View>
-                    } */}

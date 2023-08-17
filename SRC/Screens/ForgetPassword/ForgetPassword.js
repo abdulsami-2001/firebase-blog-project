@@ -25,19 +25,22 @@ const ForgetPassword = ({ isUserLoggedIn }) => {
             showMessage({
                 message: "Email Not Be Empty",
                 type: "warning",
+                duration: 3000,
             })
         } else {
             showMessage({
                 message: "Some Unexpected Error",
                 type: "warning",
+                duration: 3000,
             })
         }
     }
 
     const sendForgetPassword_EmailFirebase = async () => {
         showMessage({
-            message: "Password reset email sending...",
+            message: "Password reset email sending",
             type: "info",
+            duration: 3000,
         });
 
         auth().sendPasswordResetEmail(Email)
@@ -46,6 +49,7 @@ const ForgetPassword = ({ isUserLoggedIn }) => {
                 showMessage({
                     message: "Password reset email sent successfully",
                     type: "info",
+                    duration: 3000,
                 });
                 navigation.navigate(NavigationStrings.LOGIN)
             })
@@ -53,109 +57,31 @@ const ForgetPassword = ({ isUserLoggedIn }) => {
                 // Handle password update error
                 if (error.code === 'auth/invalid-email') {
                     showMessage({
-                        message: "Email address is not valid.",
+                        message: "Email address is not valid",
                         type: "warning",
+                        duration: 3000,
                     });
                 } else if (error.code === 'auth/missing-android-pkg-name') {
                     showMessage({
-                        message: "An Android package name must be provided if the Android app is required to be installed.",
+                        message: "An Android package name must be provided if the Android app is required to be installed",
                         type: "warning",
+                        duration: 3000,
                     })
                 } else if (error.code === 'auth/user-not-found') {
                     showMessage({
-                        message: "There is no user corresponding to the email address.",
+                        message: "There is no user corresponding to the email address",
                         type: "warning",
+                        duration: 3000,
                     })
                 } else {
                     showMessage({
                         message: "Something went wrong",
                         type: "danger",
+                        duration: 3000,
                     });
                 }
             });
     }
-
-
-    // const changePasswordHandler = () => {
-    //     if (Password != '' && Code != '') {
-    //         confirmForgetPassword_CodeFirebase()
-    //     } else if (Password == '' && Code == '') {
-    //         showMessage({
-    //             message: "New Password & Code Not Be Empty",
-    //             type: "warning",
-    //         });
-    //     }
-    //     else if (Password == '') {
-    //         showMessage({
-    //             message: "New Password Not Be Empty",
-    //             type: "warning",
-    //         });
-    //     } else if (Code == '') {
-    //         showMessage({
-    //             message: "Code Not Be Empty",
-    //             type: "warning",
-    //         });
-    //     } else {
-    //         showMessage({
-    //             message: "Some Unexpected Error",
-    //             type: "warning",
-    //         });
-    //     }
-    // }
-
-
-    // const confirmForgetPassword_CodeFirebase = async () => {
-    //     showMessage({
-    //         message: "Forgeting...",
-    //         type: "info",
-    //     });
-
-    //     auth().confirmPasswordReset(Code, Password)
-    //         .then(() => {
-    //             // Password successfully updated
-    //             showMessage({
-    //                 message: "Password successfully updated",
-    //                 type: "info",
-    //             });
-    //             navigation.navigate(NavigationStrings.LOGIN)
-    //         })
-    //         .catch(error => {
-    //             // Handle password update error
-    //             if (error.code === 'auth/expired-action-code') {
-    //                 showMessage({
-    //                     message: "Password reset code has expired",
-    //                     type: "warning",
-    //                 });
-    //             } else if (error.code === 'auth/invalid-action-code') {
-    //                 showMessage({
-    //                     message: "Password reset code is invalid",
-    //                     type: "warning",
-    //                 })
-    //             } else if (error.code === 'auth/user-disabled') {
-    //                 showMessage({
-    //                     message: "The user corresponding to the given password reset code has been disabled",
-    //                     type: "warning",
-    //                 })
-    //             } else if (error.code === 'auth/user-not-found') {
-    //                 showMessage({
-    //                     message: "There is no user corresponding to the email address.",
-    //                     type: "warning",
-    //                 })
-    //             } else if (error.code === 'auth/weak-password') {
-    //                 showMessage({
-    //                     message: "New password is not strong enough",
-    //                     type: "warning",
-    //                 })
-    //             } else {
-    //                 showMessage({
-    //                     message: "Something went wrong",
-    //                     type: "danger",
-    //                 });
-    //             }
-    //         });
-    // }
-
-
 
     return (
         <View style={STYLES.mainCont}>
@@ -166,38 +92,19 @@ const ForgetPassword = ({ isUserLoggedIn }) => {
                 <View style={STYLES.inputCont}>
                     <TextInput
                         label="Email"
-                        keyboardType='visible-password'
+                        keyboardType='email-address'
                         value={Email}
                         type='outlined'
                         onChangeText={text => SetEmail(text)}
                         style={STYLES.input}
+                        underlineColor={ThemeColors.CGREEN}
+                        activeUnderlineColor={ThemeColors.CGREEN}
                     />
                     <View style={STYLES.btnCont}>
                         <Button mode="contained" style={STYLES.btn} onPress={changeEmailHandler}>
                             REQUEST CODE
                         </Button>
                     </View>
-                    {/* <TextInput
-                        label="Code"
-                        keyboardType='visible-password'
-                        value={Code}
-                        type='outlined'
-                        onChangeText={text => SetCode(text)}
-                        style={STYLES.input}
-                    />
-                    <TextInput
-                        label="New Password"
-                        keyboardType='visible-password'
-                        value={Password}
-                        type='outlined'
-                        onChangeText={text => SetPassword(text)}
-                        style={STYLES.input}
-                    />
-                </View>
-                <View style={STYLES.btnCont}>
-                    <Button mode="contained" style={STYLES.btn} onPress={changePasswordHandler}>
-                        {NavigationStrings.FORGETPASSWORD}
-                    </Button> */}
                 </View>
             </ScrollView>
         </View>
@@ -209,7 +116,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
 }
 
@@ -219,7 +125,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
     }
 }
 
@@ -262,5 +167,6 @@ const STYLES = StyleSheet.create({
     },
     input: {
         marginVertical: vs(8),
+        backgroundColor: ThemeColors.LIGHTGRAY,
     },
 })

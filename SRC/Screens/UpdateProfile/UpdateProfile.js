@@ -30,14 +30,16 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
         } catch (error) {
             if (DocumentPicker.isCancel(error)) {
                 showMessage({
-                    message: "You didn't choose any image.",
+                    message: "You didn't choose any image",
                     type: "warning",
+                    duration: 3000,
                 })
             }
             else {
                 showMessage({
                     message: "Something went wrong",
                     type: "warning",
+                    duration: 3000,
                 })
             }
         }
@@ -69,12 +71,14 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
                         message: `Upload is paused`,
                         description: 'Make sure you have working internet',
                         type: "warning",
+                        duration: 3000,
                     })
                     break;
                 case 'running':
                     showMessage({
                         message: `Upload is running`,
                         type: "info",
+                        duration: 3000,
                     })
                     console.log('Upload is running');
                     break;
@@ -85,8 +89,8 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
                 console.log(error)
                 showMessage({
                     message: "Something went wrong",
-                    description: error.message,
                     type: "warning",
+                    duration: 3000,
                 })
             },
             () => {
@@ -101,14 +105,16 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
                         // You can display a success message to the user if needed
                         myUser({ ...user, photoURL: downloadURL })
                         showMessage({
-                            message: "Picture Uploaded Successfully.",
+                            message: "Picture Uploaded Successfully",
                             type: "success",
+                            duration: 3000,
                         })
                     }).catch(error => {
                         // Handle profile update error
                         showMessage({
-                            message: "Picture Uploaded Unsuccessfully.",
+                            message: "Picture Uploaded Unsuccessfully",
                             type: "warning",
+                            duration: 3000,
                         })
                     });
                 });
@@ -123,11 +129,13 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
             showMessage({
                 message: "New Name Not Be Empty",
                 type: "warning",
+                duration: 3000,
             });
         } else {
             showMessage({
                 message: "Some Unexpected Error",
                 type: "warning",
+                duration: 3000,
             });
         }
     }
@@ -136,7 +144,7 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
         const user = userFromStore?._user || userFromStore
         // const user = userFromStore
         showMessage({
-            message: "Updating Name...",
+            message: "Updating Name",
             type: "info",
             duration: 3000
         })
@@ -147,13 +155,14 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
                 myUser({ ...user, displayName: NewName })
                 setNewName('')
                 showMessage({
-                    message: "Name Update Successfully.",
+                    message: "Name Update Successfully",
+                    duration: 3000,
                     type: "success",
                 })
             }).catch(error => {
                 // Handle profile update error
                 showMessage({
-                    message: "Name Update Unsuccessfully.",
+                    message: "Name Update Unsuccessfully",
                     type: "warning",
                     duration: 3000,
                 })
@@ -183,10 +192,12 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
                     <TextInput
                         label="New Name"
                         value={NewName}
-                        keyboardType='default'
                         type='outlined'
-                        onChangeText={text => setNewName(text)}
                         style={STYLES.input}
+                        keyboardType='email-address'
+                        underlineColor={ThemeColors.CGREEN}
+                        onChangeText={text => setNewName(text)}
+                        activeUnderlineColor={ThemeColors.CGREEN}
                     />
                     <Button
                         mode="contained"
@@ -218,7 +229,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
     myUser: Creators.user,
 }
@@ -229,7 +239,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
         userFromStore: state.UserAuth.user,
     }
 }

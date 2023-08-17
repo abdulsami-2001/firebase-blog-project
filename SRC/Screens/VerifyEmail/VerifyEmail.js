@@ -4,7 +4,7 @@ import Lottie from 'lottie-react-native';
 import auth from '@react-native-firebase/auth';
 import { ms, vs } from 'react-native-size-matters';
 import { Creators } from '../../Redux/Action/Action'
-import { TextInput, Button } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native'
 import { showMessage } from 'react-native-flash-message';
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
@@ -18,20 +18,28 @@ const VerifyEmail = ({ isUserLoggedIn }) => {
     const VerifyEmailHandlerFirebase = async () => {
         const singInUser = auth().currentUser
         showMessage({
-            message: "Sending verification link...",
+            message: "Sending verification link",
+            duration: 3000,
             type: "info",
         });
         singInUser.sendEmailVerification()
             .then(() => {
                 // Password successfully updated
                 showMessage({
-                    message: "Verification link sended successfully.",
+                    message: "Verification link sended successfully",
                     type: "info",
+                    duration: 3000,
                 });
                 // navigation.navigate(NavigationStrings.PROFILE)
             })
             .catch(error => {
                 console.log(error)
+                showMessage({
+                    message: "Unable to send verification link",
+                    description: 'Try again later',
+                    type: "warning",
+                    duration: 3000,
+                });
                 // Handle password update error
                 // if (error.code === 'auth/weak-password') {
                 //     showMessage({
@@ -90,7 +98,6 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserId: Creators.userId,
     myuserBlogs: Creators.userBlogs,
-    myuserFavorites: Creators.userFavorites,
     myallBlogs: Creators.allBlogs,
 }
 
@@ -100,7 +107,6 @@ const mapStateToProps = (state) => {
         userBlogs: state.UserAuth.userBlogs,
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
-        userFavorites: state.UserAuth.userFavorites,
     }
 }
 
