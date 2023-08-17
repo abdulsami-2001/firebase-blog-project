@@ -14,6 +14,7 @@ import { TextInput, Button, useTheme, Card, Avatar } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import { generateKey } from '../../Utils/ReusableFunctions/ReusableFunctions';
 
 const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent, userFromStore }) => {
 
@@ -23,6 +24,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
 
     const [Title, setTitle] = useState("");
     const [ImageUrl, setImageUrl] = useState('')
+    const [ImageBase64String, setImageBase64String] = useState('')
     const [Author, setAuthor] = useState(userFromStore?.displayName);
 
     const { params } = route
@@ -52,9 +54,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
         }
     }, [])
 
-    const generateKey = (title) => {
-        return `${title}_${new Date().getTime()}`;
-    }
+
     const publishHandler = (isEditing) => {
         if (Title != '' && Content != '' && Author != '' && ImageUrl != '') {
             // run func
@@ -161,6 +161,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                     setAuthor('')
                     myContent('')
                     setImageUrl('')
+                    setImageBase64String('')
                 });
         } catch (error) {
             showMessage({
@@ -209,6 +210,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                     setAuthor('')
                     myContent('')
                     setImageUrl('')
+                    setImageBase64String('')
                 });
         } catch (error) {
             showMessage({ duration: 2000, message: 'Error while uploading blogs', description: "Make sure you have working internet", type: 'warning' })
@@ -227,8 +229,9 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
         } catch (error) {
             if (DocumentPicker.isCancel(error)) {
                 showMessage({
-                    message: "You didn't choose any image.",
-                    type: "danger",
+                    message: "You didn't choose any image",
+                    type: "warning",
+                    duration: 3000,
                 })
             }
             else {
@@ -246,6 +249,9 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
             type: "info",
             duration: 3000
         })
+
+
+
         const uploadContent = storage().ref(`allFiles/${fileName}`)
             .putString(base64String, 'base64', { contentType: fileType })
         uploadContent.on('state_changed', (snapshot) => {
@@ -325,6 +331,14 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                     myuserBlogs({
                         ...myObj
                     })
+
+                    navigation.navigate(NavigationStrings.MYBLOGS)
+                    setTitle('')
+                    setAuthor('')
+                    myContent('')
+                    setImageUrl('')
+                    setImageBase64String('')
+
                 });
         } catch (error) {
             showMessage({ duration: 3000, message: 'Blog Edit Fail', description: 'Try again later', type: 'warning' })

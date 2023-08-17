@@ -119,8 +119,6 @@ const STYLES = StyleSheet.create({
     authorCont: {
         flexDirection: 'row',
     },
-    subCont: {
-    },
     cardCont: (width) => ({
         marginVertical: 5,
         width: width - ms(30)

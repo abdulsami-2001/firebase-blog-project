@@ -14,6 +14,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StyleSheet, TouchableOpacity, Modal, View, ScrollView, TextInput, useWindowDimensions } from 'react-native'
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { generateKey } from '../../Utils/ReusableFunctions/ReusableFunctions';
 
 const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, userLike, myUserLike, userComments, myUserComments }) => {
     const [CommentText, setCommentText] = useState('')
@@ -248,13 +249,10 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
         }
     }
 
-    const generateCommentId = (cmt) => {
-        return `${cmt}_${new Date().getTime()}`;
-    }
 
     const uploadCommentToFirestore = async () => {
 
-        let cmtid = generateCommentId(CommentText.substring(0, 5))
+        let cmtid = generateKey(CommentText)
 
         try {
             firestore()
@@ -296,7 +294,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
     }
 
     const updateCommentToFirestore = async (comment) => {
-        let cmtid = generateCommentId(CommentText.substring(0, 5))
+        let cmtid = generateKey(CommentText)
 
         try {
             firestore()

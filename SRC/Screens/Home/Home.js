@@ -25,7 +25,6 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
         getblogViewsCountFromFirestore()
     }, [])
 
-    console.log('allBlogs ', allBlogs)
 
     // user data from firebase firestore
     const getDataFromFirestore = async () => {
