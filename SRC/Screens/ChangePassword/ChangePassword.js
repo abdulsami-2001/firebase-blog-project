@@ -173,5 +173,6 @@ const STYLES = StyleSheet.create({
     },
     input: {
         marginVertical: vs(8),
+        backgroundColor: ThemeColors.LIGHTGRAY,
     },
 })

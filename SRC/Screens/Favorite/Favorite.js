@@ -9,7 +9,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 
-const Favorite = ({ isUserLoggedIn, userIdentification, }) => {
+const Favorite = ({ isUserLoggedIn, userIdentification, allBlogs }) => {
     const { width, height } = Dimensions.get('screen')
     const navigation = useNavigation()
     const [first, setfirst] = useState(true)
@@ -20,7 +20,23 @@ const Favorite = ({ isUserLoggedIn, userIdentification, }) => {
 
     // favorites population krni ha
 
-    let BlogData = Object.keys({})
+
+    const getFavoritedPostsByUserId = (allBlogs, userIdentification) => {
+        const favoritedPosts = {};
+
+        for (const blogId in allBlogs) {
+            const post = allBlogs[blogId];
+            if (post?.FavByUser?.includes(userIdentification)) {
+                favoritedPosts[blogId] = post;
+            }
+        }
+
+        return favoritedPosts;
+    }
+
+    let favoritedPosts = getFavoritedPostsByUserId(allBlogs, userIdentification)
+
+    let BlogData = Object.keys(favoritedPosts)
 
 
     if (isUserLoggedIn && BlogData.length > 0) {
@@ -33,13 +49,13 @@ const Favorite = ({ isUserLoggedIn, userIdentification, }) => {
                         return (
                             <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)}>
                                 <Card>
-                                    <Card.Cover source={{ uri: userFavorites[item]?.ImageUrl }} resizeMode='contain' />
+                                    <Card.Cover source={{ uri: allBlogs[item]?.ImageUrl }} resizeMode='contain' />
                                     <Card.Content>
-                                        <Text variant="titleLarge" style={STYLES.textHeading} >{userFavorites[item]?.Title}</Text>
+                                        <Text variant="titleLarge" style={STYLES.textHeading} >{allBlogs[item]?.Title}</Text>
                                         <Text variant="bodyMedium" style={STYLES.text}>Tap to read</Text>
                                         <View style={STYLES.authorCont} >
                                             <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
-                                            <Text style={STYLES.text}>{userFavorites[item]?.Author}</Text>
+                                            <Text style={STYLES.text}>{allBlogs[item]?.Author}</Text>
                                         </View>
                                     </Card.Content>
                                 </Card>

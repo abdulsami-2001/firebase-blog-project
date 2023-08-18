@@ -10,7 +10,7 @@ import firestore from '@react-native-firebase/firestore'
 import { showMessage } from 'react-native-flash-message'
 import { useNavigation } from '@react-navigation/native'
 import DocumentPicker from 'react-native-document-picker'
-import { TextInput, Button, useTheme, Card, Avatar } from 'react-native-paper'
+import { TextInput, Button, Card, Avatar } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
@@ -18,13 +18,11 @@ import { generateKey } from '../../Utils/ReusableFunctions/ReusableFunctions';
 
 const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent, userFromStore }) => {
 
-    const theme = useTheme()
     const navigation = useNavigation()
     const { width, height } = Dimensions.get('screen')
 
     const [Title, setTitle] = useState("");
     const [ImageUrl, setImageUrl] = useState('')
-    const [ImageBase64String, setImageBase64String] = useState('')
     const [Author, setAuthor] = useState(userFromStore?.displayName);
 
     const { params } = route
@@ -32,6 +30,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
     useEffect(() => {
         setAuthor(userFromStore?.displayName)
     }, [userFromStore])
+
 
     useEffect(() => {
         let tempContent = Content
@@ -45,9 +44,9 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
 
         return () => {
             if (isUserLoggedIn && params?.editAuthor) {
+                myContent(tempContent)
                 setImageUrl('')
                 setTitle('')
-                myContent(tempContent)
                 setAuthor(userFromStore?.displayName)
                 console.log("unmount")
             }
@@ -111,14 +110,14 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                 isEditing ? editDataToFirestore(data) : updateDataToFirestore(data)
             } else {
                 showMessage({
-                    duration: 2000,
+                    duration: 3000,
                     message: "Make sure you have working internet",
                     type: 'warning',
                 })
             }
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: "Make sure you have working internet",
                 type: 'warning',
             })
@@ -133,27 +132,31 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                 .collection('Users')
                 .doc(userIdentification)
                 .set({
-                    [Title]: {
+                    [BlogId]: {
                         Title,
                         Content,
                         Author,
                         ImageUrl,
-                        BlogId: BlogId
+                        FavByUser: [],
+                        BlogId: BlogId,
+                        uid: userIdentification,
                     }
                 })
                 .then(() => {
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Blog Added',
                         type: 'success'
                     })
                     myuserBlogs({
-                        [Title]: {
+                        [BlogId]: {
                             Title,
-                            Content,
                             Author,
+                            Content,
                             ImageUrl,
-                            BlogId: BlogId
+                            FavByUser: [],
+                            BlogId: BlogId,
+                            uid: userIdentification,
                         }
                     })
                     navigation.navigate(NavigationStrings.MYBLOGS)
@@ -161,11 +164,10 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                     setAuthor('')
                     myContent('')
                     setImageUrl('')
-                    setImageBase64String('')
                 });
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: 'Error while uploading blogs',
                 description: "Make sure you have working internet",
                 type: 'warning'
@@ -181,27 +183,31 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                 .doc(userIdentification)
                 .update({
                     ...data,
-                    [Title]: {
+                    [BlogId]: {
                         Title,
-                        Content,
                         Author,
+                        Content,
                         ImageUrl,
-                        BlogId: BlogId
+                        FavByUser: [],
+                        BlogId: BlogId,
+                        uid: userIdentification,
                     }
                 })
                 .then(() => {
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Blog Added',
                         type: 'success'
                     })
                     myuserBlogs({
-                        [Title]: {
+                        [BlogId]: {
                             Title,
                             Content,
                             Author,
                             ImageUrl,
-                            BlogId: BlogId
+                            FavByUser: [],
+                            BlogId: BlogId,
+                            uid: userIdentification,
                         },
                         ...data,
                     })
@@ -210,10 +216,9 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                     setAuthor('')
                     myContent('')
                     setImageUrl('')
-                    setImageBase64String('')
                 });
         } catch (error) {
-            showMessage({ duration: 2000, message: 'Error while uploading blogs', description: "Make sure you have working internet", type: 'warning' })
+            showMessage({ duration: 3000, message: 'Error while uploading blogs', description: "Make sure you have working internet", type: 'warning' })
         }
     }
 
@@ -249,7 +254,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
             type: "info",
             duration: 3000
         })
-
 
 
         const uploadContent = storage().ref(`allFiles/${fileName}`)
@@ -303,18 +307,19 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
         )
     }
 
-
     // for editing existing blog post
 
     const editDataToFirestore = (data) => {
         let myObj = {
             ...data,
-            [params?.editTitle]: {
+            [params?.editBlogId]: {
                 Title,
                 Content,
                 Author,
                 ImageUrl,
-                BlogId: params?.editBlogId
+                BlogId: params?.editBlogId,
+                FavByUser: params?.editFavByUser,
+                uid: params?.editUserIdentification,
             }
         }
         try {
@@ -324,7 +329,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
             docRef.set({ ...myObj }, { merge: true })
                 .then(() => {
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Blog Edited',
                         type: 'success'
                     })
@@ -337,8 +342,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                     setAuthor('')
                     myContent('')
                     setImageUrl('')
-                    setImageBase64String('')
-
                 });
         } catch (error) {
             showMessage({ duration: 3000, message: 'Blog Edit Fail', description: 'Try again later', type: 'warning' })
@@ -439,16 +442,16 @@ export default connect(mapStateToProps, mapDispatchToProps)(AddBlog)
 
 const STYLES = StyleSheet.create({
     editContentCont: {
-        justifyContent: 'space-between',
         paddingLeft: ms(16),
         paddingRight: ms(3),
         alignItems: 'center',
         flexDirection: 'row',
-        backgroundColor: ThemeColors.LIGHTGRAY,
+        borderBottomWidth: 1,
+        paddingVertical: vs(10),
         borderTopLeftRadius: ms(5),
         borderTopRightRadius: ms(5),
-        paddingVertical: vs(10),
-        borderBottomWidth: 1,
+        justifyContent: 'space-between',
+        backgroundColor: ThemeColors.LIGHTGRAY,
         borderBottomColor: ThemeColors.CGREEN,
     },
     editContentText: {
@@ -456,21 +459,19 @@ const STYLES = StyleSheet.create({
     },
     mainCont: {
         flex: 1,
-        marginHorizontal: ms(15),
         marginVertical: vs(5),
+        marginHorizontal: ms(15),
     },
     mainContNL: {
         flex: 1,
-        marginHorizontal: ms(15),
         marginVertical: vs(5),
         justifyContent: 'center',
+        marginHorizontal: ms(15),
     },
     htmlView: (theme) => ({
-        // backgroundColor: theme.colors.primaryContainer,
-        borderTopStartRadius: 5,
         borderTopEndRadius: 5,
         borderBottomWidth: 0.5,
-        // padding: ms(15),
+        borderTopStartRadius: 5,
 
     }),
     headingCont: {
@@ -486,9 +487,9 @@ const STYLES = StyleSheet.create({
         backgroundColor: ThemeColors.LIGHTGRAY
     },
     imgCont: {
-        justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: mvs(10)
+        marginVertical: mvs(10),
+        justifyContent: 'center',
     },
     btn: {
         marginVertical: vs(3),
@@ -497,40 +498,37 @@ const STYLES = StyleSheet.create({
     lottieCont: (width, height) => ({
         width: width,
         height: height / 4,
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
     }),
     lottie: (width, height) => ({
         height: height / 2,
+        alignItems: 'center',
         justifyContent: 'center',
-        alignItems: 'center'
     }),
     iconCont: {
-        position: 'absolute',
         zIndex: 1,
         bottom: 15,
         right: 20,
-        backgroundColor: ThemeColors.CGREEN,
-        borderRadius: 50,
         padding: ms(10),
+        borderRadius: 50,
+        position: 'absolute',
+        backgroundColor: ThemeColors.CGREEN,
     },
     editIcon: {
         backgroundColor: 'transparent',
     },
     editIconCont: {
-        backgroundColor: ThemeColors.CGREEN,
-        borderRadius: ms(10),
-        // padding: ms(3),
-        // marginTop: vs(4),
-        // marginLeft: ms(5),
-        position: 'absolute',
         top: 2,
         right: 2,
+        borderRadius: ms(10),
+        position: 'absolute',
+        backgroundColor: ThemeColors.CGREEN,
     },
     coverImgCont: {
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: ThemeColors.CGREEN,
         borderRadius: ms(12),
+        justifyContent: 'center',
+        backgroundColor: ThemeColors.CGREEN,
     },
 })

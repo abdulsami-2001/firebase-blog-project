@@ -8,31 +8,72 @@ import { Card, Surface, Text } from 'react-native-paper'
 import { showMessage } from 'react-native-flash-message'
 import firestore from '@react-native-firebase/firestore'
 import Fontisto from 'react-native-vector-icons/Fontisto'
+import ImageViewer from 'react-native-image-zoom-viewer';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { generateKey } from '../../Utils/ReusableFunctions/ReusableFunctions';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StyleSheet, TouchableOpacity, Modal, View, ScrollView, TextInput, useWindowDimensions } from 'react-native'
-import ImageViewer from 'react-native-image-zoom-viewer';
-import { generateKey } from '../../Utils/ReusableFunctions/ReusableFunctions';
 
-const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, userLike, myUserLike, userComments, myUserComments }) => {
+const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, userLike, myUserLike, userComments, myUserComments, myallBlogs }) => {
+
+    let tempIsfavorite = allBlogs[params]?.FavByUser?.includes(userIdentification) || false
+
     const [CommentText, setCommentText] = useState('')
     const { width } = useWindowDimensions();
     const [first, setfirst] = useState(true)
     const [Visible, setVisible] = useState(false)
-
-    const isLoved = false
-
+    const [isFavorite, setisFavorite] = useState(tempIsfavorite)
 
     useEffect(() => {
         setfirst(!first)
     }, [userLike])
 
+
+    // console.log('allBlogs ', allBlogs)
+
+    // onwards: finishing of fav feat and ssolve issue of null image alse base64 invalid arg
+
+
+    // const Users = {
+    //     'user no 1 abc': {
+    //         'post 1 abc': {
+    //             Author: 'jama',
+    //             FavByUser: [],
+    //             uid: 'user no 1 abc',
+    //             Title: 'This is the first post'
+    //         },
+    //         'post 2 abc': {
+    //             Author: 'dk',
+    //             FavByUser: [],
+    //             uid: 'user no 1 abc',
+    //             Title: 'This is the second post'
+    //         },
+    //     },
+    //     'user no 2 xyz': {
+    //         'post 1 xyz': {
+    //             Author: 'poco',
+    //             FavByUser: [],
+    //             uid: 'user no 2 xyz',
+    //             Title: 'xyz xyz This is the first post'
+    //         },
+    //         'post 2 xyz': {
+    //             Author: 'dk',
+    //             FavByUser: [],
+    //             uid: 'user no 2 xyz',
+    //             Title: 'xyz xyz This is the second post'
+    //         },
+    //     }
+    // }
+
+
+
     // For Favorite feature
     // ----------------
-    const iconPresHandler = () => {
+    const iconPresHandler = (userUID, BlogId, isFavorite) => {
         if (userIdentification) {
+            toggleFavorite(userUID, BlogId, isFavorite)
         } else if (!userIdentification) {
             showMessage({
                 message: "You're in guest mode",
@@ -49,6 +90,94 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
         }
     }
 
+    const toggleFavorite = async (userUID, BlogId, isFavorite) => {
+        showMessage({
+            type: 'info',
+            duration: 3000,
+            message: "Adding to Favorites",
+        })
+        try {
+            const userRef = firestore().collection('Users').doc(userUID);
+            const userDoc = await userRef.get();
+            if (userDoc) {
+                const userData = userDoc.data();
+                const userPosts = userData[BlogId];
+                if (userPosts) {
+                    const favByUser = userPosts?.FavByUser || [];
+                    console.log('favByUser', favByUser)
+
+                    if (!isFavorite) {
+                        // Add UID to FavByUser array
+                        if (!favByUser.includes(userIdentification)) {
+                            favByUser.push(userIdentification);
+                            myallBlogs({
+                                ...allBlogs,
+                                [params]: {
+                                    Author: allBlogs[params]?.Author,
+                                    Content: allBlogs[params]?.Content,
+                                    BlogId: allBlogs[params]?.BlogId,
+                                    ImageUrl: allBlogs[params]?.ImageUrl,
+                                    Title: allBlogs[params]?.Title,
+                                    uid: allBlogs[params]?.uid,
+                                    FavByUser: favByUser,
+                                }
+                            })
+                            setisFavorite(true)
+                        }
+                    } else {
+                        // Remove UID from FavByUser array
+                        const index = favByUser.indexOf(userIdentification);
+                        if (index !== -1) {
+                            favByUser.splice(index, 1);
+                            myallBlogs({
+                                ...allBlogs,
+                                [params]: {
+                                    Author: allBlogs[params]?.Author,
+                                    Content: allBlogs[params]?.Content,
+                                    BlogId: allBlogs[params]?.BlogId,
+                                    ImageUrl: allBlogs[params]?.ImageUrl,
+                                    Title: allBlogs[params]?.Title,
+                                    uid: allBlogs[params]?.uid,
+                                    FavByUser: favByUser,
+                                }
+                            })
+                            setisFavorite(false)
+                        }
+                    }
+
+                    // Update the post with the modified FavByUser array
+                    await userRef.update({ [`${BlogId}.FavByUser`]: favByUser });
+                    showMessage({
+                        type: 'success',
+                        duration: 3000,
+                        message: "Favorites updated",
+                    })
+                } else {
+                    showMessage({
+                        type: 'warning',
+                        duration: 3000,
+                        message: "Unable to add to favorites",
+                        description: 'Try again later - Userdocs'
+                    })
+                }
+            } else {
+                showMessage({
+                    type: 'warning',
+                    duration: 3000,
+                    message: "Unable to add to favorites",
+                    description: 'Try again later - Userdocs'
+                })
+            }
+        } catch (error) {
+            showMessage({
+                type: 'warning',
+                duration: 3000,
+                message: "Unable to add to favorites",
+                description: 'Try again later'
+            })
+            console.log('error on toggle fav', error)
+        }
+    }
 
 
     // For Like feature
@@ -90,7 +219,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
             newLike ? uploadLikeToFirestore() : checkLikeByIdOnFirestore()
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: 'Error while fetching blogs',
                 description: "Make sure you have working internet",
                 type: 'warning',
@@ -109,7 +238,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 })
                 .then(() => {
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Blog Liked',
                         type: 'success'
                     })
@@ -122,7 +251,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 });
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: 'Error while liking blogs',
                 description: "Make sure you have working internet",
                 type: 'warning'
@@ -154,7 +283,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
 
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: 'Error while Commenting',
                 description: "Make sure you have working internet",
                 type: 'warning'
@@ -172,7 +301,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 })
                 .then(() => {
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Like/dislike update',
                         type: 'success'
                     })
@@ -185,7 +314,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 });
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: 'Error while liking blogs',
                 description: "Make sure you have working internet",
                 type: 'warning'
@@ -241,7 +370,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
             // newComment ? uploadCommentToFirestore() : checkCommentByIdOnFirestore()
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: 'Error while fetching blogs',
                 description: "Make sure you have working internet",
                 type: 'warning',
@@ -267,7 +396,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 })
                 .then(() => {
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Comment Added',
                         type: 'success'
                     })
@@ -285,7 +414,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 });
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: 'Error while commenting',
                 description: "Make sure you have working internet",
                 type: 'warning'
@@ -311,7 +440,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 })
                 .then(() => {
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Comment Added',
                         type: 'success'
                     })
@@ -331,7 +460,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 });
         } catch (error) {
             showMessage({
-                duration: 2000,
+                duration: 3000,
                 message: 'Error while Commenting',
                 description: "Make sure you have working internet",
                 type: 'warning'
@@ -352,7 +481,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
             .then((res) => {
                 return (
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Blog post share successfully',
                         type: 'info',
                     })
@@ -361,7 +490,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
             .catch((err) => {
                 return (
                     showMessage({
-                        duration: 2000,
+                        duration: 3000,
                         message: 'Error during sharing the blog post',
                         description: 'Try again after reopening app',
                         type: 'warning',
@@ -413,12 +542,12 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                             <Text variant="titleSmall">Author: {allBlogs[params]?.Author}</Text>
                         </View>
                         <TouchableOpacity activeOpacity={0.7} style={STYLES.btnCont}  >
-                            {isLoved ?
-                                <MaterialIcons name='favorite' size={24} color={ThemeColors.CGREEN} />
+                            {isFavorite ?
+                                <MaterialIcons name='favorite' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler(allBlogs[params]?.uid, allBlogs[params]?.BlogId, isFavorite)} />
                                 :
-                                < MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => showMessage({ type: 'info', message: 'Add to favorite feature coming soon', duration: 3000 })} />
+                                <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler(allBlogs[params]?.uid, allBlogs[params]?.BlogId, isFavorite)} />
                             }
-                            {/* <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler()} /> */}
+                            {/* <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => showMessage({ type: 'info', message: 'Add to favorite feature coming soon', duration: 3000 })} /> */}
                         </TouchableOpacity>
                     </View>
                 </Card.Content>
@@ -465,6 +594,7 @@ const mapDispatchToProps = {
     myallBlogs: Creators.allBlogs,
     myUserLike: Creators.userLike,
     myUserComments: Creators.userComments,
+    myallBlogs: Creators.allBlogs,
 }
 
 const mapStateToProps = (state) => {
@@ -492,10 +622,7 @@ const STYLES = StyleSheet.create({
         flex: 1,
     },
     modalSubCont: {
-        // paddingVertical: vs(10),
         flex: 1,
-        // justifyContent: "center",
-        // alignItems: 'center',
         backgroundColor: ThemeColors.WHITE
     },
     iconCont: {

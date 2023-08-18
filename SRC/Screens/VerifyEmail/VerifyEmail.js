@@ -148,7 +148,5 @@ const STYLES = StyleSheet.create({
         marginVertical: vs(3),
         backgroundColor: ThemeColors.CGREEN
     },
-    input: {
-        marginVertical: vs(8),
-    },
+   
 })

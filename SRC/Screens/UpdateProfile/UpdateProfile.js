@@ -249,6 +249,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(UpdateProfile)
 const STYLES = StyleSheet.create({
     input: {
         marginVertical: vs(8),
+        backgroundColor: ThemeColors.LIGHTGRAY,
     },
     picBtn: {
         backgroundColor: ThemeColors.CGREEN,

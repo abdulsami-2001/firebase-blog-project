@@ -11,7 +11,7 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StyleSheet, Modal, TouchableOpacity, View, FlatList, useWindowDimensions } from 'react-native'
 
-const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount, userIdentification, userFromStore }) => {
+const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount, userIdentification }) => {
     const { params } = route
     const { width } = useWindowDimensions();
     const [first, setfirst] = useState(true)
@@ -26,7 +26,6 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
     useEffect(() => {
         // cal the counter function
         blogViewsCountHandler()
-
     }, [])
 
 
@@ -63,7 +62,6 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
             console.log('else case - blogViewsCountHandler - Blog.js')
         }
     }
-
 
     const getblogViewsCountFromFirestore = async (BlogId) => {
         try {

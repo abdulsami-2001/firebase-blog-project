@@ -166,20 +166,20 @@ const Editor = ({ content, mycontent }) => {
 
 
 const mapDispatchToProps = {
-    myUserState: Creators.userState,
     myUserId: Creators.userId,
-    myuserBlogs: Creators.userBlogs,
-    myallBlogs: Creators.allBlogs,
     mycontent: Creators.content,
+    myallBlogs: Creators.allBlogs,
+    myUserState: Creators.userState,
+    myuserBlogs: Creators.userBlogs,
 }
 
 const mapStateToProps = (state) => {
     return {
-        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
-        userBlogs: state.UserAuth.userBlogs,
-        userIdentification: state.UserAuth.userIdentification,
-        allBlogs: state.UserAuth.allBlogs,
         content: state.UserAuth.content,
+        allBlogs: state.UserAuth.allBlogs,
+        userBlogs: state.UserAuth.userBlogs,
+        isUserLoggedIn: state.UserAuth.isUserLoggedIn,
+        userIdentification: state.UserAuth.userIdentification,
     }
 }
 
@@ -193,16 +193,16 @@ const STYLES = StyleSheet.create({
     },
     richBar: {
         height: 50,
-        backgroundColor: ThemeColors.GRAY,
         borderRadius: 10,
-        paddingHorizontal: ms(5)
+        paddingHorizontal: ms(5),
+        backgroundColor: ThemeColors.GRAY,
     },
     subCont: (height) => ({
-        marginVertical: vs(10),
+        padding: ms(5),
+        borderRadius: ms(5),
         height: height / 1.5,
         maxHeight: height / 1.5,
-        borderRadius: ms(5),
-        padding: ms(5),
+        marginVertical: vs(10),
     }),
     editor: (height) => ({
         borderRadius: ms(5),

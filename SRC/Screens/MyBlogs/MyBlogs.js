@@ -71,6 +71,11 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
         const userLikeData = filteredData(userLike, false, blogWith_IdToDelete)
         const userCommentsData = filteredData(userComments, false, blogWith_IdToDelete)
 
+        showMessage({
+            duration: 3000,
+            message: 'Blog Deleting',
+            type: 'info'
+        })
 
         try {
             firestore()
@@ -169,13 +174,14 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                         data={BlogData}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => {
+                            console.log('item ', item)
                             return (
                                 <>
                                     <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
                                         <Card>
                                             <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
                                             <View style={STYLES.iconCont} >
-                                                <TouchableOpacity style={STYLES.editIconCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG, { editItem: item, editImageUrl: userBlogs[item]?.ImageUrl, editTitle: userBlogs[item]?.Title, editBlogId: userBlogs[item]?.BlogId, editAuthor: userBlogs[item]?.Author, editContent: userBlogs[item]?.Content })}>
+                                                <TouchableOpacity style={STYLES.editIconCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG, { editItem: item, editImageUrl: userBlogs[item]?.ImageUrl, editTitle: userBlogs[item]?.Title, editBlogId: userBlogs[item]?.BlogId, editAuthor: userBlogs[item]?.Author, editContent: userBlogs[item]?.Content, editFavByUser: allBlogs[item]?.FavByUser, editUserIdentification: userBlogs[item]?.uid })}>
                                                     <Avatar.Icon size={30} color={ThemeColors.WHITE} icon={'pencil'} style={STYLES.editIcon} />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={STYLES.editIconCont} onPress={() => blogDeleteHandler(item, userBlogs[item]?.BlogId)} >
