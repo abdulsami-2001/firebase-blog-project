@@ -14,7 +14,7 @@ const App = () => {
         <Provider store={Store}>
             <PersistGate persistor={Persistor} loading={null} >
                 <PaperProvider>
-                    <StatusBar  backgroundColor={ThemeColors.CGREEN} />
+                    <StatusBar backgroundColor={ThemeColors.CGREEN} />
                     <View style={{ flex: 1 }} >
                         <MainTabNavigation />
                         <FlashMessage position="center" />

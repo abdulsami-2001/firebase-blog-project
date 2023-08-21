@@ -73,7 +73,6 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
                     newBlogViewsCount = false
                 }
             });
-            // newBlogViewsCount ? uploadblogViewsCountToFirestore() : console.log('purana')
             newBlogViewsCount ? uploadblogViewsCountToFirestore() : updateblogViewsCountToFirestore()
         } catch (error) {
             // error while fetching data from fb fs.
@@ -169,15 +168,15 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
                         </View>
                     </View>
                 </Modal>
-                <Card style={STYLES.commentSectionCont}>
-                    <FlatList
-                        showsVerticalScrollIndicator={false}
-                        data={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])?.slice(0, 3)}
-                        ListHeaderComponent={() => <HeaderComponent commentsForLength={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])} params={params} Show={Show} setShow={setShow} />}
-                        ListFooterComponent={() => <FooterComponent commentsForLength={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])} setVisible={setVisible} />}
-                        renderItem={({ item }) => {
-                            if (Show) {
-                                return (
+                <FlatList
+                    showsVerticalScrollIndicator={false}
+                    data={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])?.slice(0, 3)}
+                    ListHeaderComponent={() => <HeaderComponent commentsForLength={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])} params={params} Show={Show} setShow={setShow} />}
+                    ListFooterComponent={() => <FooterComponent commentsForLength={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])} setVisible={setVisible} />}
+                    renderItem={({ item }) => {
+                        if (Show) {
+                            return (
+                                <Card style={STYLES.commentSectionCont}>
                                     <View style={STYLES.cmnt} >
                                         <View style={STYLES.cmntImgCont} >
                                             <FontAwesome name={'user-circle'} size={40} />
@@ -187,11 +186,11 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
                                             <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
                                         </TouchableOpacity>
                                     </View>
-                                )
-                            }
-                        }}
-                    />
-                </Card>
+                                </Card>
+                            )
+                        }
+                    }}
+                />
             </View>
         </>
     )
@@ -260,7 +259,7 @@ const STYLES = StyleSheet.create({
         paddingVertical: vs(10),
         paddingHorizontal: ms(10),
         flexDirection: 'row',
-        borderWidth: 1,
+        // borderWidth: 1,
     },
     commentSectionCont: {
         marginVertical: vs(5),
@@ -268,19 +267,8 @@ const STYLES = StyleSheet.create({
     },
     mainCont: {
         flex: 1,
-        marginHorizontal: ms(15),
-        marginVertical: vs(5),
+        paddingHorizontal: ms(15),
+        paddingVertical: vs(5),
+        backgroundColor: ThemeColors.LIGHTGRAY,
     },
 })
-
-
-
-
-
-// like = [
-//     {
-//         id:'',
-//         userId:''
-//         postid
-//     }
-// ]

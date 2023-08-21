@@ -1,10 +1,11 @@
 import { connect } from 'react-redux'
 import Lottie from 'lottie-react-native';
-import { ms, vs } from 'react-native-size-matters'
 import { Card, Text } from 'react-native-paper'
 import React, { useEffect, useState } from 'react'
 import { Creators } from '../../Redux/Action/Action'
+import { ms, s, vs } from 'react-native-size-matters'
 import { useNavigation } from '@react-navigation/native'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
@@ -50,12 +51,15 @@ const Favorite = ({ isUserLoggedIn, userIdentification, allBlogs }) => {
                             <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)}>
                                 <Card>
                                     <Card.Cover source={{ uri: allBlogs[item]?.ImageUrl }} resizeMode='contain' />
-                                    <Card.Content>
-                                        <Text variant="titleLarge" style={STYLES.textHeading} >{allBlogs[item]?.Title}</Text>
-                                        <Text variant="bodyMedium" style={STYLES.text}>Tap to read</Text>
+                                    <Card.Content style={STYLES.cardContent} >
+                                        <Text variant="titleLarge" style={STYLES.blogTitle} >{allBlogs[item]?.Title}</Text>
+                                        <View style={STYLES.tapCont}>
+                                            <Text variant="bodyMedium" style={STYLES.text}>Press to read</Text>
+                                            <FontAwesome5 name={'hand-pointer'} style={STYLES.tapIcon} size={20} color={ThemeColors.CGREEN} />
+                                        </View>
                                         <View style={STYLES.authorCont} >
                                             <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
-                                            <Text style={STYLES.text}>{allBlogs[item]?.Author}</Text>
+                                            <Text style={STYLES.text2}>{allBlogs[item]?.Author}</Text>
                                         </View>
                                     </Card.Content>
                                 </Card>
@@ -116,10 +120,8 @@ const STYLES = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        // flexDirection: 'row',
         marginHorizontal: 15,
         marginVertical: 5,
-        // backgroundColor: 'purple'
     },
     lottieCont: (width, height) => ({
         width: width,
@@ -150,10 +152,37 @@ const STYLES = StyleSheet.create({
     },
     textHeading: {
         fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: 13,
+        lineHeight: 20,
+        textAlign: 'justify',
+        alignItems: 'center',
+        alignContent: 'center',
     },
     text: {
         color: ThemeColors.GRAY,
         fontSize: 15,
+        paddingVertical: ms(8),
+    },
+    tapCont: {
+        flexDirection: "row",
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignContent: 'center',
+        alignSelf: 'center',
+    },
+    tapIcon: {
+        paddingLeft: ms(3),
+    },
+    blogTitle: {
+        fontWeight: 'bold',
+        fontSize: s(20),
+        lineHeight: s(22),
+        textAlign: 'justify',
+        textAlignVertical: 'center',
+    },
+    cardContent: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: ms(20),
     },
 })

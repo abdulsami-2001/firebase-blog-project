@@ -2,14 +2,15 @@ import { connect } from 'react-redux'
 import Share from 'react-native-share';
 import React, { useEffect, useState } from 'react'
 import RenderHtml from 'react-native-render-html'
-import { ms, vs } from 'react-native-size-matters'
+import { ms, s, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
-import { Card, Surface, Text } from 'react-native-paper'
+import { Card, Text } from 'react-native-paper'
 import { showMessage } from 'react-native-flash-message'
 import firestore from '@react-native-firebase/firestore'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import ImageViewer from 'react-native-image-zoom-viewer';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { generateKey } from '../../Utils/ReusableFunctions/ReusableFunctions';
@@ -29,45 +30,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
     useEffect(() => {
         setfirst(!first)
     }, [userLike])
-
-
-    // console.log('allBlogs ', allBlogs)
-
-    // onwards: finishing of fav feat and ssolve issue of null image alse base64 invalid arg
-
-
-    // const Users = {
-    //     'user no 1 abc': {
-    //         'post 1 abc': {
-    //             Author: 'jama',
-    //             FavByUser: [],
-    //             uid: 'user no 1 abc',
-    //             Title: 'This is the first post'
-    //         },
-    //         'post 2 abc': {
-    //             Author: 'dk',
-    //             FavByUser: [],
-    //             uid: 'user no 1 abc',
-    //             Title: 'This is the second post'
-    //         },
-    //     },
-    //     'user no 2 xyz': {
-    //         'post 1 xyz': {
-    //             Author: 'poco',
-    //             FavByUser: [],
-    //             uid: 'user no 2 xyz',
-    //             Title: 'xyz xyz This is the first post'
-    //         },
-    //         'post 2 xyz': {
-    //             Author: 'dk',
-    //             FavByUser: [],
-    //             uid: 'user no 2 xyz',
-    //             Title: 'xyz xyz This is the second post'
-    //         },
-    //     }
-    // }
-
-
 
     // For Favorite feature
     // ----------------
@@ -94,7 +56,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
         showMessage({
             type: 'info',
             duration: 3000,
-            message: "Adding to Favorites",
+            message: "Favorites Updating",
         })
         try {
             const userRef = firestore().collection('Users').doc(userUID);
@@ -104,8 +66,6 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 const userPosts = userData[BlogId];
                 if (userPosts) {
                     const favByUser = userPosts?.FavByUser || [];
-                    console.log('favByUser', favByUser)
-
                     if (!isFavorite) {
                         // Add UID to FavByUser array
                         if (!favByUser.includes(userIdentification)) {
@@ -502,6 +462,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
 
     return (
         <>
+            {/* commeents modal */}
             <Modal
                 animationType='slide'
                 visible={Visible}
@@ -525,33 +486,46 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                     </View>
                 </View>
             </Modal>
+
+            {/* cover, title, author */}
             <View style={STYLES.cardCont} >
-                <TouchableOpacity onPress={() => setVisible(true)}>
-                    <Card.Cover source={{ uri: allBlogs[params]?.ImageUrl }} resizeMode='contain' />
-                </TouchableOpacity>
-                <Card.Content>
-                    <Text variant="titleLarge">{allBlogs[params]?.Title}</Text>
-                    <ScrollView horizontal >
-                        <RenderHtml
-                            source={{ html: allBlogs[params]?.Content }}
-                            contentWidth={width}
-                        />
-                    </ScrollView>
-                    <View style={STYLES.infoCont}>
-                        <View>
-                            <Text variant="titleSmall">Author: {allBlogs[params]?.Author}</Text>
+                <Card style={STYLES.card} >
+                    <View style={STYLES.header} >
+                        <View style={STYLES.authorCont} >
+                            <FontAwesome name={'user-circle'} size={40} />
+                            <Text style={STYLES.authorText}>{allBlogs[params]?.Author}</Text>
                         </View>
-                        <TouchableOpacity activeOpacity={0.7} style={STYLES.btnCont}  >
-                            {isFavorite ?
-                                <MaterialIcons name='favorite' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler(allBlogs[params]?.uid, allBlogs[params]?.BlogId, isFavorite)} />
-                                :
-                                <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler(allBlogs[params]?.uid, allBlogs[params]?.BlogId, isFavorite)} />
-                            }
-                            {/* <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => showMessage({ type: 'info', message: 'Add to favorite feature coming soon', duration: 3000 })} /> */}
-                        </TouchableOpacity>
+                        <View style={STYLES.infoCont}>
+                            <TouchableOpacity activeOpacity={0.7} style={STYLES.btnCont}  >
+                                {isFavorite ?
+                                    <MaterialIcons name='favorite' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler(allBlogs[params]?.uid, allBlogs[params]?.BlogId, isFavorite)} />
+                                    :
+                                    <MaterialIcons name='favorite-border' size={24} color={ThemeColors.CGREEN} onPress={() => iconPresHandler(allBlogs[params]?.uid, allBlogs[params]?.BlogId, isFavorite)} />
+                                }
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </Card.Content>
-                <Surface style={STYLES.engagementCont(width)} elevation={1} >
+                    <TouchableOpacity style={STYLES.imgCont} onPress={() => setVisible(true)}>
+                        <Card.Cover source={{ uri: allBlogs[params]?.ImageUrl }} style={{ paddingHorizontal: ms(6) }} resizeMode='contain' />
+                    </TouchableOpacity>
+                    <Card.Content style={STYLES.cardContent} >
+                        <Text variant="titleLarge" style={STYLES.blogTitle}>{allBlogs[params]?.Title}</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            <RenderHtml
+                                source={{ html: allBlogs[params]?.Content }}
+                                contentWidth={width}
+                            />
+                        </ScrollView>
+
+                    </Card.Content>
+                </Card>
+            </View>
+
+            {/* like, cmt, share */}
+
+            <Card style={{ marginBottom: vs(10) }}>
+                <View style={STYLES.engagementCont(width)}>
+                    {/* <View style={STYLES.engagementCont(width)} elevation={1} > */}
                     <TouchableOpacity onPress={() => likePressHandler(allBlogs[params]?.BlogId)} style={STYLES.engagementSubCont} >
                         {userLike[allBlogs[params]?.BlogId]?.LikedByUsers?.find((item) => item == userIdentification) ?
                             (
@@ -569,19 +543,19 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                     <TouchableOpacity onPress={() => sharePressHandler()} style={STYLES.engagementSubCont} >
                         <Fontisto name={'share'} size={20} color={ThemeColors.CGREEN} />
                     </TouchableOpacity>
-                </Surface>
-            </View>
-            <Surface style={STYLES.inputCont} >
-                <TextInput
-                    style={STYLES.input(width)}
-                    placeholder='Write a comment'
-                    value={CommentText}
-                    onChangeText={(text) => setCommentText(text)}
-                />
-                <TouchableOpacity onPress={() => commentPressHandler(allBlogs[params]?.BlogId)} >
-                    <MaterialIcons name='send' size={25} color={ThemeColors.CGREEN} />
-                </TouchableOpacity>
-            </Surface>
+                </View>
+                <View style={STYLES.inputCont} >
+                    <TextInput
+                        style={STYLES.input(width)}
+                        placeholder='Write a comment'
+                        value={CommentText}
+                        onChangeText={(text) => setCommentText(text)}
+                    />
+                    <TouchableOpacity onPress={() => commentPressHandler(allBlogs[params]?.BlogId)} >
+                        <MaterialIcons name='send' size={25} color={ThemeColors.CGREEN} />
+                    </TouchableOpacity>
+                </View>
+            </Card>
         </>
     )
 
@@ -613,6 +587,47 @@ export default connect(mapStateToProps, mapDispatchToProps)(HeaderComponent)
 
 
 const STYLES = StyleSheet.create({
+    imgCont: {
+        paddingTop: vs(6)
+    },
+    card: {
+        marginBottom: ms(10),
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderBottomWidth: s(0.5),
+        marginBottom: ms(3),
+    },
+    authorCont: {
+        flexDirection: 'row',
+        textAlign: 'justify',
+        marginHorizontal: ms(5),
+        marginVertical: vs(10),
+        alignItems: 'center',
+    },
+    authorText: {
+        paddingLeft: ms(8),
+        fontWeight: 'bold',
+        fontSize: s(18)
+    },
+    infoCont: {
+        flexDirection: 'row',
+    },
+    textHeading: {
+        fontWeight: 'bold',
+        fontSize: 13,
+        lineHeight: 20,
+        textAlign: 'justify',
+    },
+    blogTitle: {
+        fontWeight: 'bold',
+        fontSize: s(20),
+        lineHeight: s(22),
+        textAlign: 'justify',
+        textAlignVertical: 'center',
+    },
     modal: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -625,6 +640,9 @@ const STYLES = StyleSheet.create({
         flex: 1,
         backgroundColor: ThemeColors.WHITE
     },
+    cardContent: {
+        paddingTop: ms(20),
+    },
     iconCont: {
         position: 'absolute',
         zIndex: 1,
@@ -634,9 +652,7 @@ const STYLES = StyleSheet.create({
         borderRadius: 50,
     },
     cardCont: {
-        marginVertical: vs(5)
-    },
-    cmntText: {
+        marginVertical: vs(5),
     },
     cmntTextCont: (width) => ({
         marginLeft: ms(8),
@@ -659,20 +675,16 @@ const STYLES = StyleSheet.create({
     inputCont: {
         marginVertical: vs(5),
         padding: ms(5),
-        borderWidth: 1,
+        // borderWidth: 1,
         alignItems: 'center',
         flexDirection: 'row',
-        borderRadius: ms(10),
+        // borderRadius: ms(10),
     },
     input: (width) => ({
         width: width - ms(90),
         borderWidth: 1,
         borderRadius: ms(10),
     }),
-    infoCont: {
-        flexDirection: 'row',
-        marginVertical: vs(4)
-    },
     likeText: {
         marginLeft: ms(10)
     },
@@ -683,11 +695,11 @@ const STYLES = StyleSheet.create({
         paddingVertical: vs(6),
     },
     engagementCont: (width) => ({
-        borderRadius: ms(10),
+        // borderRadius: ms(10),
         flexDirection: 'row',
         paddingVertical: ms(5),
         paddingHorizontal: ms(10),
-        borderWidth: 1,
+        // borderWidth: 1,
         alignContent: 'center',
         justifyContent: 'space-between',
     }),

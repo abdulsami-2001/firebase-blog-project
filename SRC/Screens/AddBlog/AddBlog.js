@@ -39,7 +39,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
             setTitle(params?.editTitle)
             setAuthor(params?.editAuthor)
             myContent(params?.editContent)
-            console.log("edit")
         }
 
         return () => {
@@ -48,7 +47,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                 setImageUrl('')
                 setTitle('')
                 setAuthor(userFromStore?.displayName)
-                console.log("unmount")
             }
         }
     }, [])

@@ -174,7 +174,6 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                         data={BlogData}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => {
-                            console.log('item ', item)
                             return (
                                 <>
                                     <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
