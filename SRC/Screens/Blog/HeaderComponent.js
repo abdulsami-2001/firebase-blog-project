@@ -17,9 +17,9 @@ import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { generateKey } from '../../Utils/ReusableFunctions/ReusableFunctions';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { StyleSheet, TouchableOpacity, Modal, View, ScrollView, useWindowDimensions } from 'react-native'
+import { StyleSheet, TouchableOpacity, Modal, View, ScrollView, useWindowDimensions, Image } from 'react-native'
 
-const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, userLike, myUserLike, userComments, myUserComments, myallBlogs }) => {
+const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, userLike, myUserLike, userComments, myUserComments, myallBlogs, usersData }) => {
 
     let tempIsfavorite = allBlogs[params]?.FavByUser?.includes(userIdentification) || false
 
@@ -494,7 +494,11 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 <Card style={STYLES.card} >
                     <View style={STYLES.header} >
                         <View style={STYLES.authorCont} >
-                            <FontAwesome name={'user-circle'} size={40} />
+                            {usersData[allBlogs[params]?.uid]?.photoURL ?
+                                <Image source={{ uri: usersData[allBlogs[params]?.uid]?.photoURL }} style={STYLES.authorImg} />
+                                :
+                                <FontAwesome name={'user-circle'} size={40} />
+                            }
                             <Text style={STYLES.authorText}>{allBlogs[params]?.Author}</Text>
                         </View>
                         <View style={STYLES.infoCont}>
@@ -584,6 +588,7 @@ const mapStateToProps = (state) => {
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
         userLike: state.UserAuth.userLike,
+        usersData: state.UserAuth.usersData,
         userComments: state.UserAuth.userComments,
     }
 }
@@ -593,6 +598,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(HeaderComponent)
 
 
 const STYLES = StyleSheet.create({
+    authorImg: {
+        width: 40,
+        height: 40,
+        borderRadius: ms(25),
+    },
     imgCont: {
         paddingTop: vs(6)
     },

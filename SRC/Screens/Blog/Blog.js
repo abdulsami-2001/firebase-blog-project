@@ -9,9 +9,9 @@ import firestore from '@react-native-firebase/firestore'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { StyleSheet, Modal, TouchableOpacity, View, FlatList, useWindowDimensions } from 'react-native'
+import { StyleSheet, Modal, TouchableOpacity, View, FlatList, useWindowDimensions, Image } from 'react-native'
 
-const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount, userIdentification }) => {
+const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount, userIdentification, usersData }) => {
     const { params } = route
     const { width } = useWindowDimensions();
     const [first, setfirst] = useState(true)
@@ -157,10 +157,20 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
                                         <Card style={STYLES.modalCommentCard} >
                                             <View style={STYLES.cmnt} >
                                                 <View style={STYLES.cmntImgCont} >
-                                                    <FontAwesome name={'user-circle'} size={40} />
+                                                    {usersData[item?.user]?.photoURL ?
+                                                        <Image source={{ uri: usersData[item?.user]?.photoURL }} style={STYLES.authorImg} />
+                                                        :
+                                                        <FontAwesome name={'user-circle'} size={40} />
+                                                    }
                                                 </View>
                                                 <TouchableOpacity activeOpacity={0.5} style={STYLES.cmntTextCont(width)} >
-                                                    <Text variant='labelSmall' >{item?.user}</Text>
+                                                    {
+                                                        usersData[item?.user]?.displayName ? (
+                                                            <Text variant='labelSmall'>{usersData[item?.user]?.displayName}</Text>
+                                                        ) : (
+                                                            <Text variant='labelSmall'>This user hasn't set his/her display name</Text>
+                                                        )
+                                                    }
                                                     <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
                                                 </TouchableOpacity>
                                             </View>
@@ -177,15 +187,26 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
                     ListHeaderComponent={() => <HeaderComponent commentsForLength={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])} params={params} Show={Show} setShow={setShow} />}
                     ListFooterComponent={() => <FooterComponent commentsForLength={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])} setVisible={setVisible} />}
                     renderItem={({ item }) => {
+                        console.log(item)
                         if (Show) {
                             return (
                                 <Card style={STYLES.commentSectionCont}>
                                     <View style={STYLES.cmnt} >
                                         <View style={STYLES.cmntImgCont} >
-                                            <FontAwesome name={'user-circle'} size={40} />
+                                            {usersData[item?.user]?.photoURL ?
+                                                <Image source={{ uri: usersData[item?.user]?.photoURL }} style={STYLES.authorImg} />
+                                                :
+                                                <FontAwesome name={'user-circle'} size={40} />
+                                            }
                                         </View>
                                         <TouchableOpacity activeOpacity={0.5} style={STYLES.cmntTextCont(width)} >
-                                            <Text variant='labelSmall' >{item?.user}</Text>
+                                            {
+                                                usersData[item?.user]?.displayName ? (
+                                                    <Text variant='labelSmall'>{usersData[item?.user]?.displayName}</Text>
+                                                ) : (
+                                                    <Text variant='labelSmall'>This user hasn't set his/her display name</Text>
+                                                )
+                                            }
                                             <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -219,6 +240,7 @@ const mapStateToProps = (state) => {
         userLike: state.UserAuth.userLike,
         userComments: state.UserAuth.userComments,
         blogViewsCount: state.UserAuth.blogViewsCount,
+        usersData: state.UserAuth.usersData,
         userFromStore: state.UserAuth.user,
     }
 }
@@ -227,6 +249,11 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Blog)
 
 const STYLES = StyleSheet.create({
+    authorImg: {
+        width: 40,
+        height: 40,
+        borderRadius: ms(25),
+    },
     modalCommentCard: {
         marginVertical: mvs(3),
         backgroundColor: ThemeColors.WHITE

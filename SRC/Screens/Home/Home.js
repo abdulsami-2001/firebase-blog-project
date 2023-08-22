@@ -10,9 +10,9 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
-import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
+import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions, Image } from 'react-native'
 
-const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComments, myUserComments, blogViewsCount, myBlogViewsCount, }) => {
+const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComments, myUserComments, blogViewsCount, myBlogViewsCount, usersData, myUsersData }) => {
     const navigation = useNavigation()
     let BlogData = Object.keys(allBlogs)
     const { width } = Dimensions.get('screen')
@@ -22,6 +22,7 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
     }, [userBlogs])
 
     useEffect(() => {
+        getUsersDataFromFirestore()
         getLikeFromFirestore()
         getCommentsFromFirestore()
         getblogViewsCountFromFirestore()
@@ -97,7 +98,7 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
         }
     }
 
-
+    //blog views from firebae
     const getblogViewsCountFromFirestore = async () => {
         try {
             let datatemp = {}
@@ -120,6 +121,29 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
         }
     }
 
+    // getting all users name, profile, so that it can be displayed on everywhere when user comments or posts.
+    const getUsersDataFromFirestore = async () => {
+        try {
+            const usersRef = firestore().collection('UsersData');
+            const snapshot = await usersRef.get();
+
+            const fetchedUsers = {};
+            snapshot.forEach(doc => {
+                fetchedUsers[doc.id] = doc.data();
+            });
+
+            myUsersData(fetchedUsers)
+        } catch (error) {
+            showMessage({
+                duration: 3000,
+                message: "Unable to fetch users display names and profile pictures.",
+                description: 'Make sure internet is working',
+                type: 'warning',
+            })
+            console.error('Error fetching users data:', error);
+        }
+    };
+
     return (
         <View style={STYLES.mainCont}>
             <View style={STYLES.subCont}>
@@ -130,10 +154,14 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
                     renderItem={({ item }) => {
                         return (
                             <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.95} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
-                                <Card style={STYLES.card} >
+                                <Card style={STYLES.card} elevation={1} >
                                     <View style={STYLES.header} >
                                         <View style={STYLES.authorCont} >
-                                            <FontAwesome name={'user-circle'} size={40} />
+                                            {usersData[allBlogs[item]?.uid]?.photoURL ?
+                                                <Image source={{ uri: usersData[allBlogs[item]?.uid]?.photoURL }} style={STYLES.authorImg} />
+                                                :
+                                                <FontAwesome name={'user-circle'} size={40} />
+                                            }
                                             <Text style={STYLES.authorText}>{allBlogs[item]?.Author}</Text>
                                         </View>
                                     </View>
@@ -143,7 +171,7 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
                                         {/* <Text variant="titleLarge" style={STYLES.blogTitle}>How you can make {allBlogs[item]?.Title} tool, using free resources which is available on internet</Text> */}
                                         <View style={STYLES.tapCont}>
                                             <Text variant="bodyMedium" style={STYLES.text}>Press to read</Text>
-                                            <FontAwesome5 name={'hand-pointer'} style={STYLES.tapIcon} size={20} color={ThemeColors.CGREEN} />
+                                            <FontAwesome5 name={'hand-pointer'} style={STYLES.tapIcon} size={20} color={ThemeColors.BLACK} />
                                         </View>
                                     </Card.Content>
                                 </Card>
@@ -164,6 +192,7 @@ const mapDispatchToProps = {
     myUserState: Creators.userState,
     myUserComments: Creators.userComments,
     myBlogViewsCount: Creators.blogViewsCount,
+    myUsersData: Creators.usersData,
 }
 
 const mapStateToProps = (state) => {
@@ -175,12 +204,18 @@ const mapStateToProps = (state) => {
         blogViewsCount: state.UserAuth.blogViewsCount,
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userIdentification: state.UserAuth.userIdentification,
+        usersData: state.UserAuth.usersData,
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const STYLES = StyleSheet.create({
+    authorImg: {
+        width: 40,
+        height: 40,
+        borderRadius: ms(25),
+    },
     authorText: {
         paddingLeft: ms(8),
         fontWeight: 'bold',

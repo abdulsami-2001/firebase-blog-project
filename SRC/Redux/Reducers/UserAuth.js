@@ -6,6 +6,7 @@ export const INITIAL_STATE = {
     content: '',
     userLike: {},
     userBlogs: {},
+    usersData: {},
     editContent: {},
     userComments: {},
     blogViewsCount: {},
@@ -48,6 +49,7 @@ export const UserAuth = (state = INITIAL_STATE, action) => {
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
         editContent: state.editContent,
+        usersData: state.usersData,
     }
 }
 
@@ -64,6 +66,7 @@ export const UserIdUpdate = (state = INITIAL_STATE, action) => {
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
         editContent: state.editContent,
+        usersData: state.usersData,
     }
 }
 
@@ -81,6 +84,7 @@ export const UserBlogsUpdate = (state = INITIAL_STATE, action) => {
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
         editContent: state.editContent,
+        usersData: state.usersData,
     }
 }
 
@@ -98,6 +102,7 @@ export const allBlogsUpdate = (state = INITIAL_STATE, action) => {
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
         editContent: state.editContent,
+        usersData: state.usersData,
     }
 }
 
@@ -114,6 +119,7 @@ export const Content = (state = INITIAL_STATE, action) => {
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
         editContent: state.editContent,
+        usersData: state.usersData,
     }
 }
 
@@ -130,6 +136,7 @@ export const UserLikeUpdate = (state = INITIAL_STATE, action) => {
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
         editContent: state.editContent,
+        usersData: state.usersData,
     }
 }
 
@@ -146,6 +153,7 @@ export const UserCommentsUpdate = (state = INITIAL_STATE, action) => {
         userComments: action.usercomments,
         blogViewsCount: state.blogViewsCount,
         editContent: state.editContent,
+        usersData: state.usersData,
     }
 }
 
@@ -163,6 +171,7 @@ export const User = (state = INITIAL_STATE, action) => {
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
         editContent: state.editContent,
+        usersData: state.usersData,
     }
 }
 
@@ -180,6 +189,7 @@ export const BlogViewsCount = (state = INITIAL_STATE, action) => {
         userComments: state.userComments,
         blogViewsCount: action.blogviewscount,
         editContent: state.editContent,
+        usersData: state.usersData,
     }
 }
 
@@ -198,6 +208,26 @@ export const EditContent = (state = INITIAL_STATE, action) => {
         userComments: state.userComments,
         blogViewsCount: state.blogViewsCount,
         editContent: action.editcontent,
+        usersData: state.usersData,
+    }
+}
+
+
+
+export const UsersData = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUserLoggedIn: state.isUserLoggedIn,
+        userIdentification: state.userIdentification,
+        user: state.user,
+        userBlogs: state.userBlogs,
+        allBlogs: state.allBlogs,
+        content: state.content,
+        userLike: state.userLike,
+        userComments: state.userComments,
+        blogViewsCount: state.blogViewsCount,
+        editContent: state.editContent,
+        usersData: action.usersdata,
     }
 }
 
@@ -208,12 +238,13 @@ export const HANDLER = {
     [Types.CONTENT]: Content,
     [Types.USER_STATE]: UserAuth,
     [Types.USER_ID]: UserIdUpdate,
+    [Types.USERS_DATA]: UsersData,
     [Types.USER_LIKE]: UserLikeUpdate,
     [Types.ALL_BLOGS]: allBlogsUpdate,
+    [Types.EDIT_CONTENT]: EditContent,
     [Types.USER_BLOGS]: UserBlogsUpdate,
     [Types.BLOG_VIEWS_COUNT]: BlogViewsCount,
     [Types.USER_COMMENTS]: UserCommentsUpdate,
-    [Types.EDIT_CONTENT]: EditContent,
 }
 
 export default createReducer(INITIAL_STATE, HANDLER)

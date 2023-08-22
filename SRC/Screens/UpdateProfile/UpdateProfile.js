@@ -1,23 +1,24 @@
 import { connect } from 'react-redux'
-import Lottie from 'lottie-react-native';
-import RNFetchBlob from 'rn-fetch-blob';
-import auth from '@react-native-firebase/auth';
 import React, { useState } from 'react'
+import RNFetchBlob from 'rn-fetch-blob';
+import Lottie from 'lottie-react-native';
+import auth from '@react-native-firebase/auth';
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import storage from '@react-native-firebase/storage'
 import { showMessage } from 'react-native-flash-message'
+import firestore from '@react-native-firebase/firestore'
 import DocumentPicker from 'react-native-document-picker'
-import { Avatar, Card, Text, Button, TextInput } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import { StyleSheet, View, Dimensions, Image } from 'react-native'
+import { Avatar, Card, Text, Button, TextInput } from 'react-native-paper'
 
 
-const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
+const UpdateProfile = ({ isUserLoggedIn, userIdentification, userFromStore, myUser, usersData, myUsersData, }) => {
     const { width, height } = Dimensions.get('screen')
     const [NewName, setNewName] = useState('')
 
-
+    // Image picker from cam/ gallery
     const imageUploadHandler = async () => {
         try {
             const res = await DocumentPicker.pick({
@@ -45,7 +46,7 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
         }
     }
 
-
+    // upload to firebase cloud storage
     const uploadToFBCloudStorage = async (fileName, base64String, fileType) => {
         // const user = userFromStore
         const user = userFromStore?._user || userFromStore
@@ -104,6 +105,7 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
                         // Profile update successful
                         // You can display a success message to the user if needed
                         myUser({ ...user, photoURL: downloadURL })
+                        updateUsersData(false, downloadURL)
                         showMessage({
                             message: "Picture Uploaded Successfully",
                             type: "success",
@@ -122,6 +124,7 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
         )
     }
 
+    // UI input handler , and restriction on any empty value
     const nameUpdateHandler = () => {
         if (NewName != '') {
             updateName()
@@ -140,6 +143,7 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
         }
     }
 
+    // updating name on firebase and redux
     const updateName = async () => {
         const user = userFromStore?._user || userFromStore
         // const user = userFromStore
@@ -153,6 +157,7 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
                 displayName: NewName
             }).then(() => {
                 myUser({ ...user, displayName: NewName })
+                updateUsersData(NewName, false)
                 setNewName('')
                 showMessage({
                     message: "Name Update Successfully",
@@ -170,6 +175,47 @@ const UpdateProfile = ({ isUserLoggedIn, userFromStore, myUser }) => {
         }
 
     }
+
+    // updateUsersData to firebase and redux, it is used for displaying info on comments and posts author img.
+    const updateUsersData = async (displayName, photoURL) => {
+        try {
+            const userRef = firestore().collection('UsersData').doc(userIdentification);
+
+            // Update only if the displayName or photoURL is provided
+            if (displayName) {
+                await userRef.set({
+                    displayName: displayName,
+                    photoURL: usersData[userIdentification]?.photoURL || '',
+                }, { merge: true })
+                myUsersData({
+                    ...usersData, // previous all users data
+                    [userIdentification]: { // new data of userIdentification
+                        displayName: displayName,
+                        photoURL: usersData[userIdentification]?.photoURL || '',
+                    },
+                })
+            }
+            if (photoURL) {
+                await userRef.set({
+                    photoURL: photoURL,
+                    displayName: usersData[userIdentification]?.displayName || '',
+                }, { merge: true })
+                myUsersData({
+                    ...usersData, // previous all users data
+                    [userIdentification]: { // new data of userIdentification
+                        photoURL: photoURL,
+                        displayName: usersData[userIdentification]?.displayName || '',
+                    },
+                })
+            }
+
+
+            console.log('User data updated successfully!');
+        } catch (error) {
+            console.log('Error updating user data:', error);
+        }
+    };
+
 
     if (isUserLoggedIn) {
         return (
@@ -231,6 +277,7 @@ const mapDispatchToProps = {
     myuserBlogs: Creators.userBlogs,
     myallBlogs: Creators.allBlogs,
     myUser: Creators.user,
+    myUsersData: Creators.usersData,
 }
 
 const mapStateToProps = (state) => {
@@ -240,6 +287,7 @@ const mapStateToProps = (state) => {
         userIdentification: state.UserAuth.userIdentification,
         allBlogs: state.UserAuth.allBlogs,
         userFromStore: state.UserAuth.user,
+        usersData: state.UserAuth.usersData,
     }
 }
 

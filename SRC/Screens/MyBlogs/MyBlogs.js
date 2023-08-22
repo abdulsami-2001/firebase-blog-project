@@ -12,9 +12,9 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
-import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions, Image } from 'react-native'
 
-const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount, userLike, userComments, userBlogs, myallBlogs, myBlogViewsCount, myUserLike, myUserComments, myuserBlogs }) => {
+const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount, userLike, userComments, userBlogs, usersData, myallBlogs, myBlogViewsCount, myUserLike, myUserComments, myuserBlogs }) => {
     const navigation = useNavigation()
     const [first, setfirst] = useState(true)
     const { width, height } = Dimensions.get('screen')
@@ -182,7 +182,11 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                                         <Card style={STYLES.card} >
                                             <View style={STYLES.header} >
                                                 <View style={STYLES.authorCont} >
-                                                    <FontAwesome name={'user-circle'} size={40} />
+                                                    {usersData[userBlogs[item]?.uid]?.photoURL ?
+                                                        <Image source={{ uri: usersData[userBlogs[item]?.uid]?.photoURL }} style={STYLES.authorImg} />
+                                                        :
+                                                        <FontAwesome name={'user-circle'} size={40} />
+                                                    }
                                                     <Text style={STYLES.authorText}>{userBlogs[item]?.Author}</Text>
                                                 </View>
                                                 <View style={STYLES.blogViewCont} >
@@ -203,7 +207,7 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                                                 <Text variant="titleLarge" style={STYLES.blogTitle} >{userBlogs[item]?.Title}</Text>
                                                 <View style={STYLES.tapCont}>
                                                     <Text variant="bodyMedium" style={STYLES.text}>Press to read</Text>
-                                                    <FontAwesome5 name={'hand-pointer'} style={STYLES.tapIcon} size={20} color={ThemeColors.CGREEN} />
+                                                    <FontAwesome5 name={'hand-pointer'} style={STYLES.tapIcon} size={20} color={ThemeColors.BLACK} />
                                                 </View>
                                             </Card.Content>
                                         </Card>
@@ -264,12 +268,18 @@ const mapStateToProps = (state) => {
         blogViewsCount: state.UserAuth.blogViewsCount,
         isUserLoggedIn: state.UserAuth.isUserLoggedIn,
         userIdentification: state.UserAuth.userIdentification,
+        usersData: state.UserAuth.usersData,
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyBlogs)
 
 const STYLES = StyleSheet.create({
+    authorImg: {
+        width: 40,
+        height: 40,
+        borderRadius: ms(25),
+    },
     tapCont: {
         flexDirection: "row",
         justifyContent: 'center',
@@ -321,7 +331,8 @@ const STYLES = StyleSheet.create({
     },
     iconCont: {
         flexDirection: 'row',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+        paddingRight: ms(12)
     },
     editIcon: {
         backgroundColor: 'transparent',
