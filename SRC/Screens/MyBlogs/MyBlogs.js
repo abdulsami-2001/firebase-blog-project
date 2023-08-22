@@ -1,13 +1,15 @@
 import { connect } from 'react-redux'
 import Lottie from 'lottie-react-native';
 import React, { useState, useEffect } from 'react'
-import { ms, vs } from 'react-native-size-matters'
+import { ms, s, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import { Avatar, Card, Text } from 'react-native-paper'
 import firestore from '@react-native-firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
 import { showMessage } from 'react-native-flash-message';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
 import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native'
@@ -177,8 +179,18 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                             return (
                                 <>
                                     <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
-                                        <Card>
-                                            <Card.Cover source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
+                                        <Card style={STYLES.card} >
+                                            <View style={STYLES.header} >
+                                                <View style={STYLES.authorCont} >
+                                                    <FontAwesome name={'user-circle'} size={40} />
+                                                    <Text style={STYLES.authorText}>{userBlogs[item]?.Author}</Text>
+                                                </View>
+                                                <View style={STYLES.blogViewCont} >
+                                                    <Avatar.Icon size={25} color={ThemeColors.CGREEN} icon={'eye-outline'} style={STYLES.eyeIcon} />
+                                                    <Text style={{ ...STYLES.text, marginLeft: ms(3) }}>{postViews[userBlogs[item]?.BlogId] || 0}</Text>
+                                                </View>
+                                            </View>
+                                            <Card.Cover style={STYLES.coverImg} source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
                                             <View style={STYLES.iconCont} >
                                                 <TouchableOpacity style={STYLES.editIconCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG, { editItem: item, editImageUrl: userBlogs[item]?.ImageUrl, editTitle: userBlogs[item]?.Title, editBlogId: userBlogs[item]?.BlogId, editAuthor: userBlogs[item]?.Author, editContent: userBlogs[item]?.Content, editFavByUser: allBlogs[item]?.FavByUser, editUserIdentification: userBlogs[item]?.uid })}>
                                                     <Avatar.Icon size={30} color={ThemeColors.WHITE} icon={'pencil'} style={STYLES.editIcon} />
@@ -187,17 +199,11 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                                                     <Avatar.Icon size={30} color={ThemeColors.WHITE} icon={'delete'} style={STYLES.editIcon} />
                                                 </TouchableOpacity>
                                             </View>
-                                            <Card.Content>
-                                                <Text variant="titleLarge" style={STYLES.textHeading} >{userBlogs[item]?.Title}</Text>
-                                                <Text variant="bodyMedium" style={STYLES.text}>Tap to read</Text>
-                                                <View style={STYLES.authorCont} >
-                                                    <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
-                                                    <Text style={STYLES.text}>{userBlogs[item]?.Author}</Text>
-                                                </View>
-                                                <View style={STYLES.blogViewCont} >
-                                                    <Text variant="titleSmall" style={{ ...STYLES.textHeading, fontSize: 15 }}>Blog views: </Text>
-                                                    <Text style={{ ...STYLES.text, marginLeft: ms(3) }}>{postViews[userBlogs[item]?.BlogId] || 0}</Text>
-                                                    <Avatar.Icon size={25} color={ThemeColors.CGREEN} icon={'eye-outline'} style={STYLES.eyeIcon} />
+                                            <Card.Content style={STYLES.cardContent}>
+                                                <Text variant="titleLarge" style={STYLES.blogTitle} >{userBlogs[item]?.Title}</Text>
+                                                <View style={STYLES.tapCont}>
+                                                    <Text variant="bodyMedium" style={STYLES.text}>Press to read</Text>
+                                                    <FontAwesome5 name={'hand-pointer'} style={STYLES.tapIcon} size={20} color={ThemeColors.CGREEN} />
                                                 </View>
                                             </Card.Content>
                                         </Card>
@@ -264,6 +270,55 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, mapDispatchToProps)(MyBlogs)
 
 const STYLES = StyleSheet.create({
+    tapCont: {
+        flexDirection: "row",
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignContent: 'center',
+        alignSelf: 'center',
+    },
+    tapIcon: {
+        paddingLeft: ms(3),
+    },
+    cardContent: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: ms(12),
+    },
+    blogTitle: {
+        fontWeight: 'bold',
+        fontSize: s(20),
+        lineHeight: s(22),
+        textAlign: 'justify',
+        textAlignVertical: 'center',
+    },
+    authorCont: {
+        flexDirection: 'row',
+        textAlign: 'justify',
+        marginHorizontal: ms(5),
+        marginVertical: vs(10),
+        alignItems: 'center',
+    },
+    authorText: {
+        paddingLeft: ms(8),
+        fontWeight: 'bold',
+        fontSize: s(18)
+    },
+    coverImg: {
+        paddingHorizontal: ms(6),
+        backgroundColor: ThemeColors.WHITE,
+        paddingTop: vs(6),
+    },
+    card: {
+        borderRadius: ms(2),
+        backgroundColor: ThemeColors.WHITE,
+    },
+    header: {
+        flexDirection: 'row',
+        borderBottomWidth: s(0.5),
+        marginBottom: ms(3),
+        justifyContent: 'space-between'
+    },
     iconCont: {
         flexDirection: 'row',
         justifyContent: 'flex-end'
@@ -284,8 +339,9 @@ const STYLES = StyleSheet.create({
     },
     mainCont: {
         flex: 1,
-        marginHorizontal: ms(15),
-        marginVertical: vs(5),
+        paddingHorizontal: ms(15),
+        paddingVertical: vs(5),
+        backgroundColor: ThemeColors.LIGHTGRAY,
     },
     mainContNL: {
         flex: 1,
@@ -322,7 +378,7 @@ const STYLES = StyleSheet.create({
         flex: 1
     },
     cardCont: (width) => ({
-        marginVertical: vs(5),
+        marginVertical: vs(2),
         width: width - ms(30),
     }),
     btnCont: {
@@ -341,12 +397,10 @@ const STYLES = StyleSheet.create({
         color: ThemeColors.GRAY,
         fontSize: 15,
     },
-    authorCont: {
-        flexDirection: 'row',
-        marginTop: vs(4)
-    },
     blogViewCont: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: ms(15)
     }
 })

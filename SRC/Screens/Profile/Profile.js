@@ -179,7 +179,7 @@ const STYLES = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: ms(10),
         paddingVertical: vs(4),
-        marginBottom: vs(3)
+        marginBottom: vs(3),
     },
     upperCont: {
         flex: 2,
@@ -199,6 +199,7 @@ const STYLES = StyleSheet.create({
         borderRadius: ms(20),
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: ThemeColors.WHITE
     }),
     mainContNL: {
         flex: 1,

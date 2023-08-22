@@ -6,6 +6,7 @@ import { Card, Text, Avatar } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { showMessage } from 'react-native-flash-message'
 import firestore from '@react-native-firebase/firestore'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
@@ -129,18 +130,20 @@ const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComme
                     renderItem={({ item }) => {
                         return (
                             <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.95} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)} >
-                                <Card>
-                                    <Card.Cover source={{ uri: allBlogs[item]?.ImageUrl }} resizeMode='contain' />
+                                <Card style={STYLES.card} >
+                                    <View style={STYLES.header} >
+                                        <View style={STYLES.authorCont} >
+                                            <FontAwesome name={'user-circle'} size={40} />
+                                            <Text style={STYLES.authorText}>{allBlogs[item]?.Author}</Text>
+                                        </View>
+                                    </View>
+                                    <Card.Cover style={STYLES.coverImg} source={{ uri: allBlogs[item]?.ImageUrl }} resizeMode='contain' />
                                     <Card.Content style={STYLES.cardContent} >
                                         <Text variant="titleLarge" style={STYLES.blogTitle}>{allBlogs[item]?.Title}</Text>
                                         {/* <Text variant="titleLarge" style={STYLES.blogTitle}>How you can make {allBlogs[item]?.Title} tool, using free resources which is available on internet</Text> */}
                                         <View style={STYLES.tapCont}>
                                             <Text variant="bodyMedium" style={STYLES.text}>Press to read</Text>
                                             <FontAwesome5 name={'hand-pointer'} style={STYLES.tapIcon} size={20} color={ThemeColors.CGREEN} />
-                                        </View>
-                                        <View style={STYLES.authorCont} >
-                                            <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
-                                            <Text style={STYLES.text2}>{allBlogs[item]?.Author}</Text>
                                         </View>
                                     </Card.Content>
                                 </Card>
@@ -178,15 +181,35 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const STYLES = StyleSheet.create({
+    authorText: {
+        paddingLeft: ms(8),
+        fontWeight: 'bold',
+        fontSize: s(18)
+    },
+    coverImg: {
+        paddingHorizontal: ms(6),
+        backgroundColor: ThemeColors.WHITE,
+        paddingTop: vs(6),
+    },
+    card: {
+        borderRadius: ms(2),
+        backgroundColor: ThemeColors.WHITE,
+    },
+    header: {
+        flexDirection: 'row',
+        borderBottomWidth: s(0.5),
+        marginBottom: ms(3),
+    },
     mainCont: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginHorizontal: ms(15),
-        marginVertical: vs(5),
+        paddingHorizontal: ms(15),
+        paddingVertical: vs(5),
+        backgroundColor: ThemeColors.LIGHTGRAY,
     },
     cardCont: (width) => ({
-        marginVertical: vs(5),
+        marginVertical: vs(2),
         width: width - ms(30)
     }),
     cardContent: {
@@ -196,9 +219,10 @@ const STYLES = StyleSheet.create({
     },
     authorCont: {
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
         textAlign: 'justify',
+        marginHorizontal: ms(5),
+        marginVertical: vs(10),
+        alignItems: 'center',
     },
     textHeading: {
         fontWeight: 'bold',

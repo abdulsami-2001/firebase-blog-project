@@ -4,18 +4,20 @@ import React, { useEffect, useState } from 'react'
 import RenderHtml from 'react-native-render-html'
 import { ms, s, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
-import { Card, Text } from 'react-native-paper'
+import { mvs } from 'react-native-size-matters';
 import { showMessage } from 'react-native-flash-message'
+import ImageViewer from 'react-native-image-zoom-viewer';
 import firestore from '@react-native-firebase/firestore'
 import Fontisto from 'react-native-vector-icons/Fontisto'
-import ImageViewer from 'react-native-image-zoom-viewer';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import { Card, Text, TextInput } from 'react-native-paper'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { generateKey } from '../../Utils/ReusableFunctions/ReusableFunctions';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { StyleSheet, TouchableOpacity, Modal, View, ScrollView, TextInput, useWindowDimensions } from 'react-native'
+import { StyleSheet, TouchableOpacity, Modal, View, ScrollView, useWindowDimensions } from 'react-native'
 
 const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentification, allBlogs, userLike, myUserLike, userComments, myUserComments, myallBlogs }) => {
 
@@ -462,7 +464,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
 
     return (
         <>
-            {/* commeents modal */}
+            {/* image modal */}
             <Modal
                 animationType='slide'
                 visible={Visible}
@@ -523,7 +525,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
 
             {/* like, cmt, share */}
 
-            <Card style={{ marginBottom: vs(10) }}>
+            <Card style={STYLES.engagementCard} >
                 <View style={STYLES.engagementCont(width)}>
                     {/* <View style={STYLES.engagementCont(width)} elevation={1} > */}
                     <TouchableOpacity onPress={() => likePressHandler(allBlogs[params]?.BlogId)} style={STYLES.engagementSubCont} >
@@ -546,13 +548,17 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                 </View>
                 <View style={STYLES.inputCont} >
                     <TextInput
-                        style={STYLES.input(width)}
-                        placeholder='Write a comment'
+                        label="Comment"
                         value={CommentText}
-                        onChangeText={(text) => setCommentText(text)}
+                        keyboardType='default'
+                        underlineColor={ThemeColors.CGREEN}
+                        activeUnderlineColor={ThemeColors.CGREEN}
+                        type='outlined'
+                        onChangeText={text => setCommentText(text)}
+                        style={STYLES.input(width)}
                     />
-                    <TouchableOpacity onPress={() => commentPressHandler(allBlogs[params]?.BlogId)} >
-                        <MaterialIcons name='send' size={25} color={ThemeColors.CGREEN} />
+                    <TouchableOpacity style={STYLES.sendIconCont} onPress={() => commentPressHandler(allBlogs[params]?.BlogId)} >
+                        <Ionicons name='send-outline' size={30} color={ThemeColors.BLACK} />
                     </TouchableOpacity>
                 </View>
             </Card>
@@ -591,7 +597,8 @@ const STYLES = StyleSheet.create({
         paddingTop: vs(6)
     },
     card: {
-        marginBottom: ms(10),
+        marginBottom: ms(2),
+        borderRadius: ms(2)
     },
     header: {
         flexDirection: 'row',
@@ -620,6 +627,10 @@ const STYLES = StyleSheet.create({
         fontSize: 13,
         lineHeight: 20,
         textAlign: 'justify',
+    },
+    engagementCard: {
+        marginBottom: vs(6),
+        borderRadius: ms(2)
     },
     blogTitle: {
         fontWeight: 'bold',
@@ -652,39 +663,26 @@ const STYLES = StyleSheet.create({
         borderRadius: 50,
     },
     cardCont: {
-        marginVertical: vs(5),
-    },
-    cmntTextCont: (width) => ({
-        marginLeft: ms(8),
-        width: (width) - (width / 3),
-        borderRadius: 10,
-        padding: ms(5)
-    }),
-    cmnt: {
-        marginVertical: vs(5),
-        borderRadius: ms(15),
-        paddingVertical: vs(10),
-        paddingHorizontal: ms(10),
-        flexDirection: 'row',
-        borderWidth: 1
+        marginTop: vs(5),
     },
     commentSectionCont: {
         marginVertical: vs(5),
         padding: ms(10)
     },
     inputCont: {
-        marginVertical: vs(5),
-        padding: ms(5),
-        // borderWidth: 1,
+        padding: ms(2),
         alignItems: 'center',
         flexDirection: 'row',
-        // borderRadius: ms(10),
+        justifyContent: 'center',
     },
     input: (width) => ({
-        width: width - ms(90),
-        borderWidth: 1,
-        borderRadius: ms(10),
+        width: width - ms(70),
+        marginVertical: vs(2),
+        backgroundColor: ThemeColors.LIGHTGRAY
     }),
+    sendIconCont: {
+        marginLeft: ms(6)
+    },
     likeText: {
         marginLeft: ms(10)
     },

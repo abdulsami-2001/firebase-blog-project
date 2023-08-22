@@ -218,8 +218,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(Login)
 const STYLES = StyleSheet.create({
     mainCont: {
         flex: 1,
-        marginHorizontal: ms(15),
-        marginVertical: vs(5),
+        paddingHorizontal: ms(15),
+        paddingVertical: vs(5),
     },
     lottieCont: (width, height) => ({
         width: width,

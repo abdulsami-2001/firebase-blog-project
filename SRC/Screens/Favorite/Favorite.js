@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { Creators } from '../../Redux/Action/Action'
 import { ms, s, vs } from 'react-native-size-matters'
 import { useNavigation } from '@react-navigation/native'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
@@ -49,17 +50,19 @@ const Favorite = ({ isUserLoggedIn, userIdentification, allBlogs }) => {
                     renderItem={({ item }) => {
                         return (
                             <TouchableOpacity style={STYLES.cardCont(width)} activeOpacity={0.7} onPress={() => navigation.navigate(NavigationStrings.BLOG, item)}>
-                                <Card>
-                                    <Card.Cover source={{ uri: allBlogs[item]?.ImageUrl }} resizeMode='contain' />
+                                <Card style={STYLES.card}>
+                                    <View style={STYLES.header} >
+                                        <View style={STYLES.authorCont} >
+                                            <FontAwesome name={'user-circle'} size={40} />
+                                            <Text style={STYLES.authorText}>{allBlogs[item]?.Author}</Text>
+                                        </View>
+                                    </View>
+                                    <Card.Cover style={STYLES.coverImg} source={{ uri: allBlogs[item]?.ImageUrl }} resizeMode='contain' />
                                     <Card.Content style={STYLES.cardContent} >
                                         <Text variant="titleLarge" style={STYLES.blogTitle} >{allBlogs[item]?.Title}</Text>
                                         <View style={STYLES.tapCont}>
                                             <Text variant="bodyMedium" style={STYLES.text}>Press to read</Text>
                                             <FontAwesome5 name={'hand-pointer'} style={STYLES.tapIcon} size={20} color={ThemeColors.CGREEN} />
-                                        </View>
-                                        <View style={STYLES.authorCont} >
-                                            <Text variant="titleSmall" style={STYLES.textHeading}>Author: </Text>
-                                            <Text style={STYLES.text2}>{allBlogs[item]?.Author}</Text>
                                         </View>
                                     </Card.Content>
                                 </Card>
@@ -72,7 +75,7 @@ const Favorite = ({ isUserLoggedIn, userIdentification, allBlogs }) => {
         )
     } else if (isUserLoggedIn && BlogData.length <= 0) {
         return (
-            <View style={STYLES.mainCont}>
+            <View style={{ ...STYLES.mainCont, backgroundColor: null }}>
                 <View style={STYLES.lottieCont(width, height)} >
                     <Lottie source={require('../../Assets/Lottie/announcement.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
                 </View>
@@ -84,7 +87,7 @@ const Favorite = ({ isUserLoggedIn, userIdentification, allBlogs }) => {
     }
     else {
         return (
-            <View style={STYLES.mainCont}>
+            <View style={{ ...STYLES.mainCont, backgroundColor: null }}>
                 <View style={STYLES.lottieCont(width, height)} >
                     <Lottie source={require('../../Assets/Lottie/announcement.json')} style={STYLES.lottie(width, height)} autoPlay loop speed={0.5} />
                 </View>
@@ -116,12 +119,39 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Favorite)
 
 const STYLES = StyleSheet.create({
+    authorText: {
+        paddingLeft: ms(8),
+        fontWeight: 'bold',
+        fontSize: s(18)
+    },
+    coverImg: {
+        paddingHorizontal: ms(6),
+        paddingTop: vs(6),
+        backgroundColor: ThemeColors.WHITE,
+    },
+    card: {
+        borderRadius: ms(2),
+        backgroundColor: ThemeColors.WHITE,
+    },
+    authorCont: {
+        flexDirection: 'row',
+        textAlign: 'justify',
+        marginHorizontal: ms(5),
+        marginVertical: vs(10),
+        alignItems: 'center',
+    },
+    header: {
+        flexDirection: 'row',
+        borderBottomWidth: s(0.5),
+        marginBottom: ms(3),
+    },
     mainCont: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginHorizontal: 15,
-        marginVertical: 5,
+        paddingHorizontal: ms(15),
+        paddingVertical: vs(5),
+        backgroundColor: ThemeColors.LIGHTGRAY,
     },
     lottieCont: (width, height) => ({
         width: width,
@@ -134,11 +164,8 @@ const STYLES = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     }),
-    authorCont: {
-        flexDirection: 'row',
-    },
     cardCont: (width) => ({
-        marginVertical: 5,
+        marginVertical: vs(2),
         width: width - ms(30)
     }),
     headingCont: {

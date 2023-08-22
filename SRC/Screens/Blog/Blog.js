@@ -3,7 +3,7 @@ import { Card, Text } from 'react-native-paper'
 import HeaderComponent from './HeaderComponent'
 import FooterComponent from './FooterComponent'
 import React, { useState, useEffect } from 'react'
-import { ms, vs } from 'react-native-size-matters'
+import { ms, mvs, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action'
 import firestore from '@react-native-firebase/firestore'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
@@ -137,6 +137,7 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
     return (
         <>
             <View style={STYLES.mainCont}>
+                {/* all Comments modal  */}
                 <Modal
                     animationType='slide'
                     visible={Visible}
@@ -153,15 +154,17 @@ const Blog = ({ route, allBlogs, userComments, blogViewsCount, myBlogViewsCount,
                                 data={extractAllCommentsWithUser(userComments[allBlogs[params]?.BlogId])}
                                 renderItem={({ item }) => {
                                     return (
-                                        <View style={STYLES.cmnt} >
-                                            <View style={STYLES.cmntImgCont} >
-                                                <FontAwesome name={'user-circle'} size={40} />
+                                        <Card style={STYLES.modalCommentCard} >
+                                            <View style={STYLES.cmnt} >
+                                                <View style={STYLES.cmntImgCont} >
+                                                    <FontAwesome name={'user-circle'} size={40} />
+                                                </View>
+                                                <TouchableOpacity activeOpacity={0.5} style={STYLES.cmntTextCont(width)} >
+                                                    <Text variant='labelSmall' >{item?.user}</Text>
+                                                    <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
+                                                </TouchableOpacity>
                                             </View>
-                                            <TouchableOpacity activeOpacity={0.5} style={STYLES.cmntTextCont(width)} >
-                                                <Text variant='labelSmall' >{item?.user}</Text>
-                                                <Text style={STYLES.cmntText} variant='bodyLarge' >{item?.comment}</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                        </Card>
                                     )
                                 }}
                             />
@@ -224,13 +227,17 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Blog)
 
 const STYLES = StyleSheet.create({
+    modalCommentCard: {
+        marginVertical: mvs(3),
+        backgroundColor: ThemeColors.WHITE
+    },
     iconCont: {
         position: 'absolute',
         zIndex: 1,
         top: 15,
         right: 5,
+        borderRadius: ms(50),
         backgroundColor: ThemeColors.CGREEN,
-        borderRadius: 50,
     },
     modal: {
         justifyContent: 'center',
@@ -245,29 +252,29 @@ const STYLES = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: 'center',
-        backgroundColor: ThemeColors.WHITE
+        backgroundColor: ThemeColors.LIGHTGRAY
     },
     cmntTextCont: (width) => ({
         marginLeft: ms(8),
         width: (width) - (width / 3),
-        borderRadius: 10,
+        borderRadius: ms(8),
         padding: ms(5),
     }),
     cmnt: {
         marginVertical: vs(5),
-        borderRadius: ms(10),
+        borderRadius: ms(8),
         paddingVertical: vs(10),
         paddingHorizontal: ms(10),
         flexDirection: 'row',
         // borderWidth: 1,
     },
     commentSectionCont: {
-        marginVertical: vs(5),
-        padding: ms(10),
+        marginVertical: vs(2),
+        borderRadius: ms(2),
     },
     mainCont: {
         flex: 1,
-        paddingHorizontal: ms(15),
+        paddingHorizontal: ms(10),
         paddingVertical: vs(5),
         backgroundColor: ThemeColors.LIGHTGRAY,
     },
