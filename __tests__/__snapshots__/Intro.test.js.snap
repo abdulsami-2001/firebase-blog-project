@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "#F5FCFF",
+      "flex": 1,
+      "justifyContent": "center",
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "fontSize": 20,
+        "margin": 10,
+        "textAlign": "center",
+      }
+    }
+  >
+    Welcome to Sam React Native!
+  </Text>
+  <Text
+    style={
+      {
+        "color": "#333333",
+        "marginBottom": 5,
+        "textAlign": "center",
+      }
+    }
+  >
+    This is a React Native snapshot test.
+  </Text>
+</View>
+`;
+
+exports[`testing flatlist 1`] = `
+<RCTScrollView
+  data={
+    [
+      "item1",
+      "item2",
+      "item3",
+    ]
+  }
+  getItem={[Function]}
+  getItemCount={[Function]}
+  keyExtractor={[Function]}
+  onContentSizeChange={[Function]}
+  onLayout={[Function]}
+  onMomentumScrollBegin={[Function]}
+  onMomentumScrollEnd={[Function]}
+  onScroll={[Function]}
+  onScrollBeginDrag={[Function]}
+  onScrollEndDrag={[Function]}
+  removeClippedSubviews={false}
+  renderItem={[Function]}
+  scrollEventThrottle={50}
+  stickyHeaderIndices={[]}
+  viewabilityConfigCallbackPairs={[]}
+>
+  <View>
+    <View
+      onFocusCapture={[Function]}
+      onLayout={[Function]}
+      style={null}
+    />
+    <View
+      onFocusCapture={[Function]}
+      onLayout={[Function]}
+      style={null}
+    />
+    <View
+      onFocusCapture={[Function]}
+      onLayout={[Function]}
+      style={null}
+    />
+  </View>
+</RCTScrollView>
+`;
