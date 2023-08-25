@@ -27,7 +27,7 @@ const Login = ({ myUserState, isUserLoggedIn, myUserId, myuserBlogs, }) => {
     }
 
     useEffect(() => {
-        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged)
         if (user != undefined && user != null) {
             myUserId(user.uid)
             getDataFromFirestore(user.uid)
