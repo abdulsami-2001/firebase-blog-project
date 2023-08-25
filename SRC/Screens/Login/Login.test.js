@@ -1,6 +1,6 @@
 import 'react-native'
 import React from 'react';
-import Login from './Login';
+import Login from './Login.js';
 import { render, fireEvent } from '@testing-library/react-native'
 
 // jest.mock('./Login')

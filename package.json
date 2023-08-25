@@ -13,20 +13,7 @@
     "preset": "react-native",
     "transformIgnorePatterns": [
       "node_modules/(?!(react-native|@react-native|@react-native-firebase/auth)/)"
-    ],
-    "testEnvironment": "node",
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ],
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    },
-    "roots": ["<rootDir>/SRC"],
-    "moduleDirectories": ["node_modules", "SRC"]
+    ]
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.18.2",
@@ -91,6 +78,5 @@
   },
   "engines": {
     "node": ">=16"
-  },
-  "type": "module"
+  }
 }

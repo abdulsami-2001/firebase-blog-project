@@ -1,13 +1,13 @@
 import { connect } from 'react-redux';
 import Lottie from 'lottie-react-native';
 import auth from '@react-native-firebase/auth';
-import React, { useState, useEffect, useRef } from 'react'
 import { ms, vs } from 'react-native-size-matters'
 import { Creators } from '../../Redux/Action/Action';
 import { TextInput, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native'
 import firestore from '@react-native-firebase/firestore'
 import { showMessage, } from "react-native-flash-message";
+import React, { useState, useEffect, useRef } from 'react'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors';
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings';
 import { StyleSheet, Dimensions, View, ScrollView, TouchableOpacity, Text } from 'react-native'
