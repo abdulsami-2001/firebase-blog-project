@@ -1,14 +1,9 @@
 import 'react-native'
 import React from 'react';
-import Login from './Login.js';
+import LoginDemo from './LoginDemo'
 import { render, fireEvent } from '@testing-library/react-native'
+import renderer from 'react-test-renderer'
 
-// jest.mock('./Login')
-
-test('renders correctly', async () => {
-    const { getAllByText } = render(<Login />)
-    console.log('getAllByText ', getAllByText)
-})
 
 // it('renders correctly', () => {
 //     console.log('onPress ', jest.fn())
@@ -19,19 +14,49 @@ test('renders correctly', async () => {
 // Warning on empty input on email and password
 // //
 
+test('should render correctly', () => {
+    const { getByTestId, getByText } = render(<LoginDemo />)
+
+    const emailTI = getByTestId('email')
+    const passwordTI = getByTestId('password')
+    const button = getByTestId('login')
+    // const loginButton = button?.props
+
+    // console.log('button', button)
+
+    fireEvent.changeText(emailTI, 'email by Sami');
+    fireEvent.changeText(passwordTI, 'password123');
+
+    fireEvent.press(button);
+
+    // const emailText = getByTestId('emailText')
+
+    // console.log('emailText ', emailText.children)
+
+    // const passwordText = getByText('password123')
+    const emailText = getByTestId('emailText')
+
+    expect(...emailText.children).toBe('email by sami')
+
+
+})
+
 
 // test('renders correctly', async () => {
-//     const { getByLabelText, getByText } = await render(<Login />);
+//     const { getByLabelText, getByText } = render(<LoginDemo />);
 
 //     // Find input fields by their labels and simulate user input
 //     const emailInput = getByLabelText('Email');
 //     const passwordInput = getByLabelText('Password');
 
+//     // Find and press the login button
+//     const loginButton = getByText('Login');
+
+//     console.log('loginButton ', loginButton)
+
 //     fireEvent.changeText(emailInput, 'test@example.com');
 //     fireEvent.changeText(passwordInput, 'password123');
 
-//     // Find and press the login button
-//     const loginButton = getByText('Login');
 //     fireEvent.press(loginButton);
 
 //     // Add your assertions here to verify the expected outcomes
