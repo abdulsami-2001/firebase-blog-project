@@ -13,7 +13,8 @@
     "preset": "react-native",
     "transformIgnorePatterns": [
       "node_modules/(?!(react-native|@react-native|@react-native-firebase/auth)/)"
-    ]
+    ],
+    "setupFiles": ["<rootDir>/setupTests.js"]
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.18.2",

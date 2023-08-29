@@ -4,6 +4,10 @@ import LoginDemo from './LoginDemo'
 import { render, fireEvent } from '@testing-library/react-native'
 import renderer from 'react-test-renderer'
 
+test('should render correctly', () => {
+    RenderComponent(LoginDemo)
+})
+
 
 // it('renders correctly', () => {
 //     console.log('onPress ', jest.fn())
