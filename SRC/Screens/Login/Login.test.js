@@ -24,7 +24,7 @@ test('should render correctly', () => {
 
     // console.log('button', button)
 
-    fireEvent.changeText(emailTI, 'email by Sami');
+    fireEvent.changeText(emailTI, 'sami.siddiq@venturedive.com');
     fireEvent.changeText(passwordTI, 'password123');
 
     fireEvent.press(button);
@@ -35,8 +35,10 @@ test('should render correctly', () => {
 
     // const passwordText = getByText('password123')
     const emailText = getByTestId('emailText')
+    const passwordText = getByTestId('passwordText')
 
-    expect(...emailText.children).toBe('email by sami')
+    expect(...emailText.children).toBe('sami.siddiq@venturedive.com')
+    // expect(...passwordText.children).toBe('password123')
 
 
 })
