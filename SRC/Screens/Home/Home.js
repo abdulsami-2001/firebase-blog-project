@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Creators } from '../../Redux/Action/Action'
 import { ms, s, vs } from 'react-native-size-matters'
 import { Card, Text, Avatar } from 'react-native-paper'
@@ -10,12 +10,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
-import { StyleSheet, View, FlatList, TouchableOpacity, Dimensions, Image } from 'react-native'
+import { StyleSheet, View, FlatList, TouchableOpacity, useWindowDimensions, Image } from 'react-native'
 
 const Home = ({ userBlogs, myallBlogs, allBlogs, userLike, myUserLike, userComments, myUserComments, blogViewsCount, myBlogViewsCount, usersData, myUsersData }) => {
     const navigation = useNavigation()
     let BlogData = Object.keys(allBlogs)
-    const { width } = Dimensions.get('screen')
+    // const { width } = Dimensions.get('screen')
+    const { width } = useWindowDimensions()
 
     useEffect(() => {
         getDataFromFirestore()
