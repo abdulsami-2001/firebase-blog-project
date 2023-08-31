@@ -1,5 +1,4 @@
 import { connect } from 'react-redux'
-import { Dimensions } from 'react-native'
 import Lottie from 'lottie-react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import React, { useState, useEffect } from 'react'
@@ -10,19 +9,20 @@ import firestore from '@react-native-firebase/firestore'
 import { showMessage } from 'react-native-flash-message'
 import { useNavigation } from '@react-navigation/native'
 import DocumentPicker from 'react-native-document-picker'
-import { TextInput, Button, Card, Avatar } from 'react-native-paper'
 import { ThemeColors } from '../../Utils/ThemeColors/ThemeColors'
-import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import { TextInput, Button, Card, Avatar } from 'react-native-paper'
 import { generateKey } from '../../Utils/ReusableFunctions/ReusableFunctions';
+import NavigationStrings from '../../Utils/NavigationStrings/NavigationStrings'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, useWindowDimensions, Image } from 'react-native'
 
 const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Content, myContent, userFromStore }) => {
 
     const navigation = useNavigation()
-    const { width, height } = Dimensions.get('screen')
+    const { width, height } = useWindowDimensions('screen')
 
     const [Title, setTitle] = useState("");
     const [ImageUrl, setImageUrl] = useState('')
+    const [ImageHeight, setImageHeight] = useState(200)
     const [Author, setAuthor] = useState(userFromStore?.displayName);
 
     const { params } = route
@@ -36,6 +36,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
         let tempContent = Content
         if (isUserLoggedIn && params?.editAuthor) {
             setImageUrl(params?.editImageUrl)
+            setImageHeight(params?.editImageHeight || 200)
             setTitle(params?.editTitle)
             setAuthor(params?.editAuthor)
             myContent(params?.editContent)
@@ -45,6 +46,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
             if (isUserLoggedIn && params?.editAuthor) {
                 myContent(tempContent)
                 setImageUrl('')
+                setImageHeight(200)
                 setTitle('')
                 setAuthor(userFromStore?.displayName)
             }
@@ -135,6 +137,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                         Content,
                         Author,
                         ImageUrl,
+                        ImageHeight,
                         FavByUser: [],
                         BlogId: BlogId,
                         uid: userIdentification,
@@ -152,6 +155,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                             Author,
                             Content,
                             ImageUrl,
+                            ImageHeight,
                             FavByUser: [],
                             BlogId: BlogId,
                             uid: userIdentification,
@@ -186,6 +190,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                         Author,
                         Content,
                         ImageUrl,
+                        ImageHeight,
                         FavByUser: [],
                         BlogId: BlogId,
                         uid: userIdentification,
@@ -200,9 +205,10 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                     myuserBlogs({
                         [BlogId]: {
                             Title,
-                            Content,
                             Author,
+                            Content,
                             ImageUrl,
+                            ImageHeight,
                             FavByUser: [],
                             BlogId: BlogId,
                             uid: userIdentification,
@@ -220,6 +226,8 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
         }
     }
 
+    console.log('ImageHeight ', ImageHeight)
+
     const imageUploadHandler = async () => {
         try {
             const res = await DocumentPicker.pick({
@@ -228,6 +236,19 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
             })
             const { uri: path, name: fileName, type: fileType } = res[0]
             const base64String = await RNFetchBlob.fs.readFile(path, 'base64')
+
+            const cardWidth = width - ms(30); // Adjust as needed
+
+            Image.getSize(path, (width, height) => {
+                console.log('width ', width)
+                console.log('height ', height)
+
+                let imageHeight = Math.floor((cardWidth * height) / width)
+                setImageHeight(imageHeight)
+            }, (error) => {
+                console.error('Error getting image dimensions:', error);
+            });
+
             uploadToFBCloudStorage(fileName, base64String, fileType)
         } catch (error) {
             if (DocumentPicker.isCancel(error)) {
@@ -252,7 +273,6 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
             type: "info",
             duration: 3000
         })
-
 
         const uploadContent = storage().ref(`allFiles/${fileName}`)
             .putString(base64String, 'base64', { contentType: fileType })
@@ -315,6 +335,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                 Content,
                 Author,
                 ImageUrl,
+                ImageHeight,
                 BlogId: params?.editBlogId,
                 FavByUser: params?.editFavByUser,
                 uid: params?.editUserIdentification,
@@ -354,7 +375,7 @@ const AddBlog = ({ route, isUserLoggedIn, userIdentification, myuserBlogs, Conte
                         {ImageUrl != '' &&
                             <>
                                 <View style={{ position: 'relative' }} >
-                                    <Card.Cover source={{ uri: ImageUrl }} resizeMode='contain' />
+                                    <Image source={{ uri: ImageUrl }} style={STYLES.editImg(ImageHeight)} />
                                     <TouchableOpacity style={STYLES.editIconCont} onPress={imageUploadHandler} >
                                         <Avatar.Icon size={35} color={ThemeColors.WHITE} icon={'pencil'} style={STYLES.editIcon} />
                                     </TouchableOpacity>
@@ -516,6 +537,9 @@ const STYLES = StyleSheet.create({
     editIcon: {
         backgroundColor: 'transparent',
     },
+    editImg: (myHeight) => ({
+        height: myHeight,
+    }),
     editIconCont: {
         top: 2,
         right: 2,
@@ -525,7 +549,6 @@ const STYLES = StyleSheet.create({
     },
     coverImgCont: {
         alignItems: 'center',
-        borderRadius: ms(12),
         justifyContent: 'center',
         backgroundColor: ThemeColors.CGREEN,
     },

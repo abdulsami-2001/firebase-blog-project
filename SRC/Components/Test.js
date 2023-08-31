@@ -29,35 +29,20 @@ const Test = () => {
             const { uri: path, name: fileName, type: fileType } = res[0]
 
             const cardWidth = width - ms(30); // Adjust as needed
-            const imageWidth = cardWidth;
-            var originalImageWidth;
-            var originalImageHeight;
 
             Image.getSize(path, (width, height) => {
-                console.log('width ', width);
-                console.log('height ', height);
+                console.log('width ', width)
+                console.log('height ', height)
 
-                originalImageWidth = width /* Get the actual image width */
-                originalImageHeight = height /* Get the actual image height */
+                let imageHeight = Math.floor((cardWidth * height) / width)
 
-
-                const imageHeight = calculateImageHeight(
-                    originalImageWidth,
-                    originalImageHeight,
-                    imageWidth
-                );
                 console.log('imageHeight ', imageHeight)
-                setimageHeight(imageHeight)
 
             }, (error) => {
                 console.error('Error getting image dimensions:', error);
             });
 
             setImageUrl(path)
-
-
-            // console.log('path ', path)
-
 
             const base64String = await RNFetchBlob.fs.readFile(path, 'base64')
         } catch (error) {

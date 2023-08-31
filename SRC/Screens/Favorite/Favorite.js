@@ -61,7 +61,7 @@ const Favorite = ({ isUserLoggedIn, userIdentification, allBlogs, usersData }) =
                                             <Text style={STYLES.authorText}>{allBlogs[item]?.Author}</Text>
                                         </View>
                                     </View>
-                                    <Card.Cover style={STYLES.coverImg} source={{ uri: allBlogs[item]?.ImageUrl }} resizeMode='contain' />
+                                    <Image style={STYLES.coverImg(allBlogs[item]?.ImageHeight || 200)} source={{ uri: allBlogs[item]?.ImageUrl }} />
                                     <Card.Content style={STYLES.cardContent} >
                                         <Text variant="titleLarge" style={STYLES.blogTitle} >{allBlogs[item]?.Title}</Text>
                                         <View style={STYLES.tapCont}>
@@ -134,11 +134,12 @@ const STYLES = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: s(18)
     },
-    coverImg: {
-        paddingHorizontal: ms(6),
+    coverImg: (myHeight) => ({
+        height: myHeight,
         paddingTop: vs(6),
+        paddingHorizontal: ms(6),
         backgroundColor: ThemeColors.WHITE,
-    },
+    }),
     card: {
         borderRadius: ms(2),
         backgroundColor: ThemeColors.WHITE,
@@ -153,7 +154,6 @@ const STYLES = StyleSheet.create({
     header: {
         flexDirection: 'row',
         borderBottomWidth: s(0.5),
-        marginBottom: ms(3),
     },
     mainCont: {
         flex: 1,

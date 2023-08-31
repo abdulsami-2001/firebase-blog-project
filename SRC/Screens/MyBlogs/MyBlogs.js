@@ -194,9 +194,9 @@ const MyBlogs = ({ isUserLoggedIn, userIdentification, allBlogs, blogViewsCount,
                                                     <Text style={{ ...STYLES.text, marginLeft: ms(3) }}>{postViews[userBlogs[item]?.BlogId] || 0}</Text>
                                                 </View>
                                             </View>
-                                            <Card.Cover style={STYLES.coverImg} source={{ uri: userBlogs[item]?.ImageUrl }} resizeMode='contain' />
+                                            <Image style={STYLES.coverImg(userBlogs[item]?.ImageHeight || 200)} source={{ uri: userBlogs[item]?.ImageUrl }} />
                                             <View style={STYLES.iconCont} >
-                                                <TouchableOpacity style={STYLES.editIconCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG, { editItem: item, editImageUrl: userBlogs[item]?.ImageUrl, editTitle: userBlogs[item]?.Title, editBlogId: userBlogs[item]?.BlogId, editAuthor: userBlogs[item]?.Author, editContent: userBlogs[item]?.Content, editFavByUser: allBlogs[item]?.FavByUser, editUserIdentification: userBlogs[item]?.uid })}>
+                                                <TouchableOpacity style={STYLES.editIconCont} onPress={() => navigation.navigate(NavigationStrings.ADDBLOG, { editItem: item, editImageHeight: userBlogs[item]?.ImageHeight, editImageUrl: userBlogs[item]?.ImageUrl, editTitle: userBlogs[item]?.Title, editBlogId: userBlogs[item]?.BlogId, editAuthor: userBlogs[item]?.Author, editContent: userBlogs[item]?.Content, editFavByUser: allBlogs[item]?.FavByUser, editUserIdentification: userBlogs[item]?.uid })}>
                                                     <Avatar.Icon size={30} color={ThemeColors.WHITE} icon={'pencil'} style={STYLES.editIcon} />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={STYLES.editIconCont} onPress={() => blogDeleteHandler(item, userBlogs[item]?.BlogId)} >
@@ -314,11 +314,12 @@ const STYLES = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: s(18)
     },
-    coverImg: {
+    coverImg: (myHeight) => ({
+        height: myHeight,
+        paddingTop: vs(6),
         paddingHorizontal: ms(6),
         backgroundColor: ThemeColors.WHITE,
-        paddingTop: vs(6),
-    },
+    }),
     card: {
         borderRadius: ms(2),
         backgroundColor: ThemeColors.WHITE,
@@ -326,7 +327,6 @@ const STYLES = StyleSheet.create({
     header: {
         flexDirection: 'row',
         borderBottomWidth: s(0.5),
-        marginBottom: ms(3),
         justifyContent: 'space-between'
     },
     iconCont: {

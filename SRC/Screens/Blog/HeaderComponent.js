@@ -512,7 +512,7 @@ const HeaderComponent = ({ params, commentsForLength, Show, setShow, userIdentif
                         </View>
                     </View>
                     <TouchableOpacity style={STYLES.imgCont} onPress={() => setVisible(true)}>
-                        <Card.Cover source={{ uri: allBlogs[params]?.ImageUrl }} style={{ paddingHorizontal: ms(6) }} resizeMode='contain' />
+                        <Image source={{ uri: allBlogs[params]?.ImageUrl }} style={{ paddingHorizontal: ms(6), height: allBlogs[params]?.ImageHeight || 200 }} />
                     </TouchableOpacity>
                     <Card.Content style={STYLES.cardContent} >
                         <Text variant="titleLarge" style={STYLES.blogTitle}>{allBlogs[params]?.Title}</Text>
@@ -604,18 +604,18 @@ const STYLES = StyleSheet.create({
         borderRadius: ms(25),
     },
     imgCont: {
-        paddingTop: vs(6)
+        // paddingTop: vs(6)
     },
     card: {
         marginBottom: ms(2),
-        borderRadius: ms(2)
+        borderRadius: ms(2),
+        backgroundColor: ThemeColors.WHITE,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         borderBottomWidth: s(0.5),
-        marginBottom: ms(3),
     },
     authorCont: {
         flexDirection: 'row',
@@ -640,7 +640,8 @@ const STYLES = StyleSheet.create({
     },
     engagementCard: {
         marginBottom: vs(6),
-        borderRadius: ms(2)
+        borderRadius: ms(2),
+        backgroundColor: ThemeColors.WHITE,
     },
     blogTitle: {
         fontWeight: 'bold',

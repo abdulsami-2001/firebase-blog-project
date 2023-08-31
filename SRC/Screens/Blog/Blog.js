@@ -298,6 +298,7 @@ const STYLES = StyleSheet.create({
     commentSectionCont: {
         marginVertical: vs(2),
         borderRadius: ms(2),
+        backgroundColor: ThemeColors.WHITE,
     },
     mainCont: {
         flex: 1,
