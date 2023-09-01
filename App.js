@@ -7,6 +7,7 @@ import FlashMessage from "react-native-flash-message";
 import { PersistGate } from 'redux-persist/integration/react'
 import { ThemeColors } from './SRC/Utils/ThemeColors/ThemeColors'
 import MainTabNavigation from './SRC/Navigation/TabNavigation/MainTabNavigation'
+import UpdateDemo from './SRC/Screens/UpdateProfile/UpdateDemo';
 
 const App = () => {
     const { Store, Persistor } = ReduxStore()
@@ -16,7 +17,8 @@ const App = () => {
                 <PaperProvider>
                     <StatusBar backgroundColor={ThemeColors.CGREEN} />
                     <View style={{ flex: 1 }} >
-                        <MainTabNavigation />
+                        {/* <MainTabNavigation /> */}
+                        <UpdateDemo />
                         <FlashMessage position="center" />
                     </View>
                 </PaperProvider>
